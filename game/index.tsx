@@ -9,16 +9,23 @@ import {
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import Animated, {
+  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
+import useGameController, { Operation, OperationCell } from './controller';
 
 type CoOrdinates = {
   x: number;
   y: number;
 };
+
+type Cell = {
+  position: CoOrdinates,
+  operation: OperationCell,
+}
 
 export default function Game() {
   const [isError, setIsError] = useState(false);
@@ -32,7 +39,8 @@ export default function Game() {
   const canTouch = useSharedValue(true);
   const containerLayout = useSharedValue({width: 0, height: 0, min: 0});
   const selectedIndexes = useSharedValue([] as number[]);
-  const patternPoints = useSharedValue([] as CoOrdinates[]);
+  const patternPoints = useSharedValue([] as Cell[]);
+  const controller = useGameController();
   function renderCell() {
     return (
       <Animated.View style={cvc} onLayout={onPatternLayout}>
@@ -71,7 +79,7 @@ export default function Game() {
             return (
               <Animated.View key={idx} style={outer}>
                 <Animated.View style={inner}>
-                  <Text style={styles.number}>1</Text>
+                  <Text style={styles.number}>{`${controller.operations[idx].operation}${controller.operations[idx].number}`}</Text>
                 </Animated.View>
               </Animated.View>
             );
@@ -96,7 +104,6 @@ export default function Game() {
     () => (containerLayout.value.min / rowCount - patternMargin * 2) / 2,
   );
 
-  //   const onPatternLayout = ({ nativeEvent: { layout } }) => {
   const onPatternLayout = (event: LayoutChangeEvent) => {
     const layout = event.nativeEvent.layout;
     console.log('Pattern layout', layout);
@@ -109,7 +116,10 @@ export default function Game() {
         });
       }
     }
-    patternPoints.value = points;
+    patternPoints.value = points.map((p,idx) => ({
+      position: {x:p.x, y:p.y},
+      operation: controller.operations[idx],
+    }));
   };
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
@@ -121,6 +131,28 @@ export default function Game() {
       min: Math.min(width, height),
     };
   };
+  const checkResult = () => {
+    console.log("CAlling")
+    // ts-ignore
+    console.log(this)
+    let total = 0;
+    const mapper = {
+      [Operation.ADDITION]: (value1: number, value2: number) => value1 + value2,
+      [Operation.SUBTRACTION]: (value1: number, value2: number) => value1 - value2,
+      [Operation.MULTIPLIACTION]: (value1: number, value2: number) => value1 * value2,
+      [Operation.DIVISION]: (value1: number, value2: number) => value1 / value2,
+    }
+    selectedIndexes.value.forEach((index) => {
+      const { operation , number} = controller.operations[index];
+      total = mapper[operation](total, number);
+    })
+    if(total === controller.result) {
+      console.log("Answer found")
+    } else {
+      console.log("Answer not found")
+    }
+    selectedIndexes.value = []
+  }
 
   const panHandler = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent | TapGestureHandlerGestureEvent
@@ -134,7 +166,7 @@ export default function Game() {
         const selected: number[] = [];
         patternPoints.value.every((p, idx) => {
           if (
-            (p.x - evt.x) * (p.x - evt.x) + (p.y - evt.y) * (p.y - evt.y) <
+            (p.position.x - evt.x) * (p.position.x - evt.x) + (p.position.y - evt.y) * (p.position.y - evt.y) <
             R.value * R.value
           ) {
             selected.push(idx);
@@ -153,7 +185,7 @@ export default function Game() {
       ) {
         patternPoints.value.every((p, idx) => {
           if (
-            (p.x - evt.x) * (p.x - evt.x) + (p.y - evt.y) * (p.y - evt.y) <
+            (p.position.x - evt.x) * (p.position.x - evt.x) + (p.position.y - evt.y) * (p.position.y - evt.y) <
             R.value * R.value
           ) {
             if (selectedIndexes.value.indexOf(idx) < 0) {
@@ -169,15 +201,18 @@ export default function Game() {
     onEnd: evt => {
       if (!canTouch.value) return;
       endPoint.value = null;
-      if (selectedIndexes.value.length > 0)
-        console.log('Selected Index greater that zero');
+      if (selectedIndexes.value.length > 0) {
+        console.log(selectedIndexes);
+        // checkResult(;
+        runOnJS(checkResult)();
+      }
+        // console.log('Selected Index greater that zero');
       // runOnJS(onEndJS)(selectedIndexes.value.join(""));
     },
   });
 
   return (
-    // <View style={styles.container}>
-    //   {console.log('logged')}
+    <View>
     <PanGestureHandler onGestureEvent={panHandler}>
       <Animated.View style={styles.container} onLayout={onContainerLayout}>
         <TapGestureHandler onGestureEvent={panHandler}>
@@ -185,7 +220,7 @@ export default function Game() {
         </TapGestureHandler>
       </Animated.View>
     </PanGestureHandler>
-    // </View>
+    </View>
   );
 }
 
@@ -205,7 +240,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   number: {
-    fontSize: 40,
+    fontSize: 28,
     alignItems: 'center',
   },
 });
