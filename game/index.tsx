@@ -15,7 +15,7 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
-import useGameController, {Operation, OperationCell} from './controller';
+import useGameController, {OperationCell} from './controller';
 
 export type CoOrdinates = {
   x: number;
@@ -90,7 +90,7 @@ export default function Game() {
                   <Text
                     style={
                       styles.number
-                    }>{`${controller.operations[idx].operation}${controller.operations[idx].number}`}</Text>
+                    }>{`${controller.operatorCell[idx].operator.label}${controller.operatorCell[idx].number}`}</Text>
                 {/* </Animated.View> */}
               </Animated.View>
             );

@@ -4,37 +4,114 @@ import { PanGestureHandlerGestureEvent, TapGestureHandlerGestureEvent } from 're
 import { runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 import { Cell, CoOrdinates } from './index';
 
-export enum Operation {
-  ADDITION = '+',
-  SUBTRACTION = '-',
-  MULTIPLIACTION = '*',
-  DIVISION = '/',
+// export enum Operation {
+//   ADDITION = '+',
+//   SUBTRACTION = '-',
+//   MULTIPLIACTION = '*',
+//   DIVISION = '/',
+// }
+
+type SupportedOperation = "ADDITION" | "SUBTRACTION" 
+// | "MULTIPLICATION" 
+// | "DIVISION"
+type IOperation = {
+  [key in SupportedOperation]: {
+    label: string;
+    operate: (value1: number, value2: number) => number
+  }
+}
+
+const operations: IOperation = {
+  ADDITION: {
+    label: "+",
+    operate: (value1: number, value2: number) => value1 + value2
+  },
+  SUBTRACTION: {
+    label: "-",
+    operate: (value1: number, value2: number) => value1 - value2
+  },
+  // MULTIPLICATION: {
+  //   label: "*",
+  //   operate: (value1: number, value2: number) => value1 * value2
+  // },
+  // DIVISION: {
+  //   label: "/",
+  //   operate: (value1: number, value2: number) => value1 / value2
+  // }
 }
 
 export type OperationCell = {
-  operation: Operation;
+  operator: {
+    label: string;
+    operate: (value1: number, value2: number) => number
+  };
   number: number;
 }
+
+const totalCellsCount = 4; 
+const difficultyLevel = 1;
+const generateRandomNumber = (upperLimit: number, startValue: number = 0) => Math.floor((Math.random() * upperLimit) + startValue)
+const shuffle = (array: number[]) =>{
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = generateRandomNumber(currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
 const useGameController = () => {
-  const result = 9;
-  const operations: OperationCell[] = [
-    {
-      operation: Operation.ADDITION,
-      number: 5,
-    },
-    {
-      operation: Operation.ADDITION,
-      number: 4,
-    },
-    {
-      operation: Operation.ADDITION,
-      number: 10,
-    },
-    {
-      operation: Operation.SUBTRACTION,
-      number: 10,
+  const operationKeys = Object.keys(operations);
+  const totalOperationsCount = operationKeys.length;
+  
+  const getOperationValuesAndResult = () => {
+    const operatorCell: OperationCell[] = []
+    for(let idx=0;idx < totalCellsCount; idx++) {
+      console.log(totalOperationsCount);
+      const operationIdx = generateRandomNumber(totalOperationsCount)
+      operatorCell.push({
+        operator: operations[operationKeys[operationIdx] as SupportedOperation],
+        // number: Math.floor((Math.random() * (difficultyLevel * 10)) + 1)
+        number: generateRandomNumber((difficultyLevel * 10), 1)
+      })
     }
-  ];
+    
+    const totalNumberOfChoosenOperation = generateRandomNumber(totalCellsCount);
+    const operationCellOrder = shuffle([...Array(totalCellsCount).keys()]).slice(0, totalNumberOfChoosenOperation)
+    return {
+      result:operationCellOrder.reduce((total, orderIdx) => operatorCell[orderIdx].operator.operate(total, operatorCell[orderIdx].number), 0),
+      operatorCell
+    }
+  }
+  const [operatorAndResultState, setOperatorAndResultState] = useState(getOperationValuesAndResult());
+  const {result, operatorCell}= operatorAndResultState;
+  // const operations: OperationCell[] = [
+  //   {
+  //     operation: Operation.ADDITION,
+  //     number: 5,
+  //   },
+  //   {
+  //     operation: Operation.ADDITION,
+  //     number: 4,
+  //   },
+  //   {
+  //     operation: Operation.ADDITION,
+  //     number: 10,
+  //   },
+  //   {
+  //     operation: Operation.SUBTRACTION,
+  //     number: 10,
+  //   }
+  // ];
 
   const endPoint = useSharedValue(null as CoOrdinates | null);
   const canTouch = useSharedValue(true);
@@ -74,7 +151,7 @@ const useGameController = () => {
     width: containerLayout.value.min,
     height: containerLayout.value.min,
   }));
-  
+
   const R = useDerivedValue(
     () => (containerLayout.value.min / rowCount - patternMargin * 2) / 2,
   );
@@ -82,19 +159,20 @@ const useGameController = () => {
   const checkResult = () => {
     console.log('CAlling1234');
     let total = 0;
-    const mapper = {
-      [Operation.ADDITION]: (value1: number, value2: number) => value1 + value2,
-      [Operation.SUBTRACTION]: (value1: number, value2: number) =>
-        value1 - value2,
-      [Operation.MULTIPLIACTION]: (value1: number, value2: number) =>
-        value1 * value2,
-      [Operation.DIVISION]: (value1: number, value2: number) => value1 / value2,
-    };
+    // const mapper = {
+    //   [Operation.ADDITION]: (value1: number, value2: number) => value1 + value2,
+    //   [Operation.SUBTRACTION]: (value1: number, value2: number) =>
+    //     value1 - value2,
+    //   [Operation.MULTIPLIACTION]: (value1: number, value2: number) =>
+    //     value1 * value2,
+    //   [Operation.DIVISION]: (value1: number, value2: number) => value1 / value2,
+    // };
     selectedIndexes.value.forEach(index => {
-      const {operation, number} = operations[index];
-      total = mapper[operation](total, number);
+      const {operator, number} = operatorCell[index];
+      total = operator.operate(total,number);
     });
     if (total === result) {
+      setOperatorAndResultState(getOperationValuesAndResult())
       console.log('Answer found');
     } else {
       console.log('Answer not found');
@@ -183,12 +261,13 @@ const onPatternLayout = (event: LayoutChangeEvent) => {
   }
   patternPoints.value = points.map((p, idx) => ({
     position: {x: p.x, y: p.y},
-    operation: operations[idx],
+    operation: operatorCell[idx],
   }));
 };
 
   return {
-    operations,
+    // operations,
+    operatorCell,
     result,
     panHandler,
     patternPoints,
