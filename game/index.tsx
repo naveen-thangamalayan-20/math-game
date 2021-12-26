@@ -24,7 +24,7 @@ export type CoOrdinates = {
 
 export type Cell = {
   position: CoOrdinates;
-  operation: OperationCell;
+  // operation: OperationCell;
 };
 const inactiveColor = '#8E91A8';
 
@@ -46,6 +46,7 @@ export default function Game() {
   // const containerLayout = useSharedValue({width: 0, height: 0, min: 0});
   // const selectedIndexes = useSharedValue([] as number[]);
   // const patternPoints = useSharedValue([] as Cell[]);
+  console.log("Init game")
   const controller = useGameController();
   function renderCell() {
     return (
