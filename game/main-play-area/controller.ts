@@ -126,6 +126,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const rowCount = 2;
   const columnCount = 2;
   const patternMargin = 2;
+  const [timerKeyId , setTimerKeyId] = useState(0);
   // const checkResult = (selectedIndexes: number[]) => {
   //   let total = 0;
   //   const mapper = {
@@ -169,6 +170,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
       total = operator.operate(total, number);
     });
     if (total === props.answerToBeFound) {
+      setTimerKeyId((timerKeyId) => timerKeyId + 1)
       props.onAnswerFound();
       // setOperatorAndResultState(getOperationValuesAndResult())
       console.log('Answer found');
@@ -284,7 +286,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     selectedIndexes,
     R,
     getOperatorCellLabel,
-    onTimeUp
+    onTimeUp,
+    timerKeyId
   };
 };
 

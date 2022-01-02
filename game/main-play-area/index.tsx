@@ -89,13 +89,14 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   }
 
   return (
-    <>
+    <View style={styles.mainContainer}>
       {/* <View style={styles.answerCell}>
         <Text style={styles.number}>{controller.answerToBeFound}</Text>
       </View> */}
-      <AnswerToBeFound 
-      answerToBeFound={controller.answerToBeFound}
-      onTimeUp={controller.onTimeUp}
+      <AnswerToBeFound
+        answerToBeFound={controller.answerToBeFound}
+        onTimeUp={controller.onTimeUp}
+        keyId={controller.timerKeyId}
       />
       <PanGestureHandler onGestureEvent={controller.panHandler}>
         <Animated.View
@@ -106,13 +107,14 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
           </TapGestureHandler>
         </Animated.View>
       </PanGestureHandler>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+    elevate: 2,
   },
   container: {
     flex: 1,

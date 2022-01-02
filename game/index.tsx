@@ -20,12 +20,12 @@ type Props = {
   operatorCells: OperationCell[];
 };
 
-export default function Game() {
+export default function Game( {navigation} : {navigation: any}) {
   const controller = useGameController();
 
   return (
     <View style={styles.mainContainer}>
-      <RestartModal />
+      <RestartModal navigation={navigation}/>
       <MainPlayArea
         answerToBeFound={controller.result}
         operatorCells={controller.operatorCell}

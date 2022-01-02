@@ -9,6 +9,7 @@ import Animated from 'react-native-reanimated';
 type Props = {
   answerToBeFound:number
   onTimeUp: () => void;
+  keyId:number;
 };
 
 export default function AnswerToBeFound(props: Props) {
@@ -23,6 +24,7 @@ export default function AnswerToBeFound(props: Props) {
       ['#A30000', 0.2],
     ]}
     onComplete={props.onTimeUp}
+    key={props.keyId}
   >
     {() => (
       <Animated.Text style={{ color: "#F98F40" }}>

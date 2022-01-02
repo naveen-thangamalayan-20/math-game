@@ -18,29 +18,45 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
-import { Provider } from 'react-redux';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {Provider} from 'react-redux';
 import Game from './game';
 // import { Provider } from "react-redux";
-import { store } from './store';
+import {store} from './store';
+import Home from './home';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
+  const Stack = createNativeStackNavigator();
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   return (
-    <Provider store={store}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-    <Game />
-    </ GestureHandlerRootView>
-    </Provider>
+    <NavigationContainer>
+      <Provider store={store}>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{title: 'Home'}}
+            />
+            <Stack.Screen
+              name="Game"
+              component={Game}
+              options={{title: 'Game'}}
+            />
+            {/* < /> */}
+          </Stack.Navigator>
+        </GestureHandlerRootView>
+      </Provider>
+    </NavigationContainer>
   );
 
   // return (
