@@ -8,7 +8,8 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
-import useMainPlayAreaController, { MainPlayAreaProps } from './controller';
+import AnswerToBeFound from './answer-to-be-found';
+import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
 
 export type CoOrdinates = {
   x: number;
@@ -22,8 +23,8 @@ export type Cell = {
 const inactiveColor = '#8E91A8';
 
 type Props = {
-  destinationNumber: number
-}
+  destinationNumber: number;
+};
 
 export default function MainPlayArea(props: MainPlayAreaProps) {
   const [isError, setIsError] = useState(false);
@@ -35,12 +36,16 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   const controller = useMainPlayAreaController(props);
   function renderCell() {
     return (
-      <Animated.View style={controller.cvc} onLayout={controller.onPatternLayout}>
+      <Animated.View
+        style={controller.cvc}
+        onLayout={controller.onPatternLayout}>
         {Array(rowCount * columnCount)
           .fill(0)
           .map((_, idx) => {
             const patternColor = useDerivedValue(() => {
-              if (controller.selectedIndexes.value.findIndex(v => v === idx) < 0) {
+              if (
+                controller.selectedIndexes.value.findIndex(v => v === idx) < 0
+              ) {
                 return inactiveColor;
               } else if (isError) {
                 return errorColor;
@@ -48,7 +53,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 return activeColor;
               }
             });
-            console.log("R Value", controller.R.value)
+            console.log('R Value', controller.R.value);
             const outer = useAnimatedStyle(() => {
               return {
                 borderWidth: 2,
@@ -57,7 +62,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderColor: patternColor.value,
-                // borderRadius: 2 * R.value,
+                borderRadius: 2 * controller.R.value,
                 margin: patternMargin,
               };
             });
@@ -72,12 +77,9 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
             });
             return (
               <Animated.View key={idx} style={outer}>
-                {/* <Animated.View style={inner}> */}
-                  <Text
-                    style={
-                      styles.number
-                    }>{controller.getOperatorCellLabel(idx)}</Text>
-                {/* </Animated.View> */}
+                <Text style={styles.number}>
+                  {controller.getOperatorCellLabel(idx)}
+                </Text>
               </Animated.View>
             );
           })}
@@ -87,11 +89,14 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 
   return (
     <>
-      <View style={styles.answerCell}>
+      {/* <View style={styles.answerCell}>
         <Text style={styles.number}>{controller.answerToBeFound}</Text>
-      </View>
+      </View> */}
+      <AnswerToBeFound answerToBeFound={controller.answerToBeFound}/>
       <PanGestureHandler onGestureEvent={controller.panHandler}>
-        <Animated.View style={styles.container} onLayout={controller.onContainerLayout}>
+        <Animated.View
+          style={styles.container}
+          onLayout={controller.onContainerLayout}>
           <TapGestureHandler onGestureEvent={controller.panHandler}>
             {renderCell()}
           </TapGestureHandler>
@@ -112,13 +117,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
-  ball: {
-    width: 100,
-    height: 100,
-    borderRadius: 100,
-    backgroundColor: 'green',
-    alignSelf: 'center',
-  },
   number: {
     fontSize: 28,
     alignItems: 'center',
@@ -128,11 +126,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     top: 150,
-    alignSelf:'center',
+    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     borderColor: inactiveColor,
   },
 });
-
-
