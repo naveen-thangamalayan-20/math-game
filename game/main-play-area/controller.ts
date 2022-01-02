@@ -11,6 +11,8 @@ import {
   useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
+import { useDispatch } from 'react-redux';
+import { GamePageActions } from '../redux';
 import {Cell, CoOrdinates} from './index';
 
 // export enum Operation {
@@ -266,6 +268,11 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const getOperatorCellLabel = (idx: number) =>
     `${props.operatorCells[idx].operator.label}${props.operatorCells[idx].number}`;
 
+    const dispatch = useDispatch();
+  const onTimeUp = () => {
+    dispatch(GamePageActions.setShowRestartModal(true));
+  }
+
   return {
     answerToBeFound: props.answerToBeFound,
     operatorCells: props.operatorCells,
@@ -277,6 +284,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     selectedIndexes,
     R,
     getOperatorCellLabel,
+    onTimeUp
   };
 };
 

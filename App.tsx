@@ -23,7 +23,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
+import { Provider } from 'react-redux';
 import Game from './game';
+// import { Provider } from "react-redux";
+import { store } from './store';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -33,9 +36,11 @@ const App = () => {
   };
 
   return (
+    <Provider store={store}>
     <GestureHandlerRootView style={{ flex: 1 }}>
     <Game />
     </ GestureHandlerRootView>
+    </Provider>
   );
 
   // return (

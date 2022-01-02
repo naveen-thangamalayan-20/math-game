@@ -8,6 +8,7 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
+import RestartModal from '../restart-modal';
 import AnswerToBeFound from './answer-to-be-found';
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
 
@@ -92,7 +93,10 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
       {/* <View style={styles.answerCell}>
         <Text style={styles.number}>{controller.answerToBeFound}</Text>
       </View> */}
-      <AnswerToBeFound answerToBeFound={controller.answerToBeFound}/>
+      <AnswerToBeFound 
+      answerToBeFound={controller.answerToBeFound}
+      onTimeUp={controller.onTimeUp}
+      />
       <PanGestureHandler onGestureEvent={controller.panHandler}>
         <Animated.View
           style={styles.container}

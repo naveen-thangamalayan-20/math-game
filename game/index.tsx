@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import useGameController, {OperationCell} from './controller';
 import MainPlayArea from './main-play-area';
+import RestartModal from './restart-modal';
 
 export type CoOrdinates = {
   x: number;
@@ -24,6 +25,7 @@ export default function Game() {
 
   return (
     <View style={styles.mainContainer}>
+      <RestartModal />
       <MainPlayArea
         answerToBeFound={controller.result}
         operatorCells={controller.operatorCell}
