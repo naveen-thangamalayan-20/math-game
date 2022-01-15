@@ -33,6 +33,7 @@ export type MainPlayAreaProps = {
   onAnswerNotFound: (remaniningDuration: number) => void;
   onTimeOver: () => void;
   duration: number;
+  roundId: number;
 };
 
 const useMainPlayAreaController = (props: MainPlayAreaProps) => {
@@ -46,19 +47,19 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const patternMargin = 2;
   const [timerKeyId , setTimerKeyId] = useState(0);
   let count = useSharedValue(10);
-  const [time, setTime] = useState(props.duration);
+  // const [time, setTime] = useState(props.duration);
   console.log("Controller", props.duration);
  
-  let {
-    elapsedTime,
-    reset
-  } = useElapsedTime({
-    isPlaying: true,
-    duration: props.duration,
-    updateInterval: 1,
-    onUpdate: (elapsedTime) => setTime((time) => time - 1),
-    // onComplete: (elapsedTime) => props.onTimeOver()
-  })
+  // let {
+  //   elapsedTime,
+  //   reset
+  // } = useElapsedTime({
+  //   isPlaying: true,
+  //   duration: props.duration,
+  //   updateInterval: 1,
+  //   onUpdate: (elapsedTime) => setTime((time) => time - 1),
+  //   // onComplete: (elapsedTime) => props.onTimeOver()
+  // })
   
  
   const cvc = useAnimatedStyle(() => ({
@@ -90,7 +91,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   
     console.log("inside totalGameRemainingTime", count.value)
     if (total === props.answerToBeFound) {
-      props.onAnswerFound(time);
+      props.onAnswerFound(totalGameRemainingTime);
       dispatch(GamePageActions.updateIsRoundAnswered(true));
       console.log('Answer found');
     } else {
@@ -206,13 +207,13 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     onTimeUp,
     counter: count.value,
     totalGameRemainingTime,
-    time,
+    // time,
     onClick: () => {
       console.log("Clicked")
       count.value = Math.random();
       console.log(count.value)
     },
-    // roundId: props.roundId,
+    roundId: props.roundId,
     // key: props.key
   };
 };

@@ -1,13 +1,12 @@
 import React from "react"
 import { StyleSheet, Text, View } from "react-native"
+import useTimerController, { TimerProps } from "./controller";
 
-type TimerProps = {
-    currentTime: number;
-}
-const Timer = ({currentTime}: TimerProps) => {
+const Timer = (props: TimerProps) => {
+  const controller = useTimerController(props);
     return (
       <View style={styles.timer}>
-        <Text style={styles.number}>{currentTime}</Text>
+        <Text style={styles.number}>{controller.time}</Text>
       </View>
     )
 }

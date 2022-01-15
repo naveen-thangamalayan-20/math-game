@@ -31,7 +31,7 @@ export default function Game( {navigation} : {navigation: any}) {
         onAnswerFound={controller.onAnswerFound}
         onAnswerNotFound={controller.onAnswerNotFound}
         duration={controller.roundDuration}
-        key={controller.roundId}
+        roundId={controller.roundId}
         onTimeOver={controller.onTimeOver}
       />
     </View>

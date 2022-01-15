@@ -11,7 +11,7 @@ import Animated, {
 import RestartModal from '../restart-modal';
 import AnswerToBeFound from './answer-to-be-found/answer-to-be-found';
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
-import Timer from './timer';
+import Timer from './timer/timer';
 
 export type CoOrdinates = {
   x: number;
@@ -81,7 +81,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 
   return (
     <View style={styles.mainContainer}>
-      <Timer currentTime={controller.time}/>
+      <Timer duration={props.duration} onTimeOut={controller.onTimeUp} key={controller.roundId}/>
       <View style={styles.answerCell}>
         <Text style={styles.number}>{controller.answerToBeFound}</Text>
       </View>
