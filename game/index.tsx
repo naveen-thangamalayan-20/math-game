@@ -11,7 +11,6 @@ export type CoOrdinates = {
 
 export type Cell = {
   position: CoOrdinates;
-  // operation: OperationCell;
 };
 const inactiveColor = '#8E91A8';
 
@@ -32,7 +31,6 @@ export default function Game( {navigation} : {navigation: any}) {
         onAnswerFound={controller.onAnswerFound}
         onAnswerNotFound={controller.onAnswerNotFound}
         duration={controller.roundDuration}
-        roundId={controller.roundId}
         key={controller.roundId}
         onTimeOver={controller.onTimeOver}
       />

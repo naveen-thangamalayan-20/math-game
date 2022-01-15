@@ -20,7 +20,6 @@ export type CoOrdinates = {
 
 export type Cell = {
   position: CoOrdinates;
-  // operation: OperationCell;
 };
 const inactiveColor = '#8E91A8';
 
@@ -55,7 +54,6 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 return activeColor;
               }
             });
-            // console.log('R Value', controller.R.value);
             const outer = useAnimatedStyle(() => {
               return {
                 borderWidth: 2,
@@ -66,15 +64,6 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 borderColor: patternColor.value,
                 borderRadius: 2 * controller.R.value,
                 margin: patternMargin,
-              };
-            });
-            const inner = useAnimatedStyle(() => {
-              return {
-                width: controller.R.value * 0.8,
-                height: controller.R.value * 0.8,
-                // height: 100,
-                // borderRadius: R.value * 0.8,
-                // backgroundColor: patternColor.value,
               };
             });
             return (
@@ -91,21 +80,11 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 
 
   return (
-    <View style={styles.mainContainer} key={props.roundId}>
-       {/* <Button onPress={controller.onClick} title="sdf">
-       </Button> */}
-       {/* <View style={styles.timer}>
-        <Text style={styles.number}>{controller.time}</Text>
-      </View> */}
+    <View style={styles.mainContainer}>
       <Timer currentTime={controller.time}/>
       <View style={styles.answerCell}>
         <Text style={styles.number}>{controller.answerToBeFound}</Text>
       </View>
-      {/* <AnswerToBeFound
-        answerToBeFound={controller.answerToBeFound}
-        onTimeUp={controller.onTimeUp}
-        keyId={controller.timerKeyId}
-      /> */}
       <PanGestureHandler onGestureEvent={controller.panHandler}>
         <Animated.View
           style={styles.container}

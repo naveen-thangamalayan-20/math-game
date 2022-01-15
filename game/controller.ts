@@ -40,6 +40,7 @@ export type OperationCell = {
 
 const totalCellsCount = 4;
 const difficultyLevel = 1;
+
 const generateRandomNumber = (upperLimit: number, startValue: number = 0) =>
   Math.floor(Math.random() * upperLimit + startValue);
 const shuffle = (array: number[]) => {
@@ -71,7 +72,6 @@ const getOperationValuesAndResult = () => {
     const operationIdx = generateRandomNumber(totalOperationsCount);
     operatorCell.push({
       operator: operations[operationKeys[operationIdx] as SupportedOperation],
-      // number: Math.floor((Math.random() * (difficultyLevel * 10)) + 1)
       number: generateRandomNumber(difficultyLevel * 10, 1),
     });
   }
@@ -109,11 +109,10 @@ const getOperationValuesAndResult = () => {
 };
 
 const useGameController = () => {
-  console.log('Init GAme Controller');
   const [operatorAndResultState, setOperatorAndResultState] = useState(
     getOperationValuesAndResult(),
   );
-  const [roundDuration , setRoundDuration ]= useState(10)
+  const [roundDuration , setRoundDuration ]= useState(20)
   const [roundId , setroundId ]= useState(0)
 
   const {result, operatorCell} = operatorAndResultState;
@@ -126,6 +125,7 @@ const useGameController = () => {
 
   const onAnswerNotFound = (remainingDuration: number) => {
     // setRoundDuration(remainingDuration - 2)
+    // setroundId((roundId) => roundId + 1)
     console.log("Answer Not found")
   }
 

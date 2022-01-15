@@ -18,72 +18,12 @@ import { RootState } from '../../store';
 import { GamePageActions } from '../redux';
 import {Cell, CoOrdinates} from './index';
 
-// export enum Operation {
-//   ADDITION = '+',
-//   SUBTRACTION = '-',
-//   MULTIPLIACTION = '*',
-//   DIVISION = '/',
-// }
-
-type SupportedOperation = 'ADDITION' | 'SUBTRACTION';
-// | "MULTIPLICATION"
-// | "DIVISION"
-type IOperation = {
-  [key in SupportedOperation]: {
-    label: string;
-    operate: (value1: number, value2: number) => number;
-  };
-};
-
-const operations: IOperation = {
-  ADDITION: {
-    label: '+',
-    operate: (value1: number, value2: number) => value1 + value2,
-  },
-  SUBTRACTION: {
-    label: '-',
-    operate: (value1: number, value2: number) => value1 - value2,
-  },
-  // MULTIPLICATION: {
-  //   label: "*",
-  //   operate: (value1: number, value2: number) => value1 * value2
-  // },
-  // DIVISION: {
-  //   label: "/",
-  //   operate: (value1: number, value2: number) => value1 / value2
-  // }
-};
-
 export type OperationCell = {
   operator: {
     label: string;
     operate: (value1: number, value2: number) => number;
   };
   number: number;
-};
-
-const totalCellsCount = 4;
-const difficultyLevel = 1;
-const generateRandomNumber = (upperLimit: number, startValue: number = 0) =>
-  Math.floor(Math.random() * upperLimit + startValue);
-const shuffle = (array: number[]) => {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-    // Pick a remaining element...
-    randomIndex = generateRandomNumber(currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
 };
 
 export type MainPlayAreaProps = {
@@ -93,12 +33,9 @@ export type MainPlayAreaProps = {
   onAnswerNotFound: (remaniningDuration: number) => void;
   onTimeOver: () => void;
   duration: number;
-  roundId: number;
-  // key: number;
 };
 
 const useMainPlayAreaController = (props: MainPlayAreaProps) => {
-  console.log('Init useMainPlayAreaController Controller');
   const endPoint = useSharedValue(null as CoOrdinates | null);
   const canTouch = useSharedValue(true);
   const patternPoints = useSharedValue([] as Cell[]);
@@ -108,9 +45,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const columnCount = 2;
   const patternMargin = 2;
   const [timerKeyId , setTimerKeyId] = useState(0);
-  // const [duration , setDuration] = useState(10);
-  // let duration = 10;
-  let timerId: NodeJS.Timer | null = null;
   let count = useSharedValue(10);
   const [time, setTime] = useState(props.duration);
   console.log("Controller", props.duration);
@@ -124,21 +58,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     updateInterval: 1,
     onUpdate: (elapsedTime) => setTime((time) => time - 1),
     // onComplete: (elapsedTime) => props.onTimeOver()
-    // onUpdate: (elapsedTime) => setTime((time) => elapsedTime)
   })
-  // console.log("elapsedTime", elapsedTime)
-
-  // useEffect(() => {
-  //   console.log("Insided Effect");
-
-  //   timerId = setInterval(() => {
-  //     // count.value = count.value - 1;
-  //     setTime((time) => time - 1)
-  //     console.log("Timer called")
-  //     // dispatch(GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime-1))
-  //     // console.log("totalGameRemainingTime", totalGameRemainingTime-1)
-  //   }, 1000);
-  // }, [])
+  
  
   const cvc = useAnimatedStyle(() => ({
     flexDirection: 'row',
@@ -260,7 +181,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     }
     patternPoints.value = points.map((p, idx) => ({
       position: {x: p.x, y: p.y},
-      // operation: operatorCell[idx],
     }));
   };
 
@@ -284,18 +204,15 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     R,
     getOperatorCellLabel,
     onTimeUp,
-    timerKeyId,
     counter: count.value,
-    // counter: useSharedValue(()=>({ value: count.value})),
     totalGameRemainingTime,
     time,
-    // elapsedTime,
     onClick: () => {
       console.log("Clicked")
       count.value = Math.random();
       console.log(count.value)
     },
-    roundId: props.roundId,
+    // roundId: props.roundId,
     // key: props.key
   };
 };
