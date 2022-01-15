@@ -46,7 +46,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const columnCount = 2;
   const patternMargin = 2;
   const [timerKeyId , setTimerKeyId] = useState(0);
-  let count = useSharedValue(10);
+  // let count = useSharedValue(10);
   // const [time, setTime] = useState(props.duration);
   console.log("Controller", props.duration);
  
@@ -82,20 +82,24 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   
   const totalGameRemainingTime = useSelector((state:RootState) =>state.gamePage.totalGameRemainingTime);
   const currentGameRemainingTime = useSelector((state:RootState) =>state.gamePage.currentGameRemainingTime);
+  console.log(' outer---totalGameRemainingTime' , totalGameRemainingTime);
   const checkResult = () => {
+    console.log('INSIDE---totalGameRemainingTime' , totalGameRemainingTime);
     let total = 0;
     selectedIndexes.value.forEach(index => {
       const {operator, number} = props.operatorCells[index];
       total = operator.operate(total, number);
     });
   
-    console.log("inside totalGameRemainingTime", count.value)
+    // console.log("inside totalGameRemainingTime", count.value)
     if (total === props.answerToBeFound) {
+      console.log(' answered---totalGameRemainingTime' , totalGameRemainingTime);
       props.onAnswerFound(totalGameRemainingTime);
       dispatch(GamePageActions.updateIsRoundAnswered(true));
       console.log('Answer found');
     } else {
-      // props.onAnswerNotFound(time);
+      console.log('NOt--answered---totalGameRemainingTime' , totalGameRemainingTime);
+      props.onAnswerNotFound(totalGameRemainingTime);
       console.log('Answer not found');
     }
     selectedIndexes.value = [];
@@ -160,7 +164,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
     const {width, height} = event.nativeEvent.layout;
-    console.log('Container Layout', width, height);
+    // console.log('Container Layout', width, height);
     containerLayout.value = {
       width,
       height,
@@ -190,7 +194,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
     const dispatch = useDispatch();
   const onTimeUp = () => {
-    dispatch(GamePageActions.setShowRestartModal(true));
+    // dispatch(GamePageActions.setShowRestartModal(true));
   }
 
   return {
@@ -205,14 +209,14 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     R,
     getOperatorCellLabel,
     onTimeUp,
-    counter: count.value,
+    // counter: count.value,
     totalGameRemainingTime,
     // time,
-    onClick: () => {
-      console.log("Clicked")
-      count.value = Math.random();
-      console.log(count.value)
-    },
+    // onClick: () => {
+    //   console.log("Clicked")
+    //   count.value = Math.random();
+    //   console.log(count.value)
+    // },
     roundId: props.roundId,
     // key: props.key
   };

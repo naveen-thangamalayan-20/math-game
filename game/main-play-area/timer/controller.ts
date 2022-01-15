@@ -20,6 +20,7 @@ const useTimerController = (props: TimerProps) => {
         duration: props.duration,
         updateInterval: 1,
         onUpdate: (elapsedTime) => {
+            console.log("totalGameRemainingTime---state", totalGameRemainingTime)
             dispatch(GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime - 1))
         },
         onComplete: (elapsedTime) => props.onTimeOut()
