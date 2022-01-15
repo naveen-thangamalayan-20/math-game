@@ -1,5 +1,7 @@
-import {useState} from 'react';
-
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../store';
+import {GamePageActions} from './redux';
 
 type SupportedOperation = 'ADDITION' | 'SUBTRACTION';
 // | "MULTIPLICATION"
@@ -12,7 +14,6 @@ export type Operator = {
 type IOperation = {
   [key in SupportedOperation]: Operator;
 };
-
 
 const operations: IOperation = {
   ADDITION: {
@@ -112,32 +113,44 @@ const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
     getOperationValuesAndResult(),
   );
-  const [roundDuration , setRoundDuration ]= useState(40)
-  const [roundId , setroundId ]= useState(0)
-
+  // const [roundDuration , setRoundDuration ]= useState(40)
+  const dispatch = useDispatch();
+  const [roundId, setroundId] = useState(0);
+  useEffect(() => {
+    dispatch(GamePageActions.updateTotalGameRemainingTime(20));
+  }, []);
+  const totalGameRemainingTime = useSelector(
+    (state: RootState) => state.gamePage.totalGameRemainingTime,
+  );
   const {result, operatorCell} = operatorAndResultState;
- 
+
   const onAnswerFound = (remainingDuration: number) => {
-    setRoundDuration(remainingDuration + 5)
-    setOperatorAndResultState(getOperationValuesAndResult())
-    setroundId((roundId) => roundId + 1)
-  }
+    // setRoundDuration(remainingDuration + 5)
+    dispatch(
+      GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime + 10),
+    );
+    setOperatorAndResultState(getOperationValuesAndResult());
+    setroundId(roundId => roundId + 1);
+  };
 
   const onAnswerNotFound = (remainingDuration: number) => {
-    console.log("remainingDuration", remainingDuration)
-    setRoundDuration(remainingDuration - 2)
-    setroundId((roundId) => roundId + 1)
-    console.log("Answer Not found")
-  }
+    console.log('remainingDuration', remainingDuration);
+    // setRoundDuration(remainingDuration - 2)
+    dispatch(
+      GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime - 2),
+    );
+    setroundId(roundId => roundId + 1);
+    console.log('Answer Not found');
+  };
 
-  const onTimeOver = () => console.log("Time Over");
+  const onTimeOver = () => console.log('Time Over');
 
   return {
     operatorCell,
     result,
     onAnswerNotFound,
     onAnswerFound,
-    roundDuration,
+    roundDuration: 20,
     roundId,
     onTimeOver,
   };

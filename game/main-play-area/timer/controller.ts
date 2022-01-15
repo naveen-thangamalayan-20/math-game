@@ -12,9 +12,9 @@ export type TimerProps = {
 const useTimerController = (props: TimerProps) => {
     const dispatch = useDispatch()
     const totalGameRemainingTime = useSelector((state:RootState) =>state.gamePage.totalGameRemainingTime);
-    useEffect(() => {
-        dispatch(GamePageActions.updateTotalGameRemainingTime(props.duration))
-    }, [])
+    // useEffect(() => {
+    //     dispatch(GamePageActions.updateTotalGameRemainingTime(props.duration))
+    // }, [])
     useElapsedTime({
         isPlaying: true,
         duration: props.duration,
