@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Button, StyleSheet, Text, View} from 'react-native';
 import {
   PanGestureHandler,
   TapGestureHandler,
@@ -9,8 +9,9 @@ import Animated, {
   useDerivedValue,
 } from 'react-native-reanimated';
 import RestartModal from '../restart-modal';
-import AnswerToBeFound from './answer-to-be-found';
+import AnswerToBeFound from './answer-to-be-found/answer-to-be-found';
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
+import Timer from './timer';
 
 export type CoOrdinates = {
   x: number;
@@ -54,7 +55,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 return activeColor;
               }
             });
-            console.log('R Value', controller.R.value);
+            // console.log('R Value', controller.R.value);
             const outer = useAnimatedStyle(() => {
               return {
                 borderWidth: 2,
@@ -88,16 +89,23 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
     );
   }
 
+
   return (
-    <View style={styles.mainContainer}>
-      {/* <View style={styles.answerCell}>
-        <Text style={styles.number}>{controller.answerToBeFound}</Text>
+    <View style={styles.mainContainer} key={props.roundId}>
+       {/* <Button onPress={controller.onClick} title="sdf">
+       </Button> */}
+       {/* <View style={styles.timer}>
+        <Text style={styles.number}>{controller.time}</Text>
       </View> */}
-      <AnswerToBeFound
+      <Timer currentTime={controller.time}/>
+      <View style={styles.answerCell}>
+        <Text style={styles.number}>{controller.answerToBeFound}</Text>
+      </View>
+      {/* <AnswerToBeFound
         answerToBeFound={controller.answerToBeFound}
         onTimeUp={controller.onTimeUp}
         keyId={controller.timerKeyId}
-      />
+      /> */}
       <PanGestureHandler onGestureEvent={controller.panHandler}>
         <Animated.View
           style={styles.container}
@@ -126,6 +134,16 @@ const styles = StyleSheet.create({
   number: {
     fontSize: 28,
     alignItems: 'center',
+  },
+  timer: {
+    borderWidth: 2,
+    width: 80,
+    height: 80,
+    top: 50,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: inactiveColor,
   },
   answerCell: {
     borderWidth: 2,

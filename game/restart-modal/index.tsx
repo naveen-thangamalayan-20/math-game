@@ -33,7 +33,8 @@ const RestartModal = ({navigation}: {navigation: any}) => {
             <Pressable
               style={[styles.button, styles.buttonClose]}
               // onPress={() => dispatch(GamePageActions.setShowRestartModal(false))}
-              onPress={() => navigation.navigate('Game')}
+              // onPress={() => navigation.navigate('Game')}
+              onPress={() => navigation.goBack()}
             >
               <Text style={styles.textStyle}>Restart</Text>
             </Pressable>

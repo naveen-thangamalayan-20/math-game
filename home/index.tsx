@@ -11,6 +11,8 @@ const Home = ({navigation} : {navigation: any}) => {
             >
               <Text >Start</Text>
             </Pressable>
+
+            
       </View>
   )
 }

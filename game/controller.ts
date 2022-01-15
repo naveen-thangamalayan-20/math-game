@@ -113,17 +113,32 @@ const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
     getOperationValuesAndResult(),
   );
+  const [roundDuration , setRoundDuration ]= useState(10)
+  const [roundId , setroundId ]= useState(0)
 
   const {result, operatorCell} = operatorAndResultState;
  
-  const onAnswerFound = () => setOperatorAndResultState(getOperationValuesAndResult())
+  const onAnswerFound = (remainingDuration: number) => {
+    setRoundDuration(remainingDuration + 5)
+    setOperatorAndResultState(getOperationValuesAndResult())
+    setroundId((roundId) => roundId + 1)
+  }
 
-  const onAnswerNotFound = () => console.log("Answer Not found")
+  const onAnswerNotFound = (remainingDuration: number) => {
+    // setRoundDuration(remainingDuration - 2)
+    console.log("Answer Not found")
+  }
+
+  const onTimeOver = () => console.log("Time Over");
+
   return {
     operatorCell,
     result,
     onAnswerNotFound,
-    onAnswerFound
+    onAnswerFound,
+    roundDuration,
+    roundId,
+    onTimeOver,
   };
 };
 

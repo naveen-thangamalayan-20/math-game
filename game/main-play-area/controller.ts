@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {LayoutChangeEvent} from 'react-native';
 import {
   PanGestureHandlerGestureEvent,
@@ -7,11 +7,14 @@ import {
 import {
   runOnJS,
   useAnimatedGestureHandler,
+  useAnimatedProps,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useElapsedTime } from 'use-elapsed-time';
+import { RootState } from '../../store';
 import { GamePageActions } from '../redux';
 import {Cell, CoOrdinates} from './index';
 
@@ -83,41 +86,19 @@ const shuffle = (array: number[]) => {
   return array;
 };
 
-// const getOperationValuesAndResult = () => {
-//   const operatorCell: OperationCell[] = []
-//   const operationKeys = Object.keys(operations);
-//   const totalOperationsCount = operationKeys.length;
-//   for(let idx=0;idx < totalCellsCount; idx++) {
-//     console.log("TotalOperationCount",totalOperationsCount);
-//     const operationIdx = generateRandomNumber(totalOperationsCount)
-//     operatorCell.push({
-//       operator: operations[operationKeys[operationIdx] as SupportedOperation],
-//       // number: Math.floor((Math.random() * (difficultyLevel * 10)) + 1)
-//       number: generateRandomNumber((difficultyLevel * 10), 1)
-//     })
-//   }
-
-//   const totalNumberOfChoosenOperation = generateRandomNumber(totalCellsCount, 2);
-//   const operationCellOrder = shuffle([...Array(totalCellsCount).keys()]).slice(0, totalNumberOfChoosenOperation)
-//   console.log("--operationCellOrder", operationCellOrder.map((order)=> `${operatorCell[order].operator.label}${operatorCell[order].number}`))
-//   console.log("--operatorCell", operatorCell.map((cell)=> `${cell.operator.label}${cell.number}`))
-//   return {
-//     result:operationCellOrder.reduce((total, orderIdx) => operatorCell[orderIdx].operator.operate(total, operatorCell[orderIdx].number), 0),
-//     operatorCell
-//   }
-// }
-
 export type MainPlayAreaProps = {
   answerToBeFound: number;
   operatorCells: OperationCell[];
-  onAnswerFound: () => void;
-  onAnswerNotFound: () => void;
+  onAnswerFound: (remaniningDuration: number) => void;
+  onAnswerNotFound: (remaniningDuration: number) => void;
+  onTimeOver: () => void;
+  duration: number;
+  roundId: number;
+  // key: number;
 };
 
 const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   console.log('Init useMainPlayAreaController Controller');
-  // const [operatorAndResultState, setOperatorAndResultState] = useState(getOperationValuesAndResult());
-  // const {result, operatorCell}= operatorAndResultState;
   const endPoint = useSharedValue(null as CoOrdinates | null);
   const canTouch = useSharedValue(true);
   const patternPoints = useSharedValue([] as Cell[]);
@@ -127,24 +108,38 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const columnCount = 2;
   const patternMargin = 2;
   const [timerKeyId , setTimerKeyId] = useState(0);
-  // const checkResult = (selectedIndexes: number[]) => {
-  //   let total = 0;
-  //   const mapper = {
-  //     [Operation.ADDITION]: (value1: number, value2: number) => value1 + value2,
-  //     [Operation.SUBTRACTION]: (value1: number, value2: number) => value1 - value2,
-  //     [Operation.MULTIPLIACTION]: (value1: number, value2: number) => value1 * value2,
-  //     [Operation.DIVISION]: (value1: number, value2: number) => value1 / value2,
-  //   }
-  //   selectedIndexes.forEach((index) => {
-  //     const { operation , number} = operations[index];
-  //     total = mapper[operation](total, number);
-  //   })
-  //   if(total === result) {
-  //     console.log("Answer found")
-  //   } else {
-  //     console.log("Answer not found")
-  //   }
-  // }
+  // const [duration , setDuration] = useState(10);
+  // let duration = 10;
+  let timerId: NodeJS.Timer | null = null;
+  let count = useSharedValue(10);
+  const [time, setTime] = useState(props.duration);
+  console.log("Controller", props.duration);
+ 
+  let {
+    elapsedTime,
+    reset
+  } = useElapsedTime({
+    isPlaying: true,
+    duration: props.duration,
+    updateInterval: 1,
+    onUpdate: (elapsedTime) => setTime((time) => time - 1),
+    // onComplete: (elapsedTime) => props.onTimeOver()
+    // onUpdate: (elapsedTime) => setTime((time) => elapsedTime)
+  })
+  // console.log("elapsedTime", elapsedTime)
+
+  // useEffect(() => {
+  //   console.log("Insided Effect");
+
+  //   timerId = setInterval(() => {
+  //     // count.value = count.value - 1;
+  //     setTime((time) => time - 1)
+  //     console.log("Timer called")
+  //     // dispatch(GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime-1))
+  //     // console.log("totalGameRemainingTime", totalGameRemainingTime-1)
+  //   }, 1000);
+  // }, [])
+ 
   const cvc = useAnimatedStyle(() => ({
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -162,20 +157,23 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     () => (containerLayout.value.min / rowCount - patternMargin * 2) / 2,
   );
 
+  
+  const totalGameRemainingTime = useSelector((state:RootState) =>state.gamePage.totalGameRemainingTime);
+  const currentGameRemainingTime = useSelector((state:RootState) =>state.gamePage.currentGameRemainingTime);
   const checkResult = () => {
-    console.log('CAlling1234');
     let total = 0;
     selectedIndexes.value.forEach(index => {
       const {operator, number} = props.operatorCells[index];
       total = operator.operate(total, number);
     });
+  
+    console.log("inside totalGameRemainingTime", count.value)
     if (total === props.answerToBeFound) {
-      setTimerKeyId((timerKeyId) => timerKeyId + 1)
-      props.onAnswerFound();
-      // setOperatorAndResultState(getOperationValuesAndResult())
+      props.onAnswerFound(time);
+      dispatch(GamePageActions.updateIsRoundAnswered(true));
       console.log('Answer found');
     } else {
-      props.onAnswerNotFound();
+      // props.onAnswerNotFound(time);
       console.log('Answer not found');
     }
     selectedIndexes.value = [];
@@ -233,7 +231,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
       endPoint.value = null;
       if (selectedIndexes.value.length > 0) {
         console.log('SElectectedIndex', selectedIndexes);
-        // checkResult(;
         runOnJS(checkResult)();
       }
     },
@@ -287,7 +284,19 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     R,
     getOperatorCellLabel,
     onTimeUp,
-    timerKeyId
+    timerKeyId,
+    counter: count.value,
+    // counter: useSharedValue(()=>({ value: count.value})),
+    totalGameRemainingTime,
+    time,
+    // elapsedTime,
+    onClick: () => {
+      console.log("Clicked")
+      count.value = Math.random();
+      console.log(count.value)
+    },
+    roundId: props.roundId,
+    // key: props.key
   };
 };
 

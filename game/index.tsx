@@ -31,6 +31,10 @@ export default function Game( {navigation} : {navigation: any}) {
         operatorCells={controller.operatorCell}
         onAnswerFound={controller.onAnswerFound}
         onAnswerNotFound={controller.onAnswerNotFound}
+        duration={controller.roundDuration}
+        roundId={controller.roundId}
+        key={controller.roundId}
+        onTimeOver={controller.onTimeOver}
       />
     </View>
   );
