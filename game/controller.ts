@@ -109,6 +109,8 @@ const getOperationValuesAndResult = () => {
   };
 };
 
+const INITIAL_TOTAL_ROUND_DURATION = 10;
+
 const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
     getOperationValuesAndResult(),
@@ -117,7 +119,7 @@ const useGameController = () => {
   const dispatch = useDispatch();
   const [roundId, setroundId] = useState(0);
   useEffect(() => {
-    dispatch(GamePageActions.updateTotalGameRemainingTime(20));
+    dispatch(GamePageActions.updateTotalGameRemainingTime(INITIAL_TOTAL_ROUND_DURATION));
   }, []);
   const totalGameRemainingTime = useSelector(
     (state: RootState) => state.gamePage.totalGameRemainingTime,
@@ -145,6 +147,14 @@ const useGameController = () => {
 
   const onTimeOver = () => console.log('Time Over');
 
+  const onRestartGame = () => {
+    dispatch(
+      GamePageActions.updateTotalGameRemainingTime(INITIAL_TOTAL_ROUND_DURATION),
+    );
+    setOperatorAndResultState(getOperationValuesAndResult());
+    setroundId(roundId => roundId + 1);
+  }
+
   return {
     operatorCell,
     result,
@@ -153,6 +163,7 @@ const useGameController = () => {
     roundDuration: 20,
     roundId,
     onTimeOver,
+    onRestartGame
   };
 };
 

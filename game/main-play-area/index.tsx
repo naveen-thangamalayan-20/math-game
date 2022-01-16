@@ -21,7 +21,7 @@ export type CoOrdinates = {
 export type Cell = {
   position: CoOrdinates;
 };
-const inactiveColor = '#8E91A8';
+const inactiveColor = '#e6e6e6';
 
 type Props = {
   destinationNumber: number;
@@ -33,7 +33,8 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   const columnCount = 2;
   const patternMargin = 2;
   const errorColor = '#D93609';
-  const activeColor = '#5FA8FC';
+  // const activeColor = '#5FA8FC';
+  const activeColor = '#CCCCCC';
   const controller = useMainPlayAreaController(props);
   function renderCell() {
     return (
@@ -56,14 +57,16 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
             });
             const outer = useAnimatedStyle(() => {
               return {
-                borderWidth: 2,
                 width: 2 * controller.R.value,
                 height: 2 * controller.R.value,
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderColor: patternColor.value,
-                borderRadius: 2 * controller.R.value,
+                backgroundColor: patternColor.value,
+                borderRadius: 10,
                 margin: patternMargin,
+                color:"#ffffff",
+                // textDecorationColor:"#fffff",
               };
             });
             return (
@@ -81,7 +84,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 
   return (
     <View style={styles.mainContainer}>
-      <Timer duration={props.duration} onTimeOut={controller.onTimeUp} key={controller.roundId}/>
+      <Timer onTimeOut={controller.onTimeUp} key={controller.roundId}/>
       <View style={styles.answerCell}>
         <Text style={styles.number}>{controller.answerToBeFound}</Text>
       </View>
@@ -102,6 +105,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     elevate: 2,
+    backgroundColor:"#1a1a1a"
   },
   container: {
     flex: 1,
@@ -113,6 +117,7 @@ const styles = StyleSheet.create({
   number: {
     fontSize: 28,
     alignItems: 'center',
+    color:"#000000",
   },
   timer: {
     borderWidth: 2,
@@ -129,9 +134,12 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     top: 150,
+    borderRadius: 10,
+    color:"#fffff",
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     borderColor: inactiveColor,
+    backgroundColor: inactiveColor,
   },
 });

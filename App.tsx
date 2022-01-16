@@ -50,7 +50,7 @@ const App = () => {
             <Stack.Screen
               name="Game"
               component={Game}
-              options={{title: 'Game'}}
+              options={{title: 'Game' ,headerShown:false}}
             />
             {/* < /> */}
           </Stack.Navigator>

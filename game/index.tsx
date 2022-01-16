@@ -24,7 +24,7 @@ export default function Game( {navigation} : {navigation: any}) {
 
   return (
     <View style={styles.mainContainer}>
-      <RestartModal navigation={navigation}/>
+      <RestartModal navigation={navigation} onRestartGame={controller.onRestartGame}/>
       <MainPlayArea
         answerToBeFound={controller.result}
         operatorCells={controller.operatorCell}

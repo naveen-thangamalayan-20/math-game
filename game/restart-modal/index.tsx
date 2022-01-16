@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { GamePageActions } from "../redux";
 
-const RestartModal = ({navigation}: {navigation: any}) => {
+type RestartModelProps = {
+  navigation: any;
+  onRestartGame: () => void;
+}
+const RestartModal = (props : RestartModelProps) => {
+  const {navigation, onRestartGame } = props;
   // const showRestartModal =  false; //useSelector((state:RootState) =>state.gamePage.showRestartModal);
   const showRestartModal =  useSelector((state:RootState) =>state.gamePage.showRestartModal);
   const dispatch = useDispatch();
@@ -34,7 +39,7 @@ const RestartModal = ({navigation}: {navigation: any}) => {
               style={[styles.button, styles.buttonClose]}
               // onPress={() => dispatch(GamePageActions.setShowRestartModal(false))}
               // onPress={() => navigation.navigate('Game')}
-              onPress={() => navigation.goBack()}
+              onPress={() => onRestartGame()}
             >
               <Text style={styles.textStyle}>Restart</Text>
             </Pressable>

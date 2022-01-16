@@ -192,9 +192,12 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const getOperatorCellLabel = (idx: number) =>
     `${props.operatorCells[idx].operator.label}${props.operatorCells[idx].number}`;
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const onTimeUp = () => {
-    // dispatch(GamePageActions.setShowRestartModal(true));
+    console.log("###########")
+    console.log("Time Up")
+    console.log("###########")
+    dispatch(GamePageActions.setShowRestartModal(true));
   }
 
   return {

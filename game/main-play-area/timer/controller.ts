@@ -5,7 +5,7 @@ import { RootState } from "../../../store";
 import { GamePageActions } from "../../redux";
 
 export type TimerProps = {
-    duration: number;
+    // duration: number;
     onTimeOut: () => void;
 }
 
@@ -17,7 +17,7 @@ const useTimerController = (props: TimerProps) => {
     // }, [])
     useElapsedTime({
         isPlaying: true,
-        duration: props.duration,
+        duration: 20,
         updateInterval: 1,
         onUpdate: (elapsedTime) => {
             console.log("totalGameRemainingTime---state", totalGameRemainingTime)
