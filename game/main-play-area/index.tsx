@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import {
   PanGestureHandler,
@@ -8,8 +8,6 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
 } from 'react-native-reanimated';
-import RestartModal from '../restart-modal';
-import AnswerToBeFound from './answer-to-be-found/answer-to-be-found';
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
 import Timer from './timer/timer';
 
@@ -81,6 +79,9 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
     );
   }
 
+  useEffect(() => {
+  console.log("Mounted MainPlayArea")
+  }, [])
 
   return (
     <View style={styles.mainContainer}>

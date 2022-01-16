@@ -1,4 +1,3 @@
-import {useEffect, useState} from 'react';
 import {LayoutChangeEvent} from 'react-native';
 import {
   PanGestureHandlerGestureEvent,
@@ -7,15 +6,12 @@ import {
 import {
   runOnJS,
   useAnimatedGestureHandler,
-  useAnimatedProps,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
 } from 'react-native-reanimated';
-import { useDispatch, useSelector } from 'react-redux';
-import { useElapsedTime } from 'use-elapsed-time';
-import { RootState } from '../../store';
-import { GamePageActions } from '../redux';
+import {useDispatch} from 'react-redux';
+import {GamePageActions} from '../redux';
 import {Cell, CoOrdinates} from './index';
 
 export type OperationCell = {
@@ -29,10 +25,8 @@ export type OperationCell = {
 export type MainPlayAreaProps = {
   answerToBeFound: number;
   operatorCells: OperationCell[];
-  onAnswerFound: (remaniningDuration: number) => void;
-  onAnswerNotFound: (remaniningDuration: number) => void;
   onTimeOver: () => void;
-  duration: number;
+  validateResult: (total: number) => void;
   roundId: number;
 };
 
@@ -45,23 +39,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const rowCount = 2;
   const columnCount = 2;
   const patternMargin = 2;
-  const [timerKeyId , setTimerKeyId] = useState(0);
-  // let count = useSharedValue(10);
-  // const [time, setTime] = useState(props.duration);
-  console.log("Controller", props.duration);
- 
-  // let {
-  //   elapsedTime,
-  //   reset
-  // } = useElapsedTime({
-  //   isPlaying: true,
-  //   duration: props.duration,
-  //   updateInterval: 1,
-  //   onUpdate: (elapsedTime) => setTime((time) => time - 1),
-  //   // onComplete: (elapsedTime) => props.onTimeOver()
-  // })
-  
- 
+
   const cvc = useAnimatedStyle(() => ({
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -79,31 +57,17 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     () => (containerLayout.value.min / rowCount - patternMargin * 2) / 2,
   );
 
-  
-  const totalGameRemainingTime = useSelector((state:RootState) =>state.gamePage.totalGameRemainingTime);
-  const currentGameRemainingTime = useSelector((state:RootState) =>state.gamePage.currentGameRemainingTime);
-  console.log(' outer---totalGameRemainingTime' , totalGameRemainingTime);
   const checkResult = () => {
-    console.log('INSIDE---totalGameRemainingTime' , totalGameRemainingTime);
     let total = 0;
-    selectedIndexes.value.forEach(index => {
-      const {operator, number} = props.operatorCells[index];
-      total = operator.operate(total, number);
-    });
-  
-    // console.log("inside totalGameRemainingTime", count.value)
-    if (total === props.answerToBeFound) {
-      console.log(' answered---totalGameRemainingTime' , totalGameRemainingTime);
-      props.onAnswerFound(totalGameRemainingTime);
-      dispatch(GamePageActions.updateIsRoundAnswered(true));
-      console.log('Answer found');
-    } else {
-      console.log('NOt--answered---totalGameRemainingTime' , totalGameRemainingTime);
-      props.onAnswerNotFound(totalGameRemainingTime);
-      console.log('Answer not found');
+    if (selectedIndexes.value.length >= 2) {
+      selectedIndexes.value.forEach(index => {
+        const {operator, number} = props.operatorCells[index];
+        total = operator.operate(total, number);
+      });
+      console.log('selectedIndex,', selectedIndexes.value);
+      props.validateResult(total);
     }
     selectedIndexes.value = [];
-    console.log('REsilt Checking Done');
   };
 
   const panHandler = useAnimatedGestureHandler<
@@ -156,7 +120,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
       if (!canTouch.value) return;
       endPoint.value = null;
       if (selectedIndexes.value.length > 0) {
-        console.log('SElectectedIndex', selectedIndexes);
         runOnJS(checkResult)();
       }
     },
@@ -164,7 +127,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
     const {width, height} = event.nativeEvent.layout;
-    // console.log('Container Layout', width, height);
     containerLayout.value = {
       width,
       height,
@@ -174,7 +136,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const onPatternLayout = (event: LayoutChangeEvent) => {
     const layout = event.nativeEvent.layout;
-    console.log('Pattern layout', layout);
     const points = [];
     for (let i = 0; i < rowCount; i++) {
       for (let j = 0; j < columnCount; j++) {
@@ -194,11 +155,11 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const dispatch = useDispatch();
   const onTimeUp = () => {
-    console.log("###########")
-    console.log("Time Up")
-    console.log("###########")
-    dispatch(GamePageActions.setShowRestartModal(true));
-  }
+    console.log('###########');
+    console.log('Time Up');
+    console.log('###########');
+    // dispatch(GamePageActions.setShowRestartModal(true));
+  };
 
   return {
     answerToBeFound: props.answerToBeFound,
@@ -212,16 +173,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     R,
     getOperatorCellLabel,
     onTimeUp,
-    // counter: count.value,
-    totalGameRemainingTime,
-    // time,
-    // onClick: () => {
-    //   console.log("Clicked")
-    //   count.value = Math.random();
-    //   console.log(count.value)
-    // },
     roundId: props.roundId,
-    // key: props.key
   };
 };
 

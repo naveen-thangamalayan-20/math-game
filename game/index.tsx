@@ -12,7 +12,6 @@ export type CoOrdinates = {
 export type Cell = {
   position: CoOrdinates;
 };
-const inactiveColor = '#8E91A8';
 
 type Props = {
   destinationNumber: number;
@@ -28,11 +27,9 @@ export default function Game( {navigation} : {navigation: any}) {
       <MainPlayArea
         answerToBeFound={controller.result}
         operatorCells={controller.operatorCell}
-        onAnswerFound={controller.onAnswerFound}
-        onAnswerNotFound={controller.onAnswerNotFound}
-        duration={controller.roundDuration}
         roundId={controller.roundId}
         onTimeOver={controller.onTimeOver}
+        validateResult={controller.validateResult}
       />
     </View>
   );

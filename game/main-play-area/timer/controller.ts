@@ -12,22 +12,23 @@ export type TimerProps = {
 const useTimerController = (props: TimerProps) => {
     const dispatch = useDispatch()
     const totalGameRemainingTime = useSelector((state:RootState) =>state.gamePage.totalGameRemainingTime);
-    // useEffect(() => {
-    //     dispatch(GamePageActions.updateTotalGameRemainingTime(props.duration))
-    // }, [])
+    const currentRoundRemainingTime = useSelector((state:RootState) =>state.gamePage.currentRoundRemainingTime);
+    const startTimer = useSelector((state:RootState) =>state.gamePage.startTimer);
+    useEffect(() => {
+        console.log("Mounted Timer")
+        }, [])
     useElapsedTime({
-        isPlaying: true,
-        duration: 20,
+        isPlaying: startTimer,
+        duration: totalGameRemainingTime,
         updateInterval: 1,
         onUpdate: (elapsedTime) => {
-            console.log("totalGameRemainingTime---state", totalGameRemainingTime)
-            dispatch(GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime - 1))
+            dispatch(GamePageActions.updateCurrentRoundRemainingTime(currentRoundRemainingTime - 1))
         },
         onComplete: (elapsedTime) => props.onTimeOut()
       })
 
    return {
-       time: totalGameRemainingTime,
+       time: currentRoundRemainingTime,
    }
 }
 

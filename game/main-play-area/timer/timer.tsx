@@ -20,14 +20,10 @@ const styles = StyleSheet.create({
       color:"#f9f9f9"
     },
     timer: {
-      // borderWidth: 2,
-      // width: 180,
       height: 80,
       top: 50,
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
-      // borderColor: "#8E91A8",
     },
- 
   });

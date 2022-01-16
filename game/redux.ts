@@ -1,17 +1,20 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
+export const INITIAL_TOTAL_ROUND_DURATION = 15;
+
+
 type GamePageState = {
   showRestartModal: boolean;
-  currentGameRemainingTime: number;
+  currentRoundRemainingTime: number;
   totalGameRemainingTime: number;
-  isRoundAnswered: boolean;
+  startTimer: boolean;
 };
 
 const initialState: GamePageState = {
   showRestartModal: false,
-  currentGameRemainingTime: 0,
-  totalGameRemainingTime: 4,
-  isRoundAnswered: false,
+  currentRoundRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
+  totalGameRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
+  startTimer: false,
 };
 
 const gamePageSlice = createSlice({
@@ -36,12 +39,19 @@ export const GamePageActions = {
   setShowRestartModal: (showModal: boolean) =>
     updateGamePageState({showRestartModal: showModal}),
 
-  updateCurrentGameRemainigTime: (remainingTime: number) =>
-    updateGamePageState({currentGameRemainingTime: remainingTime}),
+  updateCurrentRoundRemainingTime: (remainingTime: number) =>
+    updateGamePageState({currentRoundRemainingTime: remainingTime}),
 
   updateTotalGameRemainingTime: (totalRemainingTime: number) =>
     updateGamePageState({totalGameRemainingTime: totalRemainingTime}),
   
-  updateIsRoundAnswered: (isRoundAnswered: boolean) =>
-    updateGamePageState({isRoundAnswered}),
+  // updateIsRoundAnswered: (isRoundAnswered: boolean) =>
+  //   updateGamePageState({isRoundAnswered}),
+
+  updateStartTimer: (startTimer: boolean) =>updateGamePageState({startTimer}),
+
+  updateGameTime: (currentRoundRemainingTime: number, totalGameRemainingTime: number) => updateGamePageState({
+    totalGameRemainingTime,
+    currentRoundRemainingTime
+  }),
 };

@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
-import {GamePageActions} from './redux';
+import {GamePageActions, INITIAL_TOTAL_ROUND_DURATION} from './redux';
 
 type SupportedOperation = 'ADDITION' | 'SUBTRACTION';
 // | "MULTIPLICATION"
@@ -69,7 +69,6 @@ const getOperationValuesAndResult = () => {
   const operationKeys = Object.keys(operations);
   const totalOperationsCount = operationKeys.length;
   for (let idx = 0; idx < totalCellsCount; idx++) {
-    console.log('TotalOperationCount', totalOperationsCount);
     const operationIdx = generateRandomNumber(totalOperationsCount);
     operatorCell.push({
       operator: operations[operationKeys[operationIdx] as SupportedOperation],
@@ -85,17 +84,17 @@ const getOperationValuesAndResult = () => {
     0,
     totalNumberOfChoosenOperation,
   );
-  console.log(
-    '--operationCellOrder',
-    operationCellOrder.map(
-      order =>
-        `${operatorCell[order].operator.label}${operatorCell[order].number}`,
-    ),
-  );
-  console.log(
-    '--operatorCell',
-    operatorCell.map(cell => `${cell.operator.label}${cell.number}`),
-  );
+  // console.log(
+  //   '--operationCellOrder',
+  //   operationCellOrder.map(
+  //     order =>
+  //       `${operatorCell[order].operator.label}${operatorCell[order].number}`,
+  //   ),
+  // );
+  // console.log(
+  //   '--operatorCell',
+  //   operatorCell.map(cell => `${cell.operator.label}${cell.number}`),
+  // );
   return {
     result: operationCellOrder.reduce(
       (total, orderIdx) =>
@@ -109,47 +108,64 @@ const getOperationValuesAndResult = () => {
   };
 };
 
-const INITIAL_TOTAL_ROUND_DURATION = 10;
 
 const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
     getOperationValuesAndResult(),
   );
-  // const [roundDuration , setRoundDuration ]= useState(40)
   const dispatch = useDispatch();
   const [roundId, setroundId] = useState(0);
-  useEffect(() => {
-    dispatch(GamePageActions.updateTotalGameRemainingTime(INITIAL_TOTAL_ROUND_DURATION));
-  }, []);
-  const totalGameRemainingTime = useSelector(
-    (state: RootState) => state.gamePage.totalGameRemainingTime,
+  const currentRoundRemainingTime = useSelector(
+    (state: RootState) => state.gamePage.currentRoundRemainingTime,
   );
   const {result, operatorCell} = operatorAndResultState;
 
-  const onAnswerFound = (remainingDuration: number) => {
-    // setRoundDuration(remainingDuration + 5)
-    dispatch(
-      GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime + 10),
-    );
+  console.log("Main,currentRoundRemainingTime", currentRoundRemainingTime)
+
+  useEffect(() => {
+    dispatch(GamePageActions.updateStartTimer(true));
+    console.log("Mounted MainGame")
+    }, []
+  )
+
+  const onAnswerFound = () => {
+    const newTotalTime = currentRoundRemainingTime + 10;
     setOperatorAndResultState(getOperationValuesAndResult());
+    dispatch(GamePageActions.updateGameTime(newTotalTime, newTotalTime));
     setroundId(roundId => roundId + 1);
   };
 
-  const onAnswerNotFound = (remainingDuration: number) => {
-    console.log('remainingDuration', remainingDuration);
-    // setRoundDuration(remainingDuration - 2)
-    dispatch(
-      GamePageActions.updateTotalGameRemainingTime(totalGameRemainingTime - 2),
-    );
+  const onAnswerNotFound = () => {
+    console.log('currentRoundRemainingTime=AnswerNotFound', currentRoundRemainingTime);
+    const newTotalTime = currentRoundRemainingTime - 2;
+    console.log('NewCurrentRoundRemainingTime=AnswerNotFound', newTotalTime);
+    if(newTotalTime > 0) {
+      dispatch(GamePageActions.updateGameTime(newTotalTime, newTotalTime));    
+    } else {
+      dispatch(GamePageActions.setShowRestartModal(true));
+      dispatch(GamePageActions.updateStartTimer(false));
+    }
     setroundId(roundId => roundId + 1);
     console.log('Answer Not found');
   };
 
+  const validateResult = (total: number) => {
+    console.log('VAlidateResult--currentRoundRemainingTime=AnswerNotFound', currentRoundRemainingTime, total);
+    if (total === result) {
+      onAnswerFound();
+    } else {
+      onAnswerNotFound();
+    }
+  }
+
   const onTimeOver = () => console.log('Time Over');
 
   const onRestartGame = () => {
+    dispatch(GamePageActions.updateStartTimer(false));
+    // dispatch(GamePageActions.updateGameTime(INITIAL_TOTAL_ROUND_DURATION, INITIAL_TOTAL_ROUND_DURATION));
+    dispatch(GamePageActions.updateGameTime(INITIAL_TOTAL_ROUND_DURATION, INITIAL_TOTAL_ROUND_DURATION));
     dispatch(
-      GamePageActions.updateTotalGameRemainingTime(INITIAL_TOTAL_ROUND_DURATION),
+      GamePageActions.setShowRestartModal(false),
     );
     setOperatorAndResultState(getOperationValuesAndResult());
     setroundId(roundId => roundId + 1);
@@ -158,12 +174,11 @@ const useGameController = () => {
   return {
     operatorCell,
     result,
-    onAnswerNotFound,
-    onAnswerFound,
     roundDuration: 20,
     roundId,
     onTimeOver,
-    onRestartGame
+    onRestartGame,
+    validateResult
   };
 };
 
