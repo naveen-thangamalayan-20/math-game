@@ -11,16 +11,17 @@ import {
   useSharedValue,
 } from 'react-native-reanimated';
 import {useDispatch} from 'react-redux';
+import { CellType, OperationCell, Operator } from '../controller';
 import {GamePageActions} from '../redux';
 import {Cell, CoOrdinates} from './index';
 
-export type OperationCell = {
-  operator: {
-    label: string;
-    operate: (value1: number, value2: number) => number;
-  };
-  number: number;
-};
+// export type OperationCell = {
+//   operator: {
+//     label: string;
+//     operate: (value1: number, value2: number) => number;
+//   };
+//   number: number;
+// };
 
 export type MainPlayAreaProps = {
   answerToBeFound: number;
@@ -58,14 +59,21 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   );
 
   const checkResult = () => {
-    let total = 0;
-    if (selectedIndexes.value.length >= 2) {
-      selectedIndexes.value.forEach(index => {
-        const {operator, number} = props.operatorCells[index];
-        total = operator.operate(total, number);
-      });
+    // let total = 0;
+    if (selectedIndexes.value.length == 3) {
+      const selectedCells = selectedIndexes.value.map((index) => props.operatorCells[index]);
+      const operandsInSelectedCells = selectedCells.filter((cell)=> cell.type === CellType.NUMBER);
+      const operatorsInSelectedCells = selectedCells.filter((cell)=> cell.type === CellType.OPERATOR);
+      if(selectedCells[0].type === CellType.NUMBER && selectedCells[1].type === CellType.OPERATOR && selectedCells[2].type === CellType.NUMBER) {
+        const operatorValue = operatorsInSelectedCells[0].value as Operator;
+        const total = operatorValue.operate(operandsInSelectedCells[0].value as number, operandsInSelectedCells[1].value as number)
+        props.validateResult(total);
+      }
+      // selectedIndexes.value.forEach(index => {
+      //   const {value, type} = props.operatorCells[index];
+      //   total = operator.operate(total, number);
+      // });
       console.log('selectedIndex,', selectedIndexes.value);
-      props.validateResult(total);
     }
     selectedIndexes.value = [];
   };
@@ -150,8 +158,15 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     }));
   };
 
-  const getOperatorCellLabel = (idx: number) =>
-    `${props.operatorCells[idx].operator.label}${props.operatorCells[idx].number}`;
+  const getOperatorCellLabel = (idx: number) => {
+    if(props.operatorCells[idx].type === CellType.OPERATOR) {
+      const value = props.operatorCells[idx].value as Operator
+      return value.label;
+    } 
+    else {
+      return props.operatorCells[idx].value;
+    }
+  }
 
   const dispatch = useDispatch();
   const onTimeUp = () => {

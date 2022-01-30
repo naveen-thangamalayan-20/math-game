@@ -3,8 +3,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
 import {GamePageActions, INITIAL_TOTAL_ROUND_DURATION} from './redux';
 
-type SupportedOperation = 'ADDITION' | 'SUBTRACTION';
-// | "MULTIPLICATION"
+type SupportedOperation = 'ADDITION' | 'SUBTRACTION'
+| "MULTIPLICATION";
 // | "DIVISION"
 export type Operator = {
   label: string;
@@ -24,10 +24,10 @@ const operations: IOperation = {
     label: '-',
     operate: (value1: number, value2: number) => value1 - value2,
   },
-  // MULTIPLICATION: {
-  //   label: "*",
-  //   operate: (value1: number, value2: number) => value1 * value2
-  // },
+  MULTIPLICATION: {
+    label: "*",
+    operate: (value1: number, value2: number) => value1 * value2
+  },
   // DIVISION: {
   //   label: "/",
   //   operate: (value1: number, value2: number) => value1 / value2
@@ -35,8 +35,11 @@ const operations: IOperation = {
 };
 
 export type OperationCell = {
-  operator: Operator;
-  number: number;
+  type: CellType.NUMBER;
+  value: number;
+} | {
+  type: CellType.OPERATOR
+  value: Operator;
 };
 
 const totalCellsCount = 4;
@@ -44,7 +47,8 @@ const difficultyLevel = 1;
 
 const generateRandomNumber = (upperLimit: number, startValue: number = 0) =>
   Math.floor(Math.random() * upperLimit + startValue);
-const shuffle = (array: number[]) => {
+
+const shuffle = (array: OperationCell[]) => {
   let currentIndex = array.length,
     randomIndex;
 
@@ -64,47 +68,65 @@ const shuffle = (array: number[]) => {
   return array;
 };
 
+export enum CellType {
+  NUMBER,
+  OPERATOR,
+}
+
 const getOperationValuesAndResult = () => {
   const operatorCell: OperationCell[] = [];
   const operationKeys = Object.keys(operations);
-  const totalOperationsCount = operationKeys.length;
-  for (let idx = 0; idx < totalCellsCount; idx++) {
-    const operationIdx = generateRandomNumber(totalOperationsCount);
-    operatorCell.push({
-      operator: operations[operationKeys[operationIdx] as SupportedOperation],
-      number: generateRandomNumber(difficultyLevel * 10, 1),
-    });
-  }
-
-  const totalNumberOfChoosenOperation = generateRandomNumber(
-    totalCellsCount,
-    2,
-  );
-  const operationCellOrder = shuffle([...Array(totalCellsCount).keys()]).slice(
-    0,
-    totalNumberOfChoosenOperation,
-  );
-  // console.log(
-  //   '--operationCellOrder',
-  //   operationCellOrder.map(
-  //     order =>
-  //       `${operatorCell[order].operator.label}${operatorCell[order].number}`,
-  //   ),
-  // );
-  // console.log(
-  //   '--operatorCell',
-  //   operatorCell.map(cell => `${cell.operator.label}${cell.number}`),
-  // );
+  let totalOperationsCount = operationKeys.length;
+  const operand1 = generateRandomNumber(difficultyLevel * 10, 1);
+  const operand2 = generateRandomNumber(difficultyLevel * 10, 1);
+  // const operators = [...operationKeys]
+  const firstOperatorIndex = generateRandomNumber(totalOperationsCount);
+  const answerOperator = operations[operationKeys[firstOperatorIndex] as SupportedOperation];
+  [operationKeys[totalOperationsCount-1], operationKeys[firstOperatorIndex]]= [operationKeys[firstOperatorIndex] , operationKeys[totalOperationsCount-1]]
+  const newTotalOperationCountAfterSwappingChooseOperator = --totalOperationsCount;
+  const otherOperator = operations[operationKeys[generateRandomNumber(newTotalOperationCountAfterSwappingChooseOperator)] as SupportedOperation]
+  const choosenOperatorCells = shuffle([
+    {
+      type: CellType.OPERATOR,
+      value:answerOperator,
+    },
+    {
+      type: CellType.OPERATOR,
+      value:otherOperator,
+    }
+  ])
   return {
-    result: operationCellOrder.reduce(
-      (total, orderIdx) =>
-        operatorCell[orderIdx].operator.operate(
-          total,
-          operatorCell[orderIdx].number,
-        ),
-      0,
-    ),
-    operatorCell,
+    result: answerOperator.operate(operand1, operand2),
+    operatorCell: [
+      {
+      type: CellType.NUMBER,
+      value:operand1,
+    },
+    choosenOperatorCells[0],
+    choosenOperatorCells[1],
+    {
+      type: CellType.NUMBER,
+      value:operand2,
+    },
+  ]
+    // operatorCell: shuffle([
+    //   {
+    //     type: CellType.NUMBER,
+    //     value:operand1,
+    //   },
+    //   {
+    //     type: CellType.NUMBER,
+    //     value:operand2,
+    //   },
+    //   {
+    //     type: CellType.OPERATOR,
+    //     value:answerOperator,
+    //   },
+    //   {
+    //     type: CellType.OPERATOR,
+    //     value:otherOperator,
+    //   }
+    // ]),
   };
 };
 
@@ -129,9 +151,9 @@ const useGameController = () => {
   )
 
   const onAnswerFound = () => {
-    const newTotalTime = currentRoundRemainingTime + 10;
+    // const newTotalTime = currentRoundRemainingTime + 3;
     setOperatorAndResultState(getOperationValuesAndResult());
-    dispatch(GamePageActions.updateGameTime(newTotalTime, newTotalTime));
+    dispatch(GamePageActions.updateGameTime(INITIAL_TOTAL_ROUND_DURATION, INITIAL_TOTAL_ROUND_DURATION));
     setroundId(roundId => roundId + 1);
   };
 
@@ -139,12 +161,8 @@ const useGameController = () => {
     console.log('currentRoundRemainingTime=AnswerNotFound', currentRoundRemainingTime);
     const newTotalTime = currentRoundRemainingTime - 2;
     console.log('NewCurrentRoundRemainingTime=AnswerNotFound', newTotalTime);
-    if(newTotalTime > 0) {
-      dispatch(GamePageActions.updateGameTime(newTotalTime, newTotalTime));    
-    } else {
-      dispatch(GamePageActions.setShowRestartModal(true));
-      dispatch(GamePageActions.updateStartTimer(false));
-    }
+    dispatch(GamePageActions.setShowRestartModal(true));
+    dispatch(GamePageActions.updateStartTimer(false));
     setroundId(roundId => roundId + 1);
     console.log('Answer Not found');
   };
@@ -162,7 +180,6 @@ const useGameController = () => {
 
   const onRestartGame = () => {
     dispatch(GamePageActions.updateStartTimer(false));
-    // dispatch(GamePageActions.updateGameTime(INITIAL_TOTAL_ROUND_DURATION, INITIAL_TOTAL_ROUND_DURATION));
     dispatch(GamePageActions.updateGameTime(INITIAL_TOTAL_ROUND_DURATION, INITIAL_TOTAL_ROUND_DURATION));
     dispatch(
       GamePageActions.setShowRestartModal(false),
