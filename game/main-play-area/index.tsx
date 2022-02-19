@@ -69,7 +69,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
             });
             return (
               <Animated.View key={idx} style={outer}>
-                <Text style={styles.number}>
+                <Text style={styles.number} accessibilityLabel={`option-${idx}`}>
                   {controller.getOperatorCellLabel(idx)}
                 </Text>
               </Animated.View>
@@ -86,12 +86,12 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   return (
     <View style={styles.mainContainer}>
       <Timer onTimeOut={controller.onTimeUp} key={controller.roundId}/>
-      <View style={styles.answerCell}>
-        <Text style={styles.number}>{controller.answerToBeFound}</Text>
-      </View>
+      <Animated.View style={[styles.answerCell, controller.animatedStyles]}>
+        <Text style={styles.number} accessibilityLabel="answer-cell">{controller.answerToBeFound}</Text>
+      </Animated.View>
       <PanGestureHandler onGestureEvent={controller.panHandler}>
         <Animated.View
-          style={styles.container}
+          style={[styles.container, controller.animatedStyles]}
           onLayout={controller.onContainerLayout}>
           <TapGestureHandler onGestureEvent={controller.panHandler}>
             {renderCell()}

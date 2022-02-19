@@ -1,14 +1,17 @@
+import { useEffect } from 'react';
 import {LayoutChangeEvent} from 'react-native';
 import {
   PanGestureHandlerGestureEvent,
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 import {
+  Easing,
   runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 import {useDispatch} from 'react-redux';
 import { CellType, OperationCell, Operator } from '../controller';
@@ -88,7 +91,10 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
         selectedIndexes.value.length === 0
       ) {
         const selected: number[] = [];
+     
         patternPoints.value.every((p, idx) => {
+          console.log("EventX", evt.x, p.position.x)
+          console.log("EventY", evt.y, p.position.y)
           if (
             (p.position.x - evt.x) * (p.position.x - evt.x) +
               (p.position.y - evt.y) * (p.position.y - evt.y) <
@@ -109,6 +115,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
         selectedIndexes.value.length > 0
       ) {
         patternPoints.value.every((p, idx) => {
+          console.log("EventActiveX", evt.x, p.position.x)
+          console.log("EventActiveY", evt.y, p.position.y)
           if (
             (p.position.x - evt.x) * (p.position.x - evt.x) +
               (p.position.y - evt.y) * (p.position.y - evt.y) <
@@ -135,6 +143,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
     const {width, height} = event.nativeEvent.layout;
+    console.log("ContainerX", event.nativeEvent.layout.x)
+    console.log("ContainerY", event.nativeEvent.layout.y)
     containerLayout.value = {
       width,
       height,
@@ -153,9 +163,14 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
         });
       }
     }
+
     patternPoints.value = points.map((p, idx) => ({
       position: {x: p.x, y: p.y},
     }));
+   
+   console.log("X", event.nativeEvent.layout.x)
+   console.log("Y", event.nativeEvent.layout.y)
+   console.log("Points", points)
   };
 
   const getOperatorCellLabel = (idx: number) => {
@@ -168,13 +183,32 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     }
   }
 
-  const dispatch = useDispatch();
   const onTimeUp = () => {
     console.log('###########');
     console.log('Time Up');
     console.log('###########');
     // dispatch(GamePageActions.setShowRestartModal(true));
   };
+
+  const offset = useSharedValue(0);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ scaleX: offset.value }, { scaleY: offset.value }],
+    };
+  });
+ 
+  const playAnimation = () => {
+    offset.value = 0;
+    offset.value = withTiming(1, {
+      duration: 250,
+      // easing: Easing.out(Easing.exp),
+    });
+  }
+ 
+  useEffect(() => {
+    playAnimation()
+  }, [props.operatorCells])
 
   return {
     answerToBeFound: props.answerToBeFound,
@@ -189,6 +223,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     getOperatorCellLabel,
     onTimeUp,
     roundId: props.roundId,
+    animatedStyles
   };
 };
 

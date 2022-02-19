@@ -22,7 +22,7 @@ export default function Game( {navigation} : {navigation: any}) {
   const controller = useGameController();
 
   return (
-    <View style={styles.mainContainer}>
+    <View style={styles.mainContainer} accessibilityLabel="testview" testID="test-mainView">
       <RestartModal navigation={navigation} onRestartGame={controller.onRestartGame}/>
       <MainPlayArea
         answerToBeFound={controller.result}

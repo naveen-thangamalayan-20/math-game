@@ -26,7 +26,7 @@ const RestartModal = (props : RestartModelProps) => {
           dispatch(GamePageActions.setShowRestartModal(false));
         }}
       >
-        <View style={styles.centeredView}>
+        <View style={styles.centeredView } accessibilityLabel="restart-modal">
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Game Over</Text>
             <Pressable

@@ -79,7 +79,6 @@ const getOperationValuesAndResult = () => {
   let totalOperationsCount = operationKeys.length;
   const operand1 = generateRandomNumber(difficultyLevel * 10, 1);
   const operand2 = generateRandomNumber(difficultyLevel * 10, 1);
-  // const operators = [...operationKeys]
   const firstOperatorIndex = generateRandomNumber(totalOperationsCount);
   const answerOperator = operations[operationKeys[firstOperatorIndex] as SupportedOperation];
   [operationKeys[totalOperationsCount-1], operationKeys[firstOperatorIndex]]= [operationKeys[firstOperatorIndex] , operationKeys[totalOperationsCount-1]]
@@ -109,24 +108,6 @@ const getOperationValuesAndResult = () => {
       value:operand2,
     },
   ]
-    // operatorCell: shuffle([
-    //   {
-    //     type: CellType.NUMBER,
-    //     value:operand1,
-    //   },
-    //   {
-    //     type: CellType.NUMBER,
-    //     value:operand2,
-    //   },
-    //   {
-    //     type: CellType.OPERATOR,
-    //     value:answerOperator,
-    //   },
-    //   {
-    //     type: CellType.OPERATOR,
-    //     value:otherOperator,
-    //   }
-    // ]),
   };
 };
 
