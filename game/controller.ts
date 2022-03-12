@@ -3,8 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
 import {GamePageActions, INITIAL_TOTAL_ROUND_DURATION} from './redux';
 
-type SupportedOperation = 'ADDITION' | 'SUBTRACTION'
-| "MULTIPLICATION";
+type SupportedOperation = 'ADDITION' | 'SUBTRACTION' | 'MULTIPLICATION';
 // | "DIVISION"
 export type Operator = {
   label: string;
@@ -25,8 +24,8 @@ const operations: IOperation = {
     operate: (value1: number, value2: number) => value1 - value2,
   },
   MULTIPLICATION: {
-    label: "*",
-    operate: (value1: number, value2: number) => value1 * value2
+    label: '*',
+    operate: (value1: number, value2: number) => value1 * value2,
   },
   // DIVISION: {
   //   label: "/",
@@ -34,19 +33,27 @@ const operations: IOperation = {
   // }
 };
 
-export type OperationCell = {
-  type: CellType.NUMBER;
-  value: number;
-} | {
-  type: CellType.OPERATOR
-  value: Operator;
-};
+export type OperationCell =
+  | {
+      type: CellType.NUMBER;
+      value: number;
+    }
+  | {
+      type: CellType.OPERATOR;
+      value: Operator;
+    };
 
 const totalCellsCount = 4;
 const difficultyLevel = 1;
 
-const generateRandomNumber = (upperLimit: number, startValue: number = 0) =>
-  Math.floor(Math.random() * upperLimit + startValue);
+const generateRandomNumber = (
+  upperLimit: number,
+  startValue: number = 0,
+  allowDecimals = false,
+) =>
+  allowDecimals
+    ? Math.round((Math.random() * upperLimit + startValue) * 10) / 10
+    : Math.floor(Math.random() * upperLimit + startValue);
 
 const shuffle = (array: OperationCell[]) => {
   let currentIndex = array.length,
@@ -75,42 +82,62 @@ export enum CellType {
 
 const getOperationValuesAndResult = () => {
   const operatorCell: OperationCell[] = [];
+  const operand1 = generateRandomNumber(
+    difficultyLevel * 10,
+    difficultyLevel + 2,
+  );
+  const operand2 = generateRandomNumber(
+    difficultyLevel * 10,
+    difficultyLevel + 2,
+  );
   const operationKeys = Object.keys(operations);
   let totalOperationsCount = operationKeys.length;
-  const operand1 = generateRandomNumber(difficultyLevel * 10, 1);
-  const operand2 = generateRandomNumber(difficultyLevel * 10, 1);
   const firstOperatorIndex = generateRandomNumber(totalOperationsCount);
-  const answerOperator = operations[operationKeys[firstOperatorIndex] as SupportedOperation];
-  [operationKeys[totalOperationsCount-1], operationKeys[firstOperatorIndex]]= [operationKeys[firstOperatorIndex] , operationKeys[totalOperationsCount-1]]
-  const newTotalOperationCountAfterSwappingChooseOperator = --totalOperationsCount;
-  const otherOperator = operations[operationKeys[generateRandomNumber(newTotalOperationCountAfterSwappingChooseOperator)] as SupportedOperation]
+  const answerOperator =
+    operations[operationKeys[firstOperatorIndex] as SupportedOperation];
+  [operationKeys[totalOperationsCount - 1], operationKeys[firstOperatorIndex]] =
+    [
+      operationKeys[firstOperatorIndex],
+      operationKeys[totalOperationsCount - 1],
+    ];
+  const newTotalOperationCountAfterSwappingChooseOperator =
+    --totalOperationsCount;
+  const otherOperator =
+    operations[
+      operationKeys[
+        generateRandomNumber(newTotalOperationCountAfterSwappingChooseOperator)
+      ] as SupportedOperation
+    ];
   const choosenOperatorCells = shuffle([
     {
       type: CellType.OPERATOR,
-      value:answerOperator,
+      value: answerOperator,
     },
     {
       type: CellType.OPERATOR,
-      value:otherOperator,
-    }
-  ])
+      value: otherOperator,
+    },
+  ]);
+  const operandCells = shuffle([
+    {
+      type: CellType.NUMBER,
+      value: operand1,
+    },
+    {
+      type: CellType.NUMBER,
+      value: operand2,
+    },
+  ]);
   return {
     result: answerOperator.operate(operand1, operand2),
     operatorCell: [
-      {
-      type: CellType.NUMBER,
-      value:operand1,
-    },
-    choosenOperatorCells[0],
-    choosenOperatorCells[1],
-    {
-      type: CellType.NUMBER,
-      value:operand2,
-    },
-  ]
+      operandCells[0],
+      choosenOperatorCells[0],
+      choosenOperatorCells[1],
+      operandCells[1],
+    ],
   };
 };
-
 
 const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
@@ -123,23 +150,30 @@ const useGameController = () => {
   );
   const {result, operatorCell} = operatorAndResultState;
 
-  console.log("Main,currentRoundRemainingTime", currentRoundRemainingTime)
+  console.log('Main,currentRoundRemainingTime', currentRoundRemainingTime);
 
   useEffect(() => {
     dispatch(GamePageActions.updateStartTimer(true));
-    console.log("Mounted MainGame")
-    }, []
-  )
+    console.log('Mounted MainGame');
+  }, []);
 
   const onAnswerFound = () => {
     // const newTotalTime = currentRoundRemainingTime + 3;
     setOperatorAndResultState(getOperationValuesAndResult());
-    dispatch(GamePageActions.updateGameTime(INITIAL_TOTAL_ROUND_DURATION, INITIAL_TOTAL_ROUND_DURATION));
+    dispatch(
+      GamePageActions.updateGameTime(
+        INITIAL_TOTAL_ROUND_DURATION,
+        INITIAL_TOTAL_ROUND_DURATION,
+      ),
+    );
     setroundId(roundId => roundId + 1);
   };
 
   const onAnswerNotFound = () => {
-    console.log('currentRoundRemainingTime=AnswerNotFound', currentRoundRemainingTime);
+    console.log(
+      'currentRoundRemainingTime=AnswerNotFound',
+      currentRoundRemainingTime,
+    );
     const newTotalTime = currentRoundRemainingTime - 2;
     console.log('NewCurrentRoundRemainingTime=AnswerNotFound', newTotalTime);
     dispatch(GamePageActions.setShowRestartModal(true));
@@ -149,25 +183,32 @@ const useGameController = () => {
   };
 
   const validateResult = (total: number) => {
-    console.log('VAlidateResult--currentRoundRemainingTime=AnswerNotFound', currentRoundRemainingTime, total);
+    console.log(
+      'VAlidateResult--currentRoundRemainingTime=AnswerNotFound',
+      currentRoundRemainingTime,
+      total,
+    );
     if (total === result) {
       onAnswerFound();
     } else {
       onAnswerNotFound();
     }
-  }
+  };
 
   const onTimeOver = () => console.log('Time Over');
 
   const onRestartGame = () => {
     dispatch(GamePageActions.updateStartTimer(false));
-    dispatch(GamePageActions.updateGameTime(INITIAL_TOTAL_ROUND_DURATION, INITIAL_TOTAL_ROUND_DURATION));
     dispatch(
-      GamePageActions.setShowRestartModal(false),
+      GamePageActions.updateGameTime(
+        INITIAL_TOTAL_ROUND_DURATION,
+        INITIAL_TOTAL_ROUND_DURATION,
+      ),
     );
+    dispatch(GamePageActions.setShowRestartModal(false));
     setOperatorAndResultState(getOperationValuesAndResult());
     setroundId(roundId => roundId + 1);
-  }
+  };
 
   return {
     operatorCell,
@@ -176,7 +217,7 @@ const useGameController = () => {
     roundId,
     onTimeOver,
     onRestartGame,
-    validateResult
+    validateResult,
   };
 };
 

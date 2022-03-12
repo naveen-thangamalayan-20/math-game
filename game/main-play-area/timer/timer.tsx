@@ -1,12 +1,14 @@
 import React from "react"
 import { StyleSheet, Text, View } from "react-native"
 import useTimerController, { TimerProps } from "./controller";
+import * as Progress from 'react-native-progress';
 
 const Timer = (props: TimerProps) => {
   const controller = useTimerController(props);
     return (
       <View style={styles.timer}>
-        <Text style={styles.number}>{controller.time} sec</Text>
+        {/* <Text style={styles.number}>{controller.time} sec</Text> */}
+        <Progress.Pie progress={controller.getElapsedTimeInPercentage()} size={80} />
       </View>
     )
 }

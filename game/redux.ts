@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-export const INITIAL_TOTAL_ROUND_DURATION = 5;
+export const INITIAL_TOTAL_ROUND_DURATION = 3;
 
 
 type GamePageState = {
