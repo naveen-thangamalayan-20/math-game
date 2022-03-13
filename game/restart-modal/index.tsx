@@ -30,22 +30,10 @@ const RestartModal = (props: RestartModelProps) => {
     );
   };
 
-  const renderScore = (title: string) => {
+  const renderScore = () => {
     return (
       <>
         <View style={styles.score}>
-          {/* <View style={styles.scoreHeader}>
-          <Text>Problems solved</Text>
-          <Text>123</Text>
-        </View>
-        <View style={styles.scoreHeader}>
-          <Text>Time</Text>
-          <Text>1.25mins</Text>
-        </View>
-        <View style={styles.scoreHeader}>
-          <Text>Speed</Text>
-          <Text>1.6 problems/sec</Text>
-        </View> */}
           <View style={styles.scoreHeader}>
             <Text></Text>
             <Text>Problems solved</Text>
@@ -54,9 +42,9 @@ const RestartModal = (props: RestartModelProps) => {
           </View>
           <View style={styles.scoreData}>
             <Text>Current Score</Text>
-            <Text>123</Text>
-            <Text>1.25mins</Text>
-            <Text>1.6 answers/sec</Text>
+            <Text>{controller.score}</Text>
+            <Text>{controller.getFormattedTime()}</Text>
+            <Text>{controller.getSpeed()}</Text>
           </View>
           <View style={styles.scoreData}>
             <Text>High Score</Text>

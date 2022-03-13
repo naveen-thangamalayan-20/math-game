@@ -172,7 +172,6 @@ const useGameController = () => {
     );
     dispatch(GamePageActions.updateScore(score + 1))
     setroundId(roundId => roundId + 1);
-    stopWatch.reset();
   };
 
   const onAnswerNotFound = () => {
@@ -181,6 +180,7 @@ const useGameController = () => {
     dispatch(GamePageActions.updateGameOverReason(GameOverReason.WRONG_ANSWER));
     dispatch(GamePageActions.setShowRestartModal(true));
     dispatch(GamePageActions.updateStartTimer(false));
+    dispatch(GamePageActions.updateTotalTime(stopWatch.timer.current));
     setroundId(roundId => roundId + 1);
     stopWatch.reset();
     console.log('Answer Not found');
@@ -203,6 +203,7 @@ const useGameController = () => {
     dispatch(GamePageActions.updateGameOverReason(GameOverReason.TIME_UP));
     dispatch(GamePageActions.setShowRestartModal(true));
     dispatch(GamePageActions.updateStartTimer(false));
+    dispatch(GamePageActions.updateTotalTime(stopWatch.timer.current));
     stopWatch.reset();
   }
 
