@@ -9,6 +9,7 @@ import Animated, {
   useDerivedValue,
 } from 'react-native-reanimated';
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
+import StopWatch from './stop-watch';
 import Timer from './timer/timer';
 
 export type CoOrdinates = {
@@ -26,7 +27,6 @@ type Props = {
 };
 
 export default function MainPlayArea(props: MainPlayAreaProps) {
-  const [isError, setIsError] = useState(false);
   const rowCount = 2;
   const columnCount = 2;
   const patternMargin = 2;
@@ -47,9 +47,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 controller.selectedIndexes.value.findIndex(v => v === idx) < 0
               ) {
                 return inactiveColor;
-              } else if (isError) {
-                return errorColor;
-              } else {
+              }  else {
                 return activeColor;
               }
             });
@@ -63,13 +61,15 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 backgroundColor: patternColor.value,
                 borderRadius: 10,
                 margin: patternMargin,
-                color:"#ffffff",
+                color: '#ffffff',
                 // textDecorationColor:"#fffff",
               };
             });
             return (
               <Animated.View key={idx} style={outer}>
-                <Text style={styles.number} accessibilityLabel={`option-${idx}`}>
+                <Text
+                  style={styles.number}
+                  accessibilityLabel={`option-${idx}`}>
                   {controller.getOperatorCellLabel(idx)}
                 </Text>
               </Animated.View>
@@ -80,14 +80,28 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   }
 
   useEffect(() => {
-  console.log("Mounted MainPlayArea")
-  }, [])
+    console.log('Mounted MainPlayArea');
+  }, []);
 
   return (
     <View style={styles.mainContainer}>
-      <Timer onTimeOut={controller.onTimeUp} key={controller.roundId}/>
+      <Timer onTimeOut={controller.onTimeUp} key={controller.roundId} />
+      <View>
+        <Text style={styles.score}>
+          {controller.score}
+          <StopWatch />
+        </Text>
+      </View>
+      <View style={styles.backButton}>
+      <Button
+        title="<"
+        onPress={() => console.log('Simple Button pressed')}
+      />
+      </View>
       <Animated.View style={[styles.answerCell, controller.animatedStyles]}>
-        <Text style={styles.number} accessibilityLabel="answer-cell">{controller.answerToBeFound}</Text>
+        <Text style={styles.number} accessibilityLabel="answer-cell">
+          {controller.answerToBeFound}
+        </Text>
       </Animated.View>
       <PanGestureHandler onGestureEvent={controller.panHandler}>
         <Animated.View
@@ -103,10 +117,15 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 }
 
 const styles = StyleSheet.create({
+  backButton:{
+    width:50,
+    left:10,
+    top:10,
+  },
   mainContainer: {
     flex: 1,
     elevate: 2,
-    backgroundColor:"#1a1a1a"
+    backgroundColor: '#1a1a1a',
   },
   container: {
     flex: 1,
@@ -118,7 +137,12 @@ const styles = StyleSheet.create({
   number: {
     fontSize: 28,
     alignItems: 'center',
-    color:"#000000",
+    color: '#000000',
+  },
+  score: {
+    top: 10,
+    fontSize: 18,
+    color: '#000000',
   },
   timer: {
     borderWidth: 2,
@@ -136,7 +160,7 @@ const styles = StyleSheet.create({
     height: 100,
     top: 150,
     borderRadius: 10,
-    color:"#fffff",
+    color: '#fffff',
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',

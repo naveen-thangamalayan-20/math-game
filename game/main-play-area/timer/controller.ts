@@ -26,7 +26,7 @@ const useTimerController = (props: TimerProps) => {
   useElapsedTime({
     isPlaying: startTimer,
     duration: totalGameRemainingTime,
-    // updateInterval: 0.2,
+    updateInterval: 0.1,
     // duration: 4,
     onUpdate: elapsedTime => {
         console.log(elapsedTime)

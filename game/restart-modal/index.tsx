@@ -4,22 +4,21 @@ import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { GamePageActions } from "../redux";
+import { useRestartModalController } from "./controller";
 
-type RestartModelProps = {
+export type RestartModelProps = {
   navigation: any;
   onRestartGame: () => void;
 }
 const RestartModal = (props : RestartModelProps) => {
-  const {navigation, onRestartGame } = props;
-  // const showRestartModal =  false; //useSelector((state:RootState) =>state.gamePage.showRestartModal);
-  const showRestartModal =  useSelector((state:RootState) =>state.gamePage.showRestartModal);
+  const controller = useRestartModalController(props);
   const dispatch = useDispatch();
   return (
     // <View style={styles.centeredView}>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={showRestartModal}
+        visible={controller.showRestartModal}
         onRequestClose={() => {
           Alert.alert("Modal has been closed.");
           // setModalVisible(!modalVisible);
@@ -31,28 +30,19 @@ const RestartModal = (props : RestartModelProps) => {
             <Text style={styles.modalText}>Game Over</Text>
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              onPress={() => dispatch(GamePageActions.setShowRestartModal(false))}
+              onPress={controller.onQuitGame}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <Text style={styles.textStyle}>Quit</Text>
             </Pressable>
             <Pressable
               style={[styles.button, styles.buttonClose]}
-              // onPress={() => dispatch(GamePageActions.setShowRestartModal(false))}
-              // onPress={() => navigation.navigate('Game')}
-              onPress={() => onRestartGame()}
+              onPress={controller.onRestartGame}
             >
               <Text style={styles.textStyle}>Restart</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
-      /* <Pressable
-        style={[styles.button, styles.buttonOpen]}
-        onPress={() => dispatch(GamePageActions.setShowRestartModal(true))}
-      >
-        <Text style={styles.textStyle}>Show Modal</Text>
-      // </Pressable> */
-    // </View>
   );
 };
 

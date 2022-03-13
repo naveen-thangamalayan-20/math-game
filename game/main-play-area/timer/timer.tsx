@@ -6,10 +6,10 @@ import * as Progress from 'react-native-progress';
 const Timer = (props: TimerProps) => {
   const controller = useTimerController(props);
     return (
-      <View style={styles.timer}>
-        {/* <Text style={styles.number}>{controller.time} sec</Text> */}
-        <Progress.Pie progress={controller.getElapsedTimeInPercentage()} size={80} />
-      </View>
+        <Progress.Bar progress={controller.getElapsedTimeInPercentage()} width={null} />
+      // <View style={styles.timer}>
+      //   {/* <Text style={styles.number}>{controller.time} sec</Text> */}
+      // </View>
     )
 }
 
@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
     },
     timer: {
       height: 80,
-      top: 50,
+      // top: 50,
+      width:400,
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',

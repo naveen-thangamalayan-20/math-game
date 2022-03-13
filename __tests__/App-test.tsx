@@ -138,4 +138,16 @@ describe('Create Android session', function () {
       expect(delete_session).toEqual(null);
     }
   });
+
+  it("should restart game when restart button is clicked on restart popup", () => {
+
+  })
+
+  it("should quit and go back to home screen  when quit is clicked on restart popup", () => {
+    
+  })
+
+  it("should show the current score and best score with the reason in the popup", () => {
+    
+  })
 });

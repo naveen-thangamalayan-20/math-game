@@ -13,7 +13,8 @@ import {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import { RootState } from '../../store';
 import { CellType, OperationCell, Operator } from '../controller';
 import {GamePageActions} from '../redux';
 import {Cell, CoOrdinates} from './index';
@@ -43,6 +44,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const rowCount = 2;
   const columnCount = 2;
   const patternMargin = 2;
+  const score = useSelector((state: RootState) => state.gamePage.score);
 
   const cvc = useAnimatedStyle(() => ({
     flexDirection: 'row',
@@ -223,7 +225,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     getOperatorCellLabel,
     onTimeUp,
     roundId: props.roundId,
-    animatedStyles
+    animatedStyles,
+    score
   };
 };
 

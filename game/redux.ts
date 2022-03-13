@@ -2,12 +2,20 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export const INITIAL_TOTAL_ROUND_DURATION = 3;
 
+export enum GameOverReason {
+  TIME_UP="Time up",
+  PAUSED="Paused",
+  WRONG_ANSWER="Wrong answer",
+  NONE="",
+}
 
 type GamePageState = {
   showRestartModal: boolean;
   currentRoundRemainingTime: number;
   totalGameRemainingTime: number;
   startTimer: boolean;
+  score: number;
+  gameOverReason: GameOverReason;
 };
 
 const initialState: GamePageState = {
@@ -15,6 +23,8 @@ const initialState: GamePageState = {
   currentRoundRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
   totalGameRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
   startTimer: false,
+  score: 0,
+  gameOverReason: GameOverReason.NONE
 };
 
 const gamePageSlice = createSlice({
@@ -49,6 +59,10 @@ export const GamePageActions = {
   //   updateGamePageState({isRoundAnswered}),
 
   updateStartTimer: (startTimer: boolean) =>updateGamePageState({startTimer}),
+
+  updateScore: (score: number) =>updateGamePageState({score}),
+
+  updateGameOverReason: (reason: GameOverReason) =>updateGamePageState({gameOverReason: reason}),
 
   updateGameTime: (currentRoundRemainingTime: number, totalGameRemainingTime: number) => updateGamePageState({
     totalGameRemainingTime,

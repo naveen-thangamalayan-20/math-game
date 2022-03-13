@@ -148,6 +148,7 @@ const useGameController = () => {
   const currentRoundRemainingTime = useSelector(
     (state: RootState) => state.gamePage.currentRoundRemainingTime,
   );
+  const score = useSelector((state: RootState) => state.gamePage.score);
   const {result, operatorCell} = operatorAndResultState;
 
   console.log('Main,currentRoundRemainingTime', currentRoundRemainingTime);
@@ -166,6 +167,7 @@ const useGameController = () => {
         INITIAL_TOTAL_ROUND_DURATION,
       ),
     );
+    dispatch(GamePageActions.updateScore(score + 1))
     setroundId(roundId => roundId + 1);
   };
 
