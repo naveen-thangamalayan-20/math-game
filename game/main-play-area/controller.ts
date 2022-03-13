@@ -18,6 +18,7 @@ import { RootState } from '../../store';
 import { CellType, OperationCell, Operator } from '../controller';
 import {GamePageActions} from '../redux';
 import {Cell, CoOrdinates} from './index';
+import useStopWatch from './stop-watch/stop-watch';
 
 // export type OperationCell = {
 //   operator: {
@@ -45,6 +46,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const columnCount = 2;
   const patternMargin = 2;
   const score = useSelector((state: RootState) => state.gamePage.score);
+  const stopWatch = useStopWatch()
 
   const cvc = useAnimatedStyle(() => ({
     flexDirection: 'row',

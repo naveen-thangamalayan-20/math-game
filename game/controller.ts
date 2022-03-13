@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
+import useStopWatch from './main-play-area/stop-watch/stop-watch';
 import {GameOverReason, GamePageActions, INITIAL_TOTAL_ROUND_DURATION} from './redux';
 
 type SupportedOperation = 'ADDITION' | 'SUBTRACTION' | 'MULTIPLICATION';
@@ -143,6 +144,7 @@ const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
     getOperationValuesAndResult(),
   );
+  const stopWatch = useStopWatch();
   const dispatch = useDispatch();
   const [roundId, setroundId] = useState(0);
   const currentRoundRemainingTime = useSelector(
@@ -154,6 +156,7 @@ const useGameController = () => {
   console.log('Main,currentRoundRemainingTime', currentRoundRemainingTime);
 
   useEffect(() => {
+    stopWatch.start();
     dispatch(GamePageActions.updateStartTimer(true));
     console.log('Mounted MainGame');
   }, []);
@@ -169,6 +172,7 @@ const useGameController = () => {
     );
     dispatch(GamePageActions.updateScore(score + 1))
     setroundId(roundId => roundId + 1);
+    stopWatch.reset();
   };
 
   const onAnswerNotFound = () => {
@@ -178,6 +182,7 @@ const useGameController = () => {
     dispatch(GamePageActions.setShowRestartModal(true));
     dispatch(GamePageActions.updateStartTimer(false));
     setroundId(roundId => roundId + 1);
+    stopWatch.reset();
     console.log('Answer Not found');
   };
 
@@ -198,6 +203,7 @@ const useGameController = () => {
     dispatch(GamePageActions.updateGameOverReason(GameOverReason.TIME_UP));
     dispatch(GamePageActions.setShowRestartModal(true));
     dispatch(GamePageActions.updateStartTimer(false));
+    stopWatch.reset();
   }
 
   const onRestartGame = () => {
@@ -211,6 +217,7 @@ const useGameController = () => {
     dispatch(GamePageActions.setShowRestartModal(false));
     setOperatorAndResultState(getOperationValuesAndResult());
     setroundId(roundId => roundId + 1);
+    stopWatch.start();
   };
 
   return {
@@ -221,6 +228,7 @@ const useGameController = () => {
     onTimeOver,
     onRestartGame,
     validateResult,
+    timer: stopWatch.timer,
   };
 };
 

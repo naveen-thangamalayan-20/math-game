@@ -16,6 +16,7 @@ type GamePageState = {
   startTimer: boolean;
   score: number;
   gameOverReason: GameOverReason;
+  totalTime: number;
 };
 
 const initialState: GamePageState = {
@@ -24,7 +25,8 @@ const initialState: GamePageState = {
   totalGameRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
   startTimer: false,
   score: 0,
-  gameOverReason: GameOverReason.NONE
+  gameOverReason: GameOverReason.NONE,
+  totalTime: 0,
 };
 
 const gamePageSlice = createSlice({
@@ -63,6 +65,8 @@ export const GamePageActions = {
   updateScore: (score: number) =>updateGamePageState({score}),
 
   updateGameOverReason: (reason: GameOverReason) =>updateGamePageState({gameOverReason: reason}),
+
+  updateTotalTime: (totalTime: number) =>updateGamePageState({totalTime}),
 
   updateGameTime: (currentRoundRemainingTime: number, totalGameRemainingTime: number) => updateGamePageState({
     totalGameRemainingTime,
