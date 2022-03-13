@@ -226,7 +226,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     onTimeUp,
     roundId: props.roundId,
     animatedStyles,
-    score
+    score,
+    onTimeOver: props.onTimeOver
   };
 };
 

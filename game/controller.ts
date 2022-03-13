@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
-import {GamePageActions, INITIAL_TOTAL_ROUND_DURATION} from './redux';
+import {GameOverReason, GamePageActions, INITIAL_TOTAL_ROUND_DURATION} from './redux';
 
 type SupportedOperation = 'ADDITION' | 'SUBTRACTION' | 'MULTIPLICATION';
 // | "DIVISION"
@@ -172,12 +172,9 @@ const useGameController = () => {
   };
 
   const onAnswerNotFound = () => {
-    console.log(
-      'currentRoundRemainingTime=AnswerNotFound',
-      currentRoundRemainingTime,
-    );
-    const newTotalTime = currentRoundRemainingTime - 2;
-    console.log('NewCurrentRoundRemainingTime=AnswerNotFound', newTotalTime);
+    // const newTotalTime = currentRoundRemainingTime - 2;
+    // console.log('NewCurrentRoundRemainingTime=AnswerNotFound', newTotalTime);
+    dispatch(GamePageActions.updateGameOverReason(GameOverReason.WRONG_ANSWER));
     dispatch(GamePageActions.setShowRestartModal(true));
     dispatch(GamePageActions.updateStartTimer(false));
     setroundId(roundId => roundId + 1);
@@ -197,7 +194,11 @@ const useGameController = () => {
     }
   };
 
-  const onTimeOver = () => console.log('Time Over');
+  const onTimeOver = () => {
+    dispatch(GamePageActions.updateGameOverReason(GameOverReason.TIME_UP));
+    dispatch(GamePageActions.setShowRestartModal(true));
+    dispatch(GamePageActions.updateStartTimer(false));
+  }
 
   const onRestartGame = () => {
     dispatch(GamePageActions.updateStartTimer(false));

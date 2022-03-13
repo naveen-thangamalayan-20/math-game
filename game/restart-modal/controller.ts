@@ -16,7 +16,6 @@ export const useRestartModalController = (props : RestartModelProps) => {
     onQuitGame: () => {
         dispatch(GamePageActions.setShowRestartModal(false))
         dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE))
-        dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE))
         props.navigation.navigate("Home")
     }
  }

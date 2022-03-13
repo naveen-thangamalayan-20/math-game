@@ -85,7 +85,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 
   return (
     <View style={styles.mainContainer}>
-      <Timer onTimeOut={controller.onTimeUp} key={controller.roundId} />
+      <Timer onTimeOut={controller.onTimeOver} key={controller.roundId} />
       <View>
         <Text style={styles.score}>
           {controller.score}
