@@ -47,7 +47,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 controller.selectedIndexes.value.findIndex(v => v === idx) < 0
               ) {
                 return inactiveColor;
-              }  else {
+              } else {
                 return activeColor;
               }
             });
@@ -87,16 +87,16 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
     <View style={styles.mainContainer}>
       <Timer onTimeOut={controller.onTimeOver} key={controller.roundId} />
       <View>
-        <Text style={styles.score}>
+        <Text style={styles.problemSolved}>
           {controller.score}
-          <StopWatch />
+          {/* <StopWatch /> */}
         </Text>
       </View>
       <View style={styles.backButton}>
-      <Button
-        title="<"
-        onPress={() => console.log('Simple Button pressed')}
-      />
+        <Button
+          title="<"
+          onPress={controller.onTouchBackButton}
+        />
       </View>
       <Animated.View style={[styles.answerCell, controller.animatedStyles]}>
         <Text style={styles.number} accessibilityLabel="answer-cell">
@@ -117,10 +117,10 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 }
 
 const styles = StyleSheet.create({
-  backButton:{
-    width:50,
-    left:10,
-    top:10,
+  backButton: {
+    width: 50,
+    left: 10,
+    top: 10,
   },
   mainContainer: {
     flex: 1,
@@ -139,10 +139,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     color: '#000000',
   },
-  score: {
+  problemSolved: {
     top: 10,
-    fontSize: 18,
-    color: '#000000',
+    fontSize: 30,
+    padding: 10,
+    color: '#ffffff',
+    textAlign: 'right'
   },
   timer: {
     borderWidth: 2,

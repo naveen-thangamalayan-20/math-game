@@ -150,4 +150,16 @@ describe('Create Android session', function () {
   it("should show the current score and best score with the reason in the popup", () => {
     
   })
+
+  it("should show the time up popup when game round times up", () => {
+    
+  })
+
+  it("should show the best and current score in the popup", () => {
+    
+  })
+
+  it("on back button select should pause the game", () => {
+    
+  })
 });

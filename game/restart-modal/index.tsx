@@ -9,10 +9,24 @@ import {useRestartModalController} from './controller';
 export type RestartModelProps = {
   navigation: any;
   onRestartGame: () => void;
+  onResumeGame: () => void;
 };
 const RestartModal = (props: RestartModelProps) => {
   const controller = useRestartModalController(props);
   const dispatch = useDispatch();
+
+  const renderResumeButton = () => {
+    return (
+      controller.shouldRenderResumeButton() && (
+        <Pressable
+          style={[styles.button, styles.buttonClose]}
+          onPress={controller.onResumeGame}>
+          <Text style={styles.textStyle}>Resume</Text>
+        </Pressable>
+      )
+    );
+  };
+
   const renderButtons = () => {
     return (
       <>
@@ -26,35 +40,38 @@ const RestartModal = (props: RestartModelProps) => {
           onPress={controller.onRestartGame}>
           <Text style={styles.textStyle}>Restart</Text>
         </Pressable>
+        {renderResumeButton()}
       </>
     );
   };
 
   const renderScore = () => {
-    return (
-      <>
-        <View style={styles.score}>
-          <View style={styles.scoreHeader}>
-            <Text></Text>
-            <Text>Problems solved</Text>
-            <Text>Time</Text>
-            <Text>Speed</Text>
+    if (controller.shouldRenderScores()) {
+      return (
+        <>
+          <View style={styles.score}>
+            <View style={styles.scoreHeader}>
+              <Text></Text>
+              <Text>Problems solved</Text>
+              <Text>Time</Text>
+              <Text>Speed</Text>
+            </View>
+            <View style={styles.scoreData}>
+              <Text>Current Score</Text>
+              <Text>{controller.problemSolved}</Text>
+              <Text>{controller.getFormattedTime()}</Text>
+              <Text>{controller.getSpeed()}</Text>
+            </View>
+            <View style={styles.scoreData}>
+              <Text>High Score</Text>
+              <Text>123</Text>
+              <Text>1.25mins</Text>
+              <Text>1.6 answers/sec</Text>
+            </View>
           </View>
-          <View style={styles.scoreData}>
-            <Text>Current Score</Text>
-            <Text>{controller.score}</Text>
-            <Text>{controller.getFormattedTime()}</Text>
-            <Text>{controller.getSpeed()}</Text>
-          </View>
-          <View style={styles.scoreData}>
-            <Text>High Score</Text>
-            <Text>123</Text>
-            <Text>1.25mins</Text>
-            <Text>1.6 answers/sec</Text>
-          </View>
-        </View>
-      </>
-    );
+        </>
+      );
+    }
   };
 
   return (

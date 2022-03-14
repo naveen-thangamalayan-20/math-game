@@ -31,9 +31,6 @@ const useTimerController = (props: TimerProps) => {
     onUpdate: elapsedTime => {
         console.log(elapsedTime)
       dispatch(
-        // GamePageActions.updateCurrentRoundRemainingTime(
-        //   currentRoundRemainingTime - 1,
-        // ),
         GamePageActions.updateCurrentRoundRemainingTime(
             elapsedTime,
           ),

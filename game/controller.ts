@@ -199,6 +199,14 @@ const useGameController = () => {
     }
   };
 
+  const onTouchBackButton = () => {
+    dispatch(GamePageActions.updateGameOverReason(GameOverReason.PAUSED));
+    dispatch(GamePageActions.setShowRestartModal(true));
+    dispatch(GamePageActions.updateStartTimer(false));
+    stopWatch.pause();
+  }
+
+
   const onTimeOver = () => {
     dispatch(GamePageActions.updateGameOverReason(GameOverReason.TIME_UP));
     dispatch(GamePageActions.setShowRestartModal(true));
@@ -221,6 +229,13 @@ const useGameController = () => {
     stopWatch.start();
   };
 
+  const onResumeGame = () => {
+    dispatch(GamePageActions.updateGameOverReason(GameOverReason.PAUSED));
+    dispatch(GamePageActions.setShowRestartModal(false));
+    dispatch(GamePageActions.updateStartTimer(true));
+    stopWatch.resume();
+  }
+
   return {
     operatorCell,
     result,
@@ -230,6 +245,8 @@ const useGameController = () => {
     onRestartGame,
     validateResult,
     timer: stopWatch.timer,
+    onTouchBackButton,
+    onResumeGame,
   };
 };
 

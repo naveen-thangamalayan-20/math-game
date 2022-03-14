@@ -12,7 +12,7 @@ export const useRestartModalController = (props: RestartModelProps) => {
     (state: RootState) => state.gamePage.showRestartModal,
   );
   const totalTime = useSelector((state: RootState) => state.gamePage.totalTime);
-  const score = useSelector((state: RootState) => state.gamePage.score);
+  const problemSolved = useSelector((state: RootState) => state.gamePage.score);
 
   const getFormattedTime = () => {
     if (totalTime < 60) {
@@ -23,8 +23,16 @@ export const useRestartModalController = (props: RestartModelProps) => {
   };
 
   const getSpeed = () => {
-    return `${(score/totalTime).toFixed(1)} answers/secs`
+    return `${(problemSolved/totalTime).toFixed(1)} answers/secs`
   };
+
+  const shouldRenderScores = () => {
+      return gameOverReason !== GameOverReason.PAUSED;
+  }
+
+  const shouldRenderResumeButton = () => {
+    return gameOverReason === GameOverReason.PAUSED;
+  }
 
   return {
     gameOverReason,
@@ -36,7 +44,10 @@ export const useRestartModalController = (props: RestartModelProps) => {
       props.navigation.navigate('Home');
     },
     getFormattedTime,
-    score,
-    getSpeed
+    problemSolved,
+    getSpeed,
+    shouldRenderScores,
+    shouldRenderResumeButton,
+    onResumeGame: props.onResumeGame,
   };
 };

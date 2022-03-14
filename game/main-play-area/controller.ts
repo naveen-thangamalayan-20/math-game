@@ -34,6 +34,7 @@ export type MainPlayAreaProps = {
   onTimeOver: () => void;
   validateResult: (total: number) => void;
   roundId: number;
+  onTouchBackButton: () => void;
 };
 
 const useMainPlayAreaController = (props: MainPlayAreaProps) => {
@@ -214,6 +215,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     playAnimation()
   }, [props.operatorCells])
 
+  
+
   return {
     answerToBeFound: props.answerToBeFound,
     operatorCells: props.operatorCells,
@@ -229,7 +232,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     roundId: props.roundId,
     animatedStyles,
     score,
-    onTimeOver: props.onTimeOver
+    onTimeOver: props.onTimeOver,
+    onTouchBackButton: props.onTouchBackButton
   };
 };
 

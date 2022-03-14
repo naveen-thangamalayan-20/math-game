@@ -23,12 +23,13 @@ export default function Game( {navigation} : {navigation: any}) {
 
   return (
     <View style={styles.mainContainer} accessibilityLabel="testview" testID="test-mainView">
-      <RestartModal navigation={navigation} onRestartGame={controller.onRestartGame}/>
+      <RestartModal navigation={navigation} onRestartGame={controller.onRestartGame} onResumeGame={controller.onResumeGame}/>
       <MainPlayArea
         answerToBeFound={controller.result}
         operatorCells={controller.operatorCell}
         roundId={controller.roundId}
         onTimeOver={controller.onTimeOver}
+        onTouchBackButton={controller.onTouchBackButton}
         validateResult={controller.validateResult}
       />
     </View>
