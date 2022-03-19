@@ -43,14 +43,14 @@ const App = () => {
         <GestureHandlerRootView style={{flex: 1}}>
           <Stack.Navigator>
             <Stack.Screen
-              name="Game"
-              component={Game}
-              options={{title: 'Game', headerShown: false}}
-            />
-            <Stack.Screen
               name="Home"
               component={Home}
               options={{title: 'Home'}}
+            />
+            <Stack.Screen
+              name="Game"
+              component={Game}
+              options={{title: 'Game', headerShown: false}}
             />
             {/* < /> */}
           </Stack.Navigator>

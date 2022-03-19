@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import highScore from './highscore';
 
-export const INITIAL_TOTAL_ROUND_DURATION = 3;
+export const INITIAL_TOTAL_ROUND_DURATION = 4;
 
 export enum GameOverReason {
   TIME_UP = 'Time up',

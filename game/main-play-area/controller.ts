@@ -15,7 +15,8 @@ import {
 } from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
-import {CellType, OperationCell, Operator} from '../controller';
+import { CellType, OperationCell, Operator } from '../problem-generator';
+// import {CellType, OperationCell, Operator} from '../controller';
 import {GamePageActions} from '../redux';
 import {Cell, CoOrdinates} from './index';
 import useStopWatch from './stop-watch/stop-watch';

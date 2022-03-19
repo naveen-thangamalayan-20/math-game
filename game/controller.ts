@@ -29,15 +29,13 @@ const useGameController = (props: GameProps) => {
     (state: RootState) => state.gamePage.highScorePEV,
   );
   const {result, operatorCell} = operatorAndResultState;
-  console.log('Main,currentRoundRemainingTime', currentRoundRemainingTime);
-  console.log('Main,problemSolved', problemSolved);
-  console.log('Main,highScorePEV', highScorePEV);
 
   useEffect(() => {
     dispatch(GamePageActions.fetchHighScore());
     setroundId(roundId => roundId + 1);
     dispatch(GamePageActions.updateStartTimer(true));
     stopWatch.start();
+    console.log("#######UseEffect")
   }, []);
 
   const getCurrentScore = () => {
@@ -139,7 +137,7 @@ const useGameController = (props: GameProps) => {
     dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
     dispatch(GamePageActions.updateProblemsSolved(0));
     stopWatch.reset()
-    props.navigation.navigate('Home');
+    props.navigation.goBack();
   }
 
   return {
