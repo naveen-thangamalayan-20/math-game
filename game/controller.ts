@@ -143,7 +143,6 @@ const getOperationValuesAndResult = () => {
     ],
   };
 };
-let ran = false;
 
 const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
@@ -160,13 +159,6 @@ const useGameController = () => {
     (state: RootState) => state.gamePage.highScorePEV,
   );
   const {result, operatorCell} = operatorAndResultState;
-  // if(!ran) {
-  //   ran = true;
-  // }
-  // if (ran) {
-
-  //   throw new Error("Error")
-  // }
   console.log('Main,currentRoundRemainingTime', currentRoundRemainingTime);
   console.log('Main,problemSolved', problemSolved);
   console.log('Main,highScorePEV', highScorePEV);
@@ -222,13 +214,7 @@ const useGameController = () => {
   };
 
   const onAnswerNotFound = () => {
-    dispatch(GamePageActions.updateGameOverReason(GameOverReason.WRONG_ANSWER));
     onGameOver(GameOverReason.WRONG_ANSWER);
-    // dispatch(GamePageActions.setShowRestartModal(true));
-    // dispatch(GamePageActions.updateStartTimer(false));
-    // dispatch(GamePageActions.updateTotalTime(stopWatch.timer.current));
-    // setroundId(roundId => roundId + 1);
-    // stopWatch.reset();
   };
 
   const validateResult = (total: number) => {

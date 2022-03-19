@@ -1,31 +1,15 @@
 import useGameController from '../controller';
 import * as redux from 'react-redux';
 import * as React from 'react';
-// import * as stopWatch from '../main-play-area/stop-watch/stop-watch';
-// import * as stopWatch from '../main-play-area/stop-watch/stop-watch';
-// import useStopWatch from '../main-play-area/stop-watch/stop-watch';
 import {render, fireEvent} from '@testing-library/react-native';
 import {Pressable, Text, TouchableHighlight} from 'react-native';
 import {iif} from '../../utils/iif';
 import {GameOverReason} from '../redux';
-// import HighScoreStore from "../highscore";
 
 const mockStopWatchStart = jest.fn();
 const mockStopWatchPause = jest.fn();
 const mockStopWatchResume = jest.fn();
 const mockStopWatchReset = jest.fn();
-const mockedHighScoreStore = jest.fn();
-
-// jest.mock('../main-play-area/stop-watch/stop-watch', () => {
-//   return {
-//     // start: mockStopWatchStart,
-//     start: () => console.log("started timer####"),
-//     pause: jest.fn(),
-//     reset: jest.fn(),
-//     resume: jest.fn(),
-//     timer: 1,
-//   };
-// });
 const gametotalTime = 10;
 jest.mock('../main-play-area/stop-watch/stop-watch', () => ({
   ...jest.requireActual('../main-play-area/stop-watch/stop-watch'),
@@ -178,127 +162,274 @@ describe('Game controller', () => {
     });
   });
 
-  it('should reset score and restart total time and current round time and restart modal should be shown and update current score on round time out', () => {
-    const mockDispatch = jest.fn();
-    const mockedUseDispatch = jest
-      .spyOn(redux, 'useDispatch')
-      .mockImplementation(() => mockDispatch);
-    const problemsSolved = 2;
-    const currentRoundTime = 4;
-    const highScore = {
-      problemsSolved: 10,
-      speed: 1,
-      totalTime: 10,
-    };
-    const mockedUseSelector = jest
-      .spyOn(redux, 'useSelector')
-      .mockReturnValue({progress: null, error: null, value: highScore})
-      .mockReturnValueOnce(currentRoundTime)
-      .mockReturnValueOnce(problemsSolved)
-      .mockReturnValueOnce({progress: null, error: null, value: highScore})
-      .mockReturnValueOnce(currentRoundTime)
-      .mockReturnValueOnce(problemsSolved)
-      .mockReturnValueOnce({progress: null, error: null, value: highScore});
-
-    const {getByText} = render(<SetupDummyComponent />);
-    fireEvent.press(getByText('RoundTimeOut'));
-
-    expect(mockedUseDispatch).toBeCalledTimes(2);
-    iif(function assertCurrentTimeAndProblemSolvedIsResetedAndModalIsHidden() {
-      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
-        payload: {gameOverReason: GameOverReason.TIME_UP},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(4, {
-        payload: {showRestartModal: true},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(5, {
-        payload: {startTimer: false},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(6, {
-        payload: {totalTime: gametotalTime},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(7, {
-        payload: {
-          currentScore: {
-            problemsSolved,
-            speed: problemsSolved / gametotalTime,
-            totalTime: gametotalTime,
+  describe("GameOver On TimeUp", () => {
+    it('should reset score and restart total time and current round time and restart modal should be shown and update current score and not high score', () => {
+      const mockDispatch = jest.fn();
+      const mockedUseDispatch = jest
+        .spyOn(redux, 'useDispatch')
+        .mockImplementation(() => mockDispatch);
+      const problemsSolved = 2;
+      const currentRoundTime = 4;
+      const highScore = {
+        problemsSolved: 10,
+        speed: 1,
+        totalTime: 10,
+      };
+      const mockedUseSelector = jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValue({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore});
+  
+      const {getByText} = render(<SetupDummyComponent />);
+      fireEvent.press(getByText('RoundTimeOut'));
+  
+      expect(mockedUseDispatch).toBeCalledTimes(2);
+      iif(function assertCurrentTimeAndProblemSolvedIsResetedAndModalIsHidden() {
+        expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+          payload: {gameOverReason: GameOverReason.TIME_UP},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+          payload: {showRestartModal: true},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(5, {
+          payload: {startTimer: false},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(6, {
+          payload: {totalTime: gametotalTime},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(7, {
+          payload: {
+            currentScore: {
+              problemsSolved,
+              speed: problemsSolved / gametotalTime,
+              totalTime: gametotalTime,
+            },
           },
-        },
-        type: 'gamePage/updateGamePageState',
+          type: 'gamePage/updateGamePageState',
+        });
+      });
+      iif(function assertHighScoreIsUpdated() {
+        expect(mockDispatch).toBeCalledTimes(7);
+      });
+      iif(function assertStopWatchIsReseted() {
+        expect(mockStopWatchReset).toBeCalledTimes(1);
       });
     });
-    expect(mockDispatch).toBeCalledTimes(7);
-    iif(function assertStopWatchIsReseted() {
-      expect(mockStopWatchReset).toBeCalledTimes(1);
+  
+    it('should reset score and restart total time and current round time and restart modal should be shown and update high score if current score is highScore', () => {
+      const mockDispatch = jest.fn();
+      const mockedUseDispatch = jest
+        .spyOn(redux, 'useDispatch')
+        .mockImplementation(() => mockDispatch);
+      const problemsSolved = 10;
+      const currentRoundTime = 4;
+      const highScore = {
+        problemsSolved: 10,
+        speed: 0.1,
+        totalTime: 100,
+      };
+      // const mockedHighScoreStore = jest.fn();
+      // HighScoreStore.store = mockedHighScoreStore;
+      const mockedUseSelector = jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValue({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore});
+  
+      const {getByText} = render(<SetupDummyComponent />);
+      fireEvent.press(getByText('RoundTimeOut'));
+  
+      expect(mockedUseDispatch).toBeCalledTimes(2);
+      iif(function assertCurrentTimeAndProblemSolvedIsResetedAndModalIsHidden() {
+        expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+          payload: {gameOverReason: GameOverReason.TIME_UP},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+          payload: {showRestartModal: true},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(5, {
+          payload: {startTimer: false},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(6, {
+          payload: {totalTime: gametotalTime},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(7, {
+          payload: {
+            currentScore: {
+              problemsSolved,
+              speed: problemsSolved / gametotalTime,
+              totalTime: gametotalTime,
+            },
+          },
+          type: 'gamePage/updateGamePageState',
+        });
+      });
+      iif(function assertHighScoreIsUpdated() {
+        expect(mockDispatch).toBeCalledTimes(8);
+      });
+      iif(function assertStopWatchIsReseted() {
+        expect(mockStopWatchReset).toBeCalledTimes(1);
+      });
     });
   });
 
-  it('should reset score and restart total time and current round time and restart modal should be shown and update high score if current score is highScore', () => {
-    const mockDispatch = jest.fn();
-    const mockedUseDispatch = jest
-      .spyOn(redux, 'useDispatch')
-      .mockImplementation(() => mockDispatch);
-    const problemsSolved = 10;
-    const currentRoundTime = 4;
-    const highScore = {
-      problemsSolved: 10,
-      speed: 0.1,
-      totalTime: 100,
+  describe("GameOver On WrongAnswer", () => {
+    const SetupDummyComponentWithResult = (props:{ answer: number} ) => {
+      const controller = useGameController();
+      return (
+        <>
+          <Pressable data-testid="restart-btn" onPress={() => controller.validateResult(props.answer)}>
+            <Text>ValidateResult</Text>
+          </Pressable>
+          <Text
+            data-testid="result"
+            onPress={controller.onTouchBackButton}>
+            <Text>{controller.result}</Text>
+          </Text>
+        </>
+      );
     };
-    // const mockedHighScoreStore = jest.fn();
-    // HighScoreStore.store = mockedHighScoreStore;
-    const mockedUseSelector = jest
-      .spyOn(redux, 'useSelector')
-      .mockReturnValue({progress: null, error: null, value: highScore})
-      .mockReturnValueOnce(currentRoundTime)
-      .mockReturnValueOnce(problemsSolved)
-      .mockReturnValueOnce({progress: null, error: null, value: highScore})
-      .mockReturnValueOnce(currentRoundTime)
-      .mockReturnValueOnce(problemsSolved)
-      .mockReturnValueOnce({progress: null, error: null, value: highScore});
-
-    const {getByText} = render(<SetupDummyComponent />);
-    fireEvent.press(getByText('RoundTimeOut'));
-
-    expect(mockedUseDispatch).toBeCalledTimes(2);
-    iif(function assertCurrentTimeAndProblemSolvedIsResetedAndModalIsHidden() {
-      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
-        payload: {gameOverReason: GameOverReason.TIME_UP},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(4, {
-        payload: {showRestartModal: true},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(5, {
-        payload: {startTimer: false},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(6, {
-        payload: {totalTime: gametotalTime},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(7, {
-        payload: {
-          currentScore: {
-            problemsSolved,
-            speed: problemsSolved / gametotalTime,
-            totalTime: gametotalTime,
+    it('should reset score and restart total time and current round time and restart modal should be shown and update current score and not high score', () => {
+      const mockDispatch = jest.fn();
+      const mockedUseDispatch = jest
+        .spyOn(redux, 'useDispatch')
+        .mockImplementation(() => mockDispatch);
+      const problemsSolved = 2;
+      const currentRoundTime = 4;
+      const highScore = {
+        problemsSolved: 10,
+        speed: 1,
+        totalTime: 10,
+      };
+      const wrongAnswer = Number.MAX_SAFE_INTEGER;
+      const mockedUseSelector = jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValue({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore});
+  
+      const {getByText} = render(<SetupDummyComponentWithResult answer={wrongAnswer} />);
+      fireEvent.press(getByText('ValidateResult'));
+  
+      expect(mockedUseDispatch).toBeCalledTimes(2);
+      iif(function assertCurrentTimeAndProblemSolvedIsResetedAndModalIsHidden() {
+        expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+          payload: {gameOverReason: GameOverReason.WRONG_ANSWER},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+          payload: {showRestartModal: true},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(5, {
+          payload: {startTimer: false},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(6, {
+          payload: {totalTime: gametotalTime},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(7, {
+          payload: {
+            currentScore: {
+              problemsSolved,
+              speed: problemsSolved / gametotalTime,
+              totalTime: gametotalTime,
+            },
           },
-        },
-        type: 'gamePage/updateGamePageState',
+          type: 'gamePage/updateGamePageState',
+        });
+      });
+      iif(function assertHighScoreIsNotUpdated() {
+        expect(mockDispatch).toBeCalledTimes(7);
+      });
+      iif(function assertStopWatchIsReseted() {
+        expect(mockStopWatchReset).toBeCalledTimes(1);
       });
     });
-    iif(function assertHighScoreIsUpdated() {
-      expect(mockDispatch).toBeCalledTimes(8);
-    });
-    iif(function assertStopWatchIsReseted() {
-      expect(mockStopWatchReset).toBeCalledTimes(1);
+  
+    it('should reset score and restart total time and current round time and restart modal should be shown and update high score if current score is highScore', () => {
+      const mockDispatch = jest.fn();
+      const mockedUseDispatch = jest
+        .spyOn(redux, 'useDispatch')
+        .mockImplementation(() => mockDispatch);
+      const problemsSolved = 10;
+      const currentRoundTime = 4;
+      const highScore = {
+        problemsSolved: 10,
+        speed: 0.1,
+        totalTime: 100,
+      };
+      const wrongAnswer = Number.MAX_SAFE_INTEGER;
+      const mockedUseSelector = jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValue({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore});
+  
+      const {getByText} = render(<SetupDummyComponentWithResult answer={wrongAnswer}/>);
+      fireEvent.press(getByText('ValidateResult'));
+  
+      expect(mockedUseDispatch).toBeCalledTimes(2);
+      iif(function assertCurrentTimeAndProblemSolvedIsResetedAndModalIsHidden() {
+        expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+          payload: {gameOverReason: GameOverReason.WRONG_ANSWER},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+          payload: {showRestartModal: true},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(5, {
+          payload: {startTimer: false},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(6, {
+          payload: {totalTime: gametotalTime},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(7, {
+          payload: {
+            currentScore: {
+              problemsSolved,
+              speed: problemsSolved / gametotalTime,
+              totalTime: gametotalTime,
+            },
+          },
+          type: 'gamePage/updateGamePageState',
+        });
+      });
+      iif(function assertHighScoreIsUpdated() {
+        expect(mockDispatch).toBeCalledTimes(8);
+      });
+      iif(function assertStopWatchIsReseted() {
+        expect(mockStopWatchReset).toBeCalledTimes(1);
+      });
     });
   });
 });
