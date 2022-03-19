@@ -1,148 +1,15 @@
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
+import { generateRandomNumber, shuffle } from '../utils/iif';
 import useStopWatch from './main-play-area/stop-watch/stop-watch';
+import { getOperationValuesAndResult, Operator } from './problem-generator';
 import {
   GameOverReason,
   GamePageActions,
   INITIAL_TOTAL_ROUND_DURATION,
 } from './redux';
 
-type SupportedOperation = 'ADDITION' | 'SUBTRACTION' | 'MULTIPLICATION';
-// | "DIVISION"
-export type Operator = {
-  label: string;
-  operate: (value1: number, value2: number) => number;
-};
-
-type IOperation = {
-  [key in SupportedOperation]: Operator;
-};
-
-const operations: IOperation = {
-  ADDITION: {
-    label: '+',
-    operate: (value1: number, value2: number) => value1 + value2,
-  },
-  SUBTRACTION: {
-    label: '-',
-    operate: (value1: number, value2: number) => value1 - value2,
-  },
-  MULTIPLICATION: {
-    label: '*',
-    operate: (value1: number, value2: number) => value1 * value2,
-  },
-  // DIVISION: {
-  //   label: "/",
-  //   operate: (value1: number, value2: number) => value1 / value2
-  // }
-};
-
-export type OperationCell =
-  | {
-      type: CellType.NUMBER;
-      value: number;
-    }
-  | {
-      type: CellType.OPERATOR;
-      value: Operator;
-    };
-
-const totalCellsCount = 4;
-const difficultyLevel = 1;
-
-const generateRandomNumber = (
-  upperLimit: number,
-  startValue: number = 0,
-  allowDecimals = false,
-) =>
-  allowDecimals
-    ? Math.round((Math.random() * upperLimit + startValue) * 10) / 10
-    : Math.floor(Math.random() * upperLimit + startValue);
-
-const shuffle = (array: OperationCell[]) => {
-  let currentIndex = array.length,
-    randomIndex;
-
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-    // Pick a remaining element...
-    randomIndex = generateRandomNumber(currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
-
-  return array;
-};
-
-export enum CellType {
-  NUMBER,
-  OPERATOR,
-}
-
-const getOperationValuesAndResult = () => {
-  const operatorCell: OperationCell[] = [];
-  const operand1 = generateRandomNumber(
-    difficultyLevel * 10,
-    difficultyLevel + 2,
-  );
-  const operand2 = generateRandomNumber(
-    difficultyLevel * 10,
-    difficultyLevel + 2,
-  );
-  const operationKeys = Object.keys(operations);
-  let totalOperationsCount = operationKeys.length;
-  const firstOperatorIndex = generateRandomNumber(totalOperationsCount);
-  const answerOperator =
-    operations[operationKeys[firstOperatorIndex] as SupportedOperation];
-  [operationKeys[totalOperationsCount - 1], operationKeys[firstOperatorIndex]] =
-    [
-      operationKeys[firstOperatorIndex],
-      operationKeys[totalOperationsCount - 1],
-    ];
-  const newTotalOperationCountAfterSwappingChooseOperator =
-    --totalOperationsCount;
-  const otherOperator =
-    operations[
-      operationKeys[
-        generateRandomNumber(newTotalOperationCountAfterSwappingChooseOperator)
-      ] as SupportedOperation
-    ];
-  const choosenOperatorCells = shuffle([
-    {
-      type: CellType.OPERATOR,
-      value: answerOperator,
-    },
-    {
-      type: CellType.OPERATOR,
-      value: otherOperator,
-    },
-  ]);
-  const operandCells = shuffle([
-    {
-      type: CellType.NUMBER,
-      value: operand1,
-    },
-    {
-      type: CellType.NUMBER,
-      value: operand2,
-    },
-  ]);
-  return {
-    result: answerOperator.operate(operand1, operand2),
-    operatorCell: [
-      operandCells[0],
-      choosenOperatorCells[0],
-      choosenOperatorCells[1],
-      operandCells[1],
-    ],
-  };
-};
 
 const useGameController = () => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
@@ -263,6 +130,12 @@ const useGameController = () => {
     dispatch(GamePageActions.updateStartTimer(true));
     stopWatch.resume();
   };
+
+  const onQuitGame = () => {
+    dispatch(GamePageActions.setShowRestartModal(false));
+      dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
+      props.navigation.navigate('Home');
+  }
 
   return {
     operatorCell,

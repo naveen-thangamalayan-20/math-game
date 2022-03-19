@@ -5,6 +5,8 @@ import {render, fireEvent} from '@testing-library/react-native';
 import {Pressable, Text, TouchableHighlight} from 'react-native';
 import {iif} from '../../utils/iif';
 import {GameOverReason} from '../redux';
+import * as problemGenerator from '../problem-generator';
+import { CellType } from '../problem-generator';
 
 const mockStopWatchStart = jest.fn();
 const mockStopWatchPause = jest.fn();
@@ -431,5 +433,89 @@ describe('Game controller', () => {
         expect(mockStopWatchReset).toBeCalledTimes(1);
       });
     });
+  });
+
+  it("should restart the current round time, update the problemsSolved when answer is correct", () => {
+    const SetupDummyComponentWithResult = (props:{ answer: number} ) => {
+      const controller = useGameController();
+      return (
+        <>
+          <Pressable data-testid="restart-btn" onPress={() => controller.validateResult(props.answer)}>
+            <Text>ValidateResult</Text>
+          </Pressable>
+          <Text
+            data-testid="result"
+            onPress={controller.onTouchBackButton}>
+            <Text>{controller.result}</Text>
+          </Text>
+        </>
+      );
+    };
+
+    const correctAnswer = 20;
+    jest.spyOn(problemGenerator, "getOperationValuesAndResult").mockImplementation(() => ({
+      result: correctAnswer,
+      operatorCell: [
+        {
+          type: CellType.NUMBER,
+          value: 10,
+        },
+        {
+          type: CellType.OPERATOR,
+          value: problemGenerator.operations.ADDITION,
+        },
+        {
+          type: CellType.NUMBER,
+          value: 10,
+        },
+        {
+          type: CellType.OPERATOR,
+          value: problemGenerator.operations.SUBTRACTION,
+        },
+      ]
+    }))
+    const mockDispatch = jest.fn();
+      const mockedUseDispatch = jest
+        .spyOn(redux, 'useDispatch')
+        .mockImplementation(() => mockDispatch);
+      const problemsSolved = 1;
+      const currentRoundTime = 4;
+      const highScore = {
+        problemsSolved: 10,
+        speed: 0.1,
+        totalTime: 100,
+      };
+      const mockedUseSelector = jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValue({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore});
+  
+      const {getByText} = render(<SetupDummyComponentWithResult answer={correctAnswer}/>);
+      fireEvent.press(getByText('ValidateResult'));
+  
+      expect(mockedUseDispatch).toBeCalledTimes(3);
+      iif(function assertCurrentTimeIsRestedAndProblemSolvedIsUpdated() {
+        expect(mockDispatch).toHaveBeenNthCalledWith(2, {
+          payload: {startTimer: true},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+          payload: {currentRoundRemainingTime: 3, totalGameRemainingTime: 3},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+          payload: {problemsSolved: 2},
+          type: 'gamePage/updateGamePageState',
+        });
+      });
+      expect(mockDispatch).toBeCalledTimes(4);
+      iif(function assertStopWatchIsNotReseted() {
+        expect(mockStopWatchReset).toBeCalledTimes(0);
+      });
   });
 });
