@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import {LayoutChangeEvent} from 'react-native';
 import {
   PanGestureHandlerGestureEvent,
@@ -14,8 +14,8 @@ import {
   withTiming,
 } from 'react-native-reanimated';
 import {useDispatch, useSelector} from 'react-redux';
-import { RootState } from '../../store';
-import { CellType, OperationCell, Operator } from '../controller';
+import {RootState} from '../../store';
+import {CellType, OperationCell, Operator} from '../controller';
 import {GamePageActions} from '../redux';
 import {Cell, CoOrdinates} from './index';
 import useStopWatch from './stop-watch/stop-watch';
@@ -46,8 +46,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const rowCount = 2;
   const columnCount = 2;
   const patternMargin = 2;
-  const score = useSelector((state: RootState) => state.gamePage.score);
-  const stopWatch = useStopWatch()
+  const score = useSelector((state: RootState) => state.gamePage.problemsSolved);
+  const stopWatch = useStopWatch();
 
   const cvc = useAnimatedStyle(() => ({
     flexDirection: 'row',
@@ -69,12 +69,25 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const checkResult = () => {
     // let total = 0;
     if (selectedIndexes.value.length == 3) {
-      const selectedCells = selectedIndexes.value.map((index) => props.operatorCells[index]);
-      const operandsInSelectedCells = selectedCells.filter((cell)=> cell.type === CellType.NUMBER);
-      const operatorsInSelectedCells = selectedCells.filter((cell)=> cell.type === CellType.OPERATOR);
-      if(selectedCells[0].type === CellType.NUMBER && selectedCells[1].type === CellType.OPERATOR && selectedCells[2].type === CellType.NUMBER) {
+      const selectedCells = selectedIndexes.value.map(
+        index => props.operatorCells[index],
+      );
+      const operandsInSelectedCells = selectedCells.filter(
+        cell => cell.type === CellType.NUMBER,
+      );
+      const operatorsInSelectedCells = selectedCells.filter(
+        cell => cell.type === CellType.OPERATOR,
+      );
+      if (
+        selectedCells[0].type === CellType.NUMBER &&
+        selectedCells[1].type === CellType.OPERATOR &&
+        selectedCells[2].type === CellType.NUMBER
+      ) {
         const operatorValue = operatorsInSelectedCells[0].value as Operator;
-        const total = operatorValue.operate(operandsInSelectedCells[0].value as number, operandsInSelectedCells[1].value as number)
+        const total = operatorValue.operate(
+          operandsInSelectedCells[0].value as number,
+          operandsInSelectedCells[1].value as number,
+        );
         props.validateResult(total);
       }
       // selectedIndexes.value.forEach(index => {
@@ -96,10 +109,10 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
         selectedIndexes.value.length === 0
       ) {
         const selected: number[] = [];
-     
+
         patternPoints.value.every((p, idx) => {
-          console.log("EventX", evt.x, p.position.x)
-          console.log("EventY", evt.y, p.position.y)
+          console.log('EventX', evt.x, p.position.x);
+          console.log('EventY', evt.y, p.position.y);
           if (
             (p.position.x - evt.x) * (p.position.x - evt.x) +
               (p.position.y - evt.y) * (p.position.y - evt.y) <
@@ -120,8 +133,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
         selectedIndexes.value.length > 0
       ) {
         patternPoints.value.every((p, idx) => {
-          console.log("EventActiveX", evt.x, p.position.x)
-          console.log("EventActiveY", evt.y, p.position.y)
+          console.log('EventActiveX', evt.x, p.position.x);
+          console.log('EventActiveY', evt.y, p.position.y);
           if (
             (p.position.x - evt.x) * (p.position.x - evt.x) +
               (p.position.y - evt.y) * (p.position.y - evt.y) <
@@ -138,7 +151,9 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
       }
     },
     onEnd: evt => {
-      if (!canTouch.value) return;
+      if (!canTouch.value) {
+        return;
+      }
       endPoint.value = null;
       if (selectedIndexes.value.length > 0) {
         runOnJS(checkResult)();
@@ -148,8 +163,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
     const {width, height} = event.nativeEvent.layout;
-    console.log("ContainerX", event.nativeEvent.layout.x)
-    console.log("ContainerY", event.nativeEvent.layout.y)
+    console.log('ContainerX', event.nativeEvent.layout.x);
+    console.log('ContainerY', event.nativeEvent.layout.y);
     containerLayout.value = {
       width,
       height,
@@ -172,21 +187,20 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     patternPoints.value = points.map((p, idx) => ({
       position: {x: p.x, y: p.y},
     }));
-   
-   console.log("X", event.nativeEvent.layout.x)
-   console.log("Y", event.nativeEvent.layout.y)
-   console.log("Points", points)
+
+    console.log('X', event.nativeEvent.layout.x);
+    console.log('Y', event.nativeEvent.layout.y);
+    console.log('Points', points);
   };
 
   const getOperatorCellLabel = (idx: number) => {
-    if(props.operatorCells[idx].type === CellType.OPERATOR) {
-      const value = props.operatorCells[idx].value as Operator
+    if (props.operatorCells[idx].type === CellType.OPERATOR) {
+      const value = props.operatorCells[idx].value as Operator;
       return value.label;
-    } 
-    else {
+    } else {
       return props.operatorCells[idx].value;
     }
-  }
+  };
 
   const onTimeUp = () => {
     console.log('###########');
@@ -199,23 +213,21 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      transform: [{ scaleX: offset.value }, { scaleY: offset.value }],
+      transform: [{scaleX: offset.value}, {scaleY: offset.value}],
     };
   });
- 
+
   const playAnimation = () => {
     offset.value = 0;
     offset.value = withTiming(1, {
       duration: 250,
       // easing: Easing.out(Easing.exp),
     });
-  }
- 
-  useEffect(() => {
-    playAnimation()
-  }, [props.operatorCells])
+  };
 
-  
+  useEffect(() => {
+    playAnimation();
+  }, [props.operatorCells]);
 
   return {
     answerToBeFound: props.answerToBeFound,
@@ -233,7 +245,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     animatedStyles,
     score,
     onTimeOver: props.onTimeOver,
-    onTouchBackButton: props.onTouchBackButton
+    onTouchBackButton: props.onTouchBackButton,
   };
 };
 

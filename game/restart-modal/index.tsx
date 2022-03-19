@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../store';
-import {GamePageActions} from '../redux';
+import {GamePageActions, HighScore} from '../redux';
 import {useRestartModalController} from './controller';
 
 export type RestartModelProps = {
@@ -47,26 +47,28 @@ const RestartModal = (props: RestartModelProps) => {
 
   const renderScore = () => {
     if (controller.shouldRenderScores()) {
+      const formattedCurrentScore = controller.getFormattedCurrentScore();
+      const formattedHighScore = controller.getFormattedHighScore();
       return (
         <>
           <View style={styles.score}>
             <View style={styles.scoreHeader}>
-              <Text></Text>
+              <Text />
               <Text>Problems solved</Text>
               <Text>Time</Text>
               <Text>Speed</Text>
             </View>
             <View style={styles.scoreData}>
               <Text>Current Score</Text>
-              <Text>{controller.problemSolved}</Text>
-              <Text>{controller.getFormattedTime()}</Text>
-              <Text>{controller.getSpeed()}</Text>
+              <Text>{formattedCurrentScore.problemsSolved}</Text>
+              <Text>{formattedCurrentScore.totalTime}</Text>
+              <Text>{formattedCurrentScore.speed}</Text>
             </View>
             <View style={styles.scoreData}>
               <Text>High Score</Text>
-              <Text>123</Text>
-              <Text>1.25mins</Text>
-              <Text>1.6 answers/sec</Text>
+              <Text>{formattedHighScore.problemsSolved}</Text>
+              <Text>{formattedHighScore.totalTime}</Text>
+              <Text>{formattedHighScore.speed}</Text>
             </View>
           </View>
         </>

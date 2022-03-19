@@ -18,12 +18,19 @@ type Props = {
   operatorCells: OperationCell[];
 };
 
-export default function Game( {navigation} : {navigation: any}) {
+export default function Game({navigation}: {navigation: any}) {
   const controller = useGameController();
 
   return (
-    <View style={styles.mainContainer} accessibilityLabel="testview" testID="test-mainView">
-      <RestartModal navigation={navigation} onRestartGame={controller.onRestartGame} onResumeGame={controller.onResumeGame}/>
+    <View
+      style={styles.mainContainer}
+      accessibilityLabel="testview"
+      testID="test-mainView">
+      <RestartModal
+        navigation={navigation}
+        onRestartGame={controller.onRestartGame}
+        onResumeGame={controller.onResumeGame}
+      />
       <MainPlayArea
         answerToBeFound={controller.result}
         operatorCells={controller.operatorCell}

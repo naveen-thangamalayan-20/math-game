@@ -29,19 +29,15 @@ const useTimerController = (props: TimerProps) => {
     updateInterval: 0.1,
     // duration: 4,
     onUpdate: elapsedTime => {
-        console.log(elapsedTime)
-      dispatch(
-        GamePageActions.updateCurrentRoundRemainingTime(
-            elapsedTime,
-          ),
-      );
+      console.log(elapsedTime);
+      dispatch(GamePageActions.updateCurrentRoundRemainingTime(elapsedTime));
     },
     onComplete: elapsedTime => props.onTimeOut(),
   });
 
   const getElapsedTimeInPercentage = () => {
-      return 1 - (currentRoundRemainingTime/INITIAL_TOTAL_ROUND_DURATION);
-  }
+    return 1 - currentRoundRemainingTime / INITIAL_TOTAL_ROUND_DURATION;
+  };
 
   return {
     time: currentRoundRemainingTime,

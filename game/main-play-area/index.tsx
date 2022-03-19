@@ -93,10 +93,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
         </Text>
       </View>
       <View style={styles.backButton}>
-        <Button
-          title="<"
-          onPress={controller.onTouchBackButton}
-        />
+        <Button title="<" onPress={controller.onTouchBackButton} />
       </View>
       <Animated.View style={[styles.answerCell, controller.animatedStyles]}>
         <Text style={styles.number} accessibilityLabel="answer-cell">
@@ -144,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     padding: 10,
     color: '#ffffff',
-    textAlign: 'right'
+    textAlign: 'right',
   },
   timer: {
     borderWidth: 2,

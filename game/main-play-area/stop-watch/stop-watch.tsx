@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {View, Text} from 'react-native';
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 const useStopWatch = () => {
   // const [timer, setTimer] = useState(0);
@@ -14,7 +14,7 @@ const useStopWatch = () => {
     setIsPaused(true);
     increment.current = setInterval(() => {
       // setTimer(timer => timer + 1);
-      timer.current = timer.current+1;
+      timer.current = timer.current + 1;
     }, 1000) as unknown as number;
   };
 
@@ -27,7 +27,7 @@ const useStopWatch = () => {
     setIsPaused(true);
     increment.current = setInterval(() => {
       // setTimer(timer => timer + 1);
-      timer.current = timer.current+1;
+      timer.current = timer.current + 1;
     }, 1000) as unknown as number;
   };
 
@@ -36,13 +36,13 @@ const useStopWatch = () => {
     setIsActive(false);
     setIsPaused(false);
     // setTimer(0);
-    timer.current =0;
+    timer.current = 0;
   };
 
   const restart = () => {
     reset();
     start();
-  }
+  };
 
   // const formatTime = () => {
   //   const getSeconds = `0${timer % 60}`.slice(-2);

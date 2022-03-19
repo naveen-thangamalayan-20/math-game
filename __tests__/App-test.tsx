@@ -83,9 +83,11 @@ describe('Create Android session', function () {
         client.$('~option-3').getText(),
       ]);
       expect(answer).not.toBe(newAnswer);
-      expect(`${newNumberOptionOne}-${newOperatorOptionOne}-${newOperatorOptionTwo}-${newNumberOptionTwo}`)
-      .not
-      .toBe(`${numberOptionOne}-${operatorOptionOne}-${operatorOptionTwo}-${numberOptionTwo}`);
+      expect(
+        `${newNumberOptionOne}-${newOperatorOptionOne}-${newOperatorOptionTwo}-${newNumberOptionTwo}`,
+      ).not.toBe(
+        `${numberOptionOne}-${operatorOptionOne}-${operatorOptionTwo}-${numberOptionTwo}`,
+      );
     } finally {
       const delete_session = await client.deleteSession();
       expect(delete_session).toEqual(null);
@@ -121,7 +123,7 @@ describe('Create Android session', function () {
           {action: 'moveTo', x: 835, y: 1750},
           'release',
         ]);
-      }  else {
+      } else {
         await client.touchAction([
           {action: 'press', element: await client.$('~option-0')},
           {action: 'moveTo', x: 635, y: 1750},
@@ -130,36 +132,24 @@ describe('Create Android session', function () {
         ]);
       }
       await sleep(3000);
-      const restartModal = await client.$('~restart-modal')
-      const isRestartModalDisplayed = await restartModal.isEnabled()
-      expect(isRestartModalDisplayed).toBeTruthy()
+      const restartModal = await client.$('~restart-modal');
+      const isRestartModalDisplayed = await restartModal.isEnabled();
+      expect(isRestartModalDisplayed).toBeTruthy();
     } finally {
       const delete_session = await client.deleteSession();
       expect(delete_session).toEqual(null);
     }
   });
 
-  it("should restart game when restart button is clicked on restart popup", () => {
+  it('should restart game when restart button is clicked on restart popup', () => {});
 
-  })
+  it('should quit and go back to home screen  when quit is clicked on restart popup', () => {});
 
-  it("should quit and go back to home screen  when quit is clicked on restart popup", () => {
-    
-  })
+  it('should show the current score and best score with the reason in the popup', () => {});
 
-  it("should show the current score and best score with the reason in the popup", () => {
-    
-  })
+  it('should show the time up popup when game round times up', () => {});
 
-  it("should show the time up popup when game round times up", () => {
-    
-  })
+  it('should show the best and current score in the popup', () => {});
 
-  it("should show the best and current score in the popup", () => {
-    
-  })
-
-  it("on back button select should pause the game", () => {
-    
-  })
+  it('on back button select should pause the game', () => {});
 });

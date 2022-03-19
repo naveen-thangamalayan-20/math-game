@@ -9,5 +9,9 @@ describe('Game', () => {
     it('should resume game on resume option click', () => {
       // const controller = useRestartModalController({});
     });
+
+    it('should update highScore if current score is greater than the highscore', () => {
+      // const controller = useRestartModalController({});
+    });
   });
 });
