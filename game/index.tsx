@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import useGameController from './controller';
+import useGameController, { GameProps } from './controller';
 import MainPlayArea from './main-play-area';
 import RestartModal from './restart-modal';
 
@@ -18,8 +18,8 @@ export type Cell = {
 //   operatorCells: OperationCell[];
 // };
 
-export default function Game({navigation}: {navigation: any}) {
-  const controller = useGameController();
+export default function Game(props: GameProps) {
+  const controller = useGameController(props);
 
   return (
     <View
@@ -27,7 +27,8 @@ export default function Game({navigation}: {navigation: any}) {
       accessibilityLabel="testview"
       testID="test-mainView">
       <RestartModal
-        navigation={navigation}
+        // navigation={navigation}
+        onQuitGame={controller.onQuitGame}
         onRestartGame={controller.onRestartGame}
         onResumeGame={controller.onResumeGame}
       />

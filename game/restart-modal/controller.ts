@@ -65,11 +65,12 @@ export const useRestartModalController = (props: RestartModelProps) => {
     gameOverReason,
     showRestartModal,
     onRestartGame: props.onRestartGame,
-    onQuitGame: () => {
-      dispatch(GamePageActions.setShowRestartModal(false));
-      dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
-      props.navigation.navigate('Home');
-    },
+    // onQuitGame: () => {
+    //   dispatch(GamePageActions.setShowRestartModal(false));
+    //   dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
+    //   props.navigation.navigate('Home');
+    // },
+    onQuitGame: props.onQuitGame,
     getFormattedTime,
     problemSolved: currentScore.problemsSolved,
     // getSpeed,

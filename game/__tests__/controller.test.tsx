@@ -1,4 +1,4 @@
-import useGameController from '../controller';
+import useGameController, { GameProps } from '../controller';
 import * as redux from 'react-redux';
 import * as React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
@@ -27,6 +27,10 @@ jest.mock('../main-play-area/stop-watch/stop-watch', () => ({
   })),
 }));
 
+const createGameProps = (options: {navigation?: any}) => ({
+  navigation: options.navigation ?? jest.fn()
+})
+
 describe('Game controller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -36,7 +40,7 @@ describe('Game controller', () => {
   });
 
   const SetupDummyComponent = () => {
-    const controller = useGameController();
+    const controller = useGameController(createGameProps({}));
     return (
       <>
         <Pressable data-testid="restart-btn" onPress={controller.onRestartGame}>
@@ -294,7 +298,7 @@ describe('Game controller', () => {
 
   describe("GameOver On WrongAnswer", () => {
     const SetupDummyComponentWithResult = (props:{ answer: number} ) => {
-      const controller = useGameController();
+      const controller = useGameController(createGameProps({}));
       return (
         <>
           <Pressable data-testid="restart-btn" onPress={() => controller.validateResult(props.answer)}>
@@ -437,7 +441,7 @@ describe('Game controller', () => {
 
   it("should restart the current round time, update the problemsSolved when answer is correct", () => {
     const SetupDummyComponentWithResult = (props:{ answer: number} ) => {
-      const controller = useGameController();
+      const controller = useGameController(createGameProps({}));
       return (
         <>
           <Pressable data-testid="restart-btn" onPress={() => controller.validateResult(props.answer)}>
@@ -518,4 +522,115 @@ describe('Game controller', () => {
         expect(mockStopWatchReset).toBeCalledTimes(0);
       });
   });
+
+  it("should restart timer and problemsSolved and naviage to home screen", () =>{
+    const mockedNavigate = jest.fn();
+    const navigation = {
+      navigate: mockedNavigate
+    }
+    const SetupDummyComponentWithQuit = () => {
+      const controller = useGameController(createGameProps({navigation}));
+      return (
+        <>
+          <Pressable data-testid="restart-btn" onPress={controller.onQuitGame}>
+            <Text>Quit</Text>
+          </Pressable>
+        </>
+      );
+    };
+
+    const correctAnswer = 20;
+    jest.spyOn(problemGenerator, "getOperationValuesAndResult").mockImplementation(() => ({
+      result: correctAnswer,
+      operatorCell: [
+        {
+          type: CellType.NUMBER,
+          value: 10,
+        },
+        {
+          type: CellType.OPERATOR,
+          value: problemGenerator.operations.ADDITION,
+        },
+        {
+          type: CellType.NUMBER,
+          value: 10,
+        },
+        {
+          type: CellType.OPERATOR,
+          value: problemGenerator.operations.SUBTRACTION,
+        },
+      ]
+    }))
+    const mockDispatch = jest.fn();
+      const mockedUseDispatch = jest
+        .spyOn(redux, 'useDispatch')
+        .mockImplementation(() => mockDispatch);
+      const problemsSolved = 1;
+      const currentRoundTime = 4;
+      const highScore = {
+        problemsSolved: 10,
+        speed: 0.1,
+        totalTime: 100,
+      };
+      const mockedUseSelector = jest
+        .spyOn(redux, 'useSelector')
+        .mockReturnValue({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore})
+        .mockReturnValueOnce(currentRoundTime)
+        .mockReturnValueOnce(problemsSolved)
+        .mockReturnValueOnce({progress: null, error: null, value: highScore});
+  
+      const {getByText} = render(<SetupDummyComponentWithQuit />);
+      fireEvent.press(getByText('Quit'));
+  
+      expect(mockedUseDispatch).toBeCalledTimes(2);
+      iif(function assertCurrentTimeIsRestedAndProblemSolvedIsUpdated() {
+        expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+          payload: {showRestartModal: false},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+          payload: {gameOverReason: GameOverReason.NONE},
+          type: 'gamePage/updateGamePageState',
+        });
+        expect(mockDispatch).toHaveBeenNthCalledWith(5, {
+          payload: {problemsSolved: 0},
+          type: 'gamePage/updateGamePageState',
+        });
+      });
+      expect(mockDispatch).toBeCalledTimes(5);
+      iif(function assertStopWatchIsNotReseted() {
+        expect(mockStopWatchReset).toBeCalledTimes(1);
+      });
+      iif(function assertMoveToNavigationScreen() {
+        expect(mockedNavigate).toBeCalledTimes(1);
+        expect(mockedNavigate).toBeCalledWith('Home');
+      });
+  })
+
+  it("should start current round timer, set fetch highscore and start total time when game screen is loaded", () => {
+    const mockDispatch = jest.fn();
+    const mockedUseDispatch = jest
+      .spyOn(redux, 'useDispatch')
+      .mockImplementation(() => mockDispatch);
+    const mockedUseSelector = jest
+      .spyOn(redux, 'useSelector')
+      .mockReturnValue([0, jest.fn()]);
+
+    render(<SetupDummyComponent />);
+
+    expect(mockedUseDispatch).toBeCalledTimes(2);
+    iif(function assertCurrentTimeAndProblemSolvedIsResetedAndModalIsHidden() {
+      expect(mockDispatch).toHaveBeenNthCalledWith(2, {
+        payload: {startTimer: true},
+        type: 'gamePage/updateGamePageState',
+      });
+    });
+    expect(mockDispatch).toBeCalledTimes(2);
+    iif(function assertStopWatchIsReseted() {
+      expect(mockStopWatchStart).toBeCalledTimes(1);
+    });
+  })
 });

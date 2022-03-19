@@ -7,10 +7,11 @@ import {GamePageActions, HighScore} from '../redux';
 import {useRestartModalController} from './controller';
 
 export type RestartModelProps = {
-  navigation: any;
   onRestartGame: () => void;
   onResumeGame: () => void;
+  onQuitGame: () => void;
 };
+
 const RestartModal = (props: RestartModelProps) => {
   const controller = useRestartModalController(props);
   const dispatch = useDispatch();

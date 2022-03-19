@@ -11,7 +11,10 @@ import {
 } from './redux';
 
 
-const useGameController = () => {
+export type GameProps = {
+  navigation: any;
+}
+const useGameController = (props: GameProps) => {
   const [operatorAndResultState, setOperatorAndResultState] = useState(
     getOperationValuesAndResult(),
   );
@@ -32,9 +35,9 @@ const useGameController = () => {
 
   useEffect(() => {
     dispatch(GamePageActions.fetchHighScore());
+    setroundId(roundId => roundId + 1);
     dispatch(GamePageActions.updateStartTimer(true));
     stopWatch.start();
-    setroundId(roundId => roundId + 1);
   }, []);
 
   const getCurrentScore = () => {
@@ -133,8 +136,10 @@ const useGameController = () => {
 
   const onQuitGame = () => {
     dispatch(GamePageActions.setShowRestartModal(false));
-      dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
-      props.navigation.navigate('Home');
+    dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
+    dispatch(GamePageActions.updateProblemsSolved(0));
+    stopWatch.reset()
+    props.navigation.navigate('Home');
   }
 
   return {
@@ -149,6 +154,7 @@ const useGameController = () => {
     onTouchBackButton,
     onResumeGame,
     getCurrentScore,
+    onQuitGame
   };
 };
 
