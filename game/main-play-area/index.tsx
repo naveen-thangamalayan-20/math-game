@@ -23,15 +23,15 @@ export type Cell = {
   position: CoOrdinates;
 };
 
-
-const backGroundColour = "#121212"
-const numberColour = "#ffffff" 
-const answerColour = "#000000"
-const answerCellBGColour = numberColour
+const backGroundColour = '#121212';
+const numberColour = '#ffffff';
+const answerColour = '#000000';
+const answerCellBGColour = numberColour;
 const inactiveColor = numberColour;
 
-const backButtonIcon = <Icon name="arrow-back-circle-outline" size={38} color={numberColour} />;
-
+const backButtonIcon = (
+  <Icon name="arrow-back-circle-outline" size={38} color={numberColour} />
+);
 
 export default function MainPlayArea(props: MainPlayAreaProps) {
   const rowCount = 2;
@@ -54,9 +54,12 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
               if (
                 controller.selectedIndexes.value.findIndex(v => v === idx) < 0
               ) {
-                return {bgColor:backGroundColour , borderColor: inactiveColor};
+                return {bgColor: backGroundColour, borderColor: inactiveColor};
               } else {
-                return {bgColor:cellSelectedColor , borderColor: cellSelectedBorderColor};;
+                return {
+                  bgColor: cellSelectedColor,
+                  borderColor: cellSelectedBorderColor,
+                };
               }
             });
             const outer = useAnimatedStyle(() => {
@@ -68,7 +71,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 borderColor: patternColor.value.borderColor,
                 backgroundColor: patternColor.value.bgColor,
                 borderRadius: 10,
-                borderWidth:1,
+                borderWidth: 1,
                 margin: patternMargin,
                 color: '#ffffff',
                 // textDecorationColor:"#fffff",
@@ -95,44 +98,80 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   return (
     <View style={styles.mainContainer}>
       <Timer onTimeOut={controller.onTimeOver} key={controller.roundId} />
-      <View>
-        <Text style={styles.problemSolved}>
-          {controller.currentScore.problemsSolved}
-          {/* <StopWatch /> */}
-        </Text>
-        <Text style={styles.problemSolved}>
-          {controller.currentScore.speed}
-          {/* <StopWatch /> */}
-        </Text>
+      <View style={styles.header}>
+        <IconButton
+          onPress={controller.onTouchBackButton}
+          icon={backButtonIcon}
+          style={styles.backButton}
+        />
+        <View style={styles.highScoreContainer}>
+        <View style={styles.highScore}>
+          <Text style={styles.problemSolved}>
+            {controller.currentScore.problemsSolved}
+          </Text>
+          <Text style={styles.highScoreTitle}>solved</Text>
+        </View>
+        <View style={styles.highScore}>
+          <Text style={styles.problemSolved}>
+            {controller.currentScore.speed}
+          </Text>
+          <Text style={styles.highScoreTitle}>answers/msec</Text>
+        </View>
+        </View>
       </View>
-      {/* <View style={styles.backButton}>
-        <Button title="Bacl=k" >{myIcon}</Button>
-      </View> */}
-      <IconButton onPress={controller.onTouchBackButton} icon={backButtonIcon} style={styles.backButton}/>
-      <Animated.View style={[styles.answerCell, controller.animatedStyles]}>
-        <Text style={styles.answer} accessibilityLabel="answer-cell">
-          {controller.answerToBeFound}
-        </Text>
-      </Animated.View>
-      <PanGestureHandler onGestureEvent={controller.panHandler}>
-        <Animated.View
-          style={[styles.cellsContainer, controller.animatedStyles]}
-          onLayout={controller.onContainerLayout}>
-          <TapGestureHandler onGestureEvent={controller.panHandler}>
-            {renderCell()}
-          </TapGestureHandler>
+      <View style={styles.playContainer}>
+        <Animated.View style={[styles.answerCell, controller.animatedStyles]}>
+          <Text style={styles.answer} accessibilityLabel="answer-cell">
+            {controller.answerToBeFound}
+          </Text>
         </Animated.View>
-      </PanGestureHandler>
+        <PanGestureHandler onGestureEvent={controller.panHandler}>
+          <Animated.View
+            style={[styles.cellsContainer, controller.animatedStyles]}
+            onLayout={controller.onContainerLayout}>
+            <TapGestureHandler onGestureEvent={controller.panHandler}>
+              {renderCell()}
+            </TapGestureHandler>
+          </Animated.View>
+        </PanGestureHandler>
+      </View>
     </View>
   );
 }
 
-
 const styles = StyleSheet.create({
+  header: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+  highScore: {
+    flex: 1,
+  },
+  highScoreContainer: {
+    flex: 2,
+    flexDirection: 'row',
+  },
+  highScoreTitle: {
+    fontSize: 16,
+    color: numberColour,
+    textAlign: 'center',
+  },
+  problemSolved: {
+    fontSize: 26,
+    textAlign: 'center',
+    color: numberColour,
+  },
   backButton: {
     width: 50,
     left: 10,
+    height: 50,
     top: 10,
+    flex: 1
+  },
+  playContainer: {
+    flex: 3,
+    elevate: 2,
   },
   mainContainer: {
     flex: 1,
@@ -142,9 +181,9 @@ const styles = StyleSheet.create({
   cellsContainer: {
     flex: 1,
     alignSelf: 'center',
-    top: 180,
     width: 200,
     height: 200,
+    marginTop: 40,
   },
   number: {
     fontSize: 28,
@@ -156,13 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     color: answerColour,
   },
-  problemSolved: {
-    top: 10,
-    fontSize: 30,
-    padding: 10,
-    color: numberColour,
-    textAlign: 'right',
-  },
+
   timer: {
     borderWidth: 2,
     width: 80,
@@ -177,7 +210,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     width: 100,
     height: 100,
-    top: 150,
+    //top: 150,
     borderRadius: 10,
     color: answerColour,
     alignSelf: 'center',
