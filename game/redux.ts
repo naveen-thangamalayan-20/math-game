@@ -31,7 +31,7 @@ type GamePageState = {
   currentRoundRemainingTime: number;
   totalGameRemainingTime: number;
   startTimer: boolean;
-  problemsSolved: number;
+  // problemsSolved: number;
   gameOverReason: GameOverReason;
   totalTime: number;
   currentScore: HighScore;
@@ -44,7 +44,7 @@ const initialState: GamePageState = {
   currentRoundRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
   totalGameRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
   startTimer: false,
-  problemsSolved: 0,
+  // problemsSolved: 0,
   gameOverReason: GameOverReason.NONE,
   totalTime: 0,
   currentScore: {
@@ -138,7 +138,7 @@ export const GamePageActions = {
 
   updateStartTimer: (startTimer: boolean) => updateGamePageState({startTimer}),
 
-  updateProblemsSolved: (score: number) => updateGamePageState({problemsSolved: score}),
+  // updateProblemsSolved: (score: number) => updateGamePageState({problemsSolved: score}),
 
   updateGameOverReason: (reason: GameOverReason) =>
     updateGamePageState({gameOverReason: reason}),

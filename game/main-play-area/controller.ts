@@ -47,7 +47,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const rowCount = 2;
   const columnCount = 2;
   const patternMargin = 2;
-  const score = useSelector((state: RootState) => state.gamePage.problemsSolved);
+  // const problemsSolved = useSelector((state: RootState) => state.gamePage.problemsSolved);
+  const currentScore = useSelector((state: RootState) => state.gamePage.currentScore);
   const stopWatch = useStopWatch();
 
   const cvc = useAnimatedStyle(() => ({
@@ -210,7 +211,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     // dispatch(GamePageActions.setShowRestartModal(true));
   };
 
-  const offset = useSharedValue(0);
+  const offset = useSharedValue(1);
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
@@ -221,14 +222,14 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const playAnimation = () => {
     offset.value = 0;
     offset.value = withTiming(1, {
-      duration: 250,
+      duration: 150,
       // easing: Easing.out(Easing.exp),
     });
   };
 
-  useEffect(() => {
-    playAnimation();
-  }, [props.operatorCells]);
+  // useEffect(() => {
+  //   playAnimation();
+  // }, [props.operatorCells]);
 
   return {
     answerToBeFound: props.answerToBeFound,
@@ -244,7 +245,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     onTimeUp,
     roundId: props.roundId,
     animatedStyles,
-    score,
+    // score: problemsSolved,
+    currentScore,
     onTimeOver: props.onTimeOver,
     onTouchBackButton: props.onTouchBackButton,
   };

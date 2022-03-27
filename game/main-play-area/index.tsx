@@ -11,6 +11,8 @@ import Animated, {
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
 import StopWatch from './stop-watch';
 import Timer from './timer/timer';
+import Icon from 'react-native-vector-icons/dist/Ionicons';
+import IconButton from '../../components/icon-button';
 
 export type CoOrdinates = {
   x: number;
@@ -20,11 +22,16 @@ export type CoOrdinates = {
 export type Cell = {
   position: CoOrdinates;
 };
-const inactiveColor = '#e6e6e6';
 
-type Props = {
-  destinationNumber: number;
-};
+
+const backGroundColour = "#121212"
+const numberColour = "#ffffff" 
+const answerColour = "#000000"
+const answerCellBGColour = numberColour
+const inactiveColor = numberColour;
+
+const backButtonIcon = <Icon name="arrow-back-circle-outline" size={38} color={numberColour} />;
+
 
 export default function MainPlayArea(props: MainPlayAreaProps) {
   const rowCount = 2;
@@ -32,7 +39,8 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   const patternMargin = 2;
   const errorColor = '#D93609';
   // const activeColor = '#5FA8FC';
-  const activeColor = '#CCCCCC';
+  const cellSelectedColor = '#212121';
+  const cellSelectedBorderColor = '#fafafa';
   const controller = useMainPlayAreaController(props);
   function renderCell() {
     return (
@@ -46,9 +54,9 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
               if (
                 controller.selectedIndexes.value.findIndex(v => v === idx) < 0
               ) {
-                return inactiveColor;
+                return {bgColor:backGroundColour , borderColor: inactiveColor};
               } else {
-                return activeColor;
+                return {bgColor:cellSelectedColor , borderColor: cellSelectedBorderColor};;
               }
             });
             const outer = useAnimatedStyle(() => {
@@ -57,9 +65,10 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 height: 2 * controller.R.value,
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderColor: patternColor.value,
-                backgroundColor: patternColor.value,
+                borderColor: patternColor.value.borderColor,
+                backgroundColor: patternColor.value.bgColor,
                 borderRadius: 10,
+                borderWidth:1,
                 margin: patternMargin,
                 color: '#ffffff',
                 // textDecorationColor:"#fffff",
@@ -88,21 +97,26 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
       <Timer onTimeOut={controller.onTimeOver} key={controller.roundId} />
       <View>
         <Text style={styles.problemSolved}>
-          {controller.score}
+          {controller.currentScore.problemsSolved}
+          {/* <StopWatch /> */}
+        </Text>
+        <Text style={styles.problemSolved}>
+          {controller.currentScore.speed}
           {/* <StopWatch /> */}
         </Text>
       </View>
-      <View style={styles.backButton}>
-        <Button title="<" onPress={controller.onTouchBackButton} />
-      </View>
+      {/* <View style={styles.backButton}>
+        <Button title="Bacl=k" >{myIcon}</Button>
+      </View> */}
+      <IconButton onPress={controller.onTouchBackButton} icon={backButtonIcon} style={styles.backButton}/>
       <Animated.View style={[styles.answerCell, controller.animatedStyles]}>
-        <Text style={styles.number} accessibilityLabel="answer-cell">
+        <Text style={styles.answer} accessibilityLabel="answer-cell">
           {controller.answerToBeFound}
         </Text>
       </Animated.View>
       <PanGestureHandler onGestureEvent={controller.panHandler}>
         <Animated.View
-          style={[styles.container, controller.animatedStyles]}
+          style={[styles.cellsContainer, controller.animatedStyles]}
           onLayout={controller.onContainerLayout}>
           <TapGestureHandler onGestureEvent={controller.panHandler}>
             {renderCell()}
@@ -113,6 +127,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   );
 }
 
+
 const styles = StyleSheet.create({
   backButton: {
     width: 50,
@@ -122,9 +137,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     elevate: 2,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: backGroundColour,
   },
-  container: {
+  cellsContainer: {
     flex: 1,
     alignSelf: 'center',
     top: 180,
@@ -134,13 +149,18 @@ const styles = StyleSheet.create({
   number: {
     fontSize: 28,
     alignItems: 'center',
-    color: '#000000',
+    color: numberColour,
+  },
+  answer: {
+    fontSize: 30,
+    alignItems: 'center',
+    color: answerColour,
   },
   problemSolved: {
     top: 10,
     fontSize: 30,
     padding: 10,
-    color: '#ffffff',
+    color: numberColour,
     textAlign: 'right',
   },
   timer: {
@@ -151,7 +171,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: inactiveColor,
+    // borderColor: inactiveColor,
   },
   answerCell: {
     borderWidth: 2,
@@ -159,11 +179,11 @@ const styles = StyleSheet.create({
     height: 100,
     top: 150,
     borderRadius: 10,
-    color: '#fffff',
+    color: answerColour,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: inactiveColor,
-    backgroundColor: inactiveColor,
+    borderColor: answerCellBGColour,
+    backgroundColor: answerCellBGColour,
   },
 });

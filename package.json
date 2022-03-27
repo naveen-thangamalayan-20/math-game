@@ -19,6 +19,7 @@
     "react-native-countdown-circle-timer": "^2.5.4",
     "react-native-design-system": "^1.2.13",
     "react-native-gesture-handler": "^2.1.0",
+    "react-native-paper": "^4.11.2",
     "react-native-progress": "^5.0.0",
     "react-native-reanimated": "^2.3.0",
     "react-native-safe-area-context": "^3.3.2",
@@ -37,6 +38,7 @@
     "@testing-library/react-native": "^9.0.0",
     "@types/jest": "^26.0.23",
     "@types/react-native": "^0.66.4",
+    "@types/react-native-vector-icons": "^6.4.10",
     "@types/react-redux": "^7.1.21",
     "@types/react-test-renderer": "^17.0.1",
     "@types/webdriverio": "^5.0.0",
@@ -68,6 +70,8 @@
     "setupFiles": [
       "./jestSetupFile.js"
     ],
-    "setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect"]
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect"
+    ]
   }
 }

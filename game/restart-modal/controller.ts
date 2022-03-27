@@ -37,6 +37,10 @@ export const useRestartModalController = (props: RestartModelProps) => {
     return `${(problemsSolved / totalTime).toFixed(1)} answers/secs`;
   };
 
+  const getFormattedSpeed = (speed:number) => {
+    return `${speed.toFixed(1)} answers/secs`
+  }
+
   const shouldRenderScores = () => {
     return gameOverReason !== GameOverReason.PAUSED;
   };
@@ -47,7 +51,7 @@ export const useRestartModalController = (props: RestartModelProps) => {
 
   const getFormattedCurrentScore = () => {
     return {
-      speed: currentScore.speed,
+      speed: getFormattedSpeed(currentScore.speed),
       problemsSolved: currentScore.problemsSolved,
       totalTime: getFormattedTime(currentScore.totalTime),
     };
@@ -55,7 +59,7 @@ export const useRestartModalController = (props: RestartModelProps) => {
 
   const getFormattedHighScore = () => {
     return {
-      speed: highScorePEV.value.speed,
+      speed: getFormattedSpeed(highScorePEV.value.speed),
       problemsSolved: highScorePEV.value.problemsSolved,
       totalTime: getFormattedTime(highScorePEV.value.totalTime),
     };

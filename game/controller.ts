@@ -24,7 +24,8 @@ const useGameController = (props: GameProps) => {
   const currentRoundRemainingTime = useSelector(
     (state: RootState) => state.gamePage.currentRoundRemainingTime,
   );
-  const problemSolved = useSelector((state: RootState) => state.gamePage.problemsSolved);
+  // const problemSolved = useSelector((state: RootState) => state.gamePage.problemsSolved);
+  const currentScore = useSelector((state: RootState) => state.gamePage.currentScore);
   const highScorePEV = useSelector(
     (state: RootState) => state.gamePage.highScorePEV,
   );
@@ -39,22 +40,22 @@ const useGameController = (props: GameProps) => {
   }, []);
 
   const getCurrentScore = () => {
-    const currentSpeed = problemSolved / stopWatch.timer.current;
-    console.log(
-      'StopWatch',
-      stopWatch.timer.current,
-      problemSolved,
-      currentSpeed,
-    );
-    return {
-      speed: currentSpeed,
-      problemsSolved: problemSolved,
-      totalTime: stopWatch.timer.current,
-    };
+    // console.log(
+    //   'StopWatch',
+    //   stopWatch.timer.current,
+    //   problemSolved,
+    //   currentSpeed,
+    // );
+    // return {
+    //   speed: currentSpeed,
+    //   problemsSolved: problemSolved,
+    //   totalTime: stopWatch.timer.current,
+    // };
+    return currentScore;
   };
 
   const onGameOver = (gameOverReason: GameOverReason) => {
-    const currentScore = getCurrentScore();
+    // const currentScore = getCurrentScore();
     dispatch(GamePageActions.updateGameOverReason(gameOverReason));
     dispatch(GamePageActions.setShowRestartModal(true));
     dispatch(GamePageActions.updateStartTimer(false));
@@ -62,7 +63,7 @@ const useGameController = (props: GameProps) => {
     // setroundId(roundId => roundId + 1);
     stopWatch.reset();
     console.log('CurrentScore', currentScore);
-    dispatch(GamePageActions.updateCurrentScore(currentScore));
+    // dispatch(GamePageActions.updateCurrentScore(currentScore));
     if (highScorePEV.value.speed < currentScore.speed) {
       dispatch(GamePageActions.storeHighScore(currentScore));
     }
@@ -77,7 +78,12 @@ const useGameController = (props: GameProps) => {
         INITIAL_TOTAL_ROUND_DURATION,
       ),
     );
-    dispatch(GamePageActions.updateProblemsSolved(problemSolved + 1));
+    const currentSpeed = currentScore.problemsSolved / stopWatch.timer.current;
+    dispatch(GamePageActions.updateCurrentScore({
+      speed: currentSpeed,
+      problemsSolved: currentScore.problemsSolved + 1,
+      totalTime: stopWatch.timer.current,
+    }));
     setroundId(roundId => roundId + 1);
   };
 
@@ -118,7 +124,12 @@ const useGameController = (props: GameProps) => {
       ),
     );
     dispatch(GamePageActions.updateStartTimer(true));
-    dispatch(GamePageActions.updateProblemsSolved(0));
+    // dispatch(GamePageActions.updateProblemsSolved(0));
+    dispatch(GamePageActions.updateCurrentScore({
+      speed: 0,
+      problemsSolved: 0,
+      totalTime: 0,
+    }));
     dispatch(GamePageActions.setShowRestartModal(false));
     setOperatorAndResultState(getOperationValuesAndResult());
     setroundId(roundId => roundId + 1);
@@ -135,7 +146,7 @@ const useGameController = (props: GameProps) => {
   const onQuitGame = () => {
     dispatch(GamePageActions.setShowRestartModal(false));
     dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
-    dispatch(GamePageActions.updateProblemsSolved(0));
+    // dispatch(GamePageActions.updateProblemsSolved(0));
     stopWatch.reset()
     props.navigation.goBack();
   }
