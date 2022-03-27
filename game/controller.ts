@@ -36,7 +36,6 @@ const useGameController = (props: GameProps) => {
     setroundId(roundId => roundId + 1);
     dispatch(GamePageActions.updateStartTimer(true));
     stopWatch.start();
-    console.log("#######UseEffect")
   }, []);
 
   const getCurrentScore = () => {

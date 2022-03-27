@@ -9,10 +9,8 @@ const Timer = (props: TimerProps) => {
     <Progress.Bar
       progress={controller.getElapsedTimeInPercentage()}
       width={null}
+      // color={"#03acd5"}
     />
-    // <View style={styles.timer}>
-    //   {/* <Text style={styles.number}>{controller.time} sec</Text> */}
-    // </View>
   );
 };
 

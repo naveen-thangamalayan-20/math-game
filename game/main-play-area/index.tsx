@@ -13,6 +13,7 @@ import StopWatch from './stop-watch';
 import Timer from './timer/timer';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import IconButton from '../../components/icon-button';
+import { answerCellBGColour, answerColour, backGroundColour, inactiveColor, numberColour } from '../../components/color';
 
 export type CoOrdinates = {
   x: number;
@@ -23,11 +24,7 @@ export type Cell = {
   position: CoOrdinates;
 };
 
-const backGroundColour = '#121212';
-const numberColour = '#ffffff';
-const answerColour = '#000000';
-const answerCellBGColour = numberColour;
-const inactiveColor = numberColour;
+
 
 const backButtonIcon = (
   <Icon name="arrow-back-circle-outline" size={38} color={numberColour} />

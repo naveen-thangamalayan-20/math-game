@@ -2,6 +2,8 @@ import {NavigationProp, NavigationState} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
+import Button from '../../components/button';
+import { backGroundColour, numberColour } from '../../components/color';
 import {RootState} from '../../store';
 import {GamePageActions, HighScore} from '../redux';
 import {useRestartModalController} from './controller';
@@ -19,33 +21,37 @@ const RestartModal = (props: RestartModelProps) => {
   const renderResumeButton = () => {
     return (
       controller.shouldRenderResumeButton() && (
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={controller.onResumeGame}>
-          <Text style={styles.textStyle}>Resume</Text>
-        </Pressable>
+        <Button onPress={controller.onResumeGame} label={"Resume"} style={styles.button} textStyle={styles.buttonText}/>
+        // <Pressable
+        //   style={[styles.button, styles.buttonClose]}
+        //   onPress={controller.onResumeGame}>
+        //   <Text style={styles.textStyle}>Resume</Text>
+        // </Pressable>
       )
     );
   };
 
   const renderButtons = () => {
     return (
-      <>
-        <Pressable
+      <View style={styles.buttonGroup}>
+        {/* <Pressable
           style={[styles.button, styles.buttonClose]}
           onPress={controller.onQuitGame}>
           <Text style={styles.textStyle}>Quit</Text>
-        </Pressable>
-        <Pressable
+        </Pressable> */}
+        {renderResumeButton()}
+        <Button onPress={controller.onRestartGame} label={"Restart"} style={styles.button} textStyle={styles.buttonText}/>
+        <Button onPress={controller.onQuitGame} label={"Quit"} style={styles.button} textStyle={styles.buttonText}/>
+        {/* <Pressable
           style={[styles.button, styles.buttonClose]}
           onPress={controller.onRestartGame}>
           <Text style={styles.textStyle}>Restart</Text>
-        </Pressable>
-        {renderResumeButton()}
-      </>
+        </Pressable> */}
+      </View>
     );
   };
 
+  const WhiteText = ({data}:{data: string}) => <Text style={styles.textStyle}>{data}</Text>
   const renderScore = () => {
     if (controller.shouldRenderScores()) {
       const formattedCurrentScore = controller.getFormattedCurrentScore();
@@ -55,21 +61,21 @@ const RestartModal = (props: RestartModelProps) => {
           <View style={styles.score}>
             <View style={styles.scoreHeader}>
               <Text />
-              <Text>Problems solved</Text>
-              <Text>Time</Text>
-              <Text>Speed</Text>
+              <WhiteText data={"Problems solved"}/>
+              <WhiteText data={"Time"}/>
+              <WhiteText data={"Speed"} />
             </View>
             <View style={styles.scoreData}>
-              <Text>Current Score</Text>
-              <Text>{formattedCurrentScore.problemsSolved}</Text>
-              <Text>{formattedCurrentScore.totalTime}</Text>
-              <Text>{formattedCurrentScore.speed}</Text>
+              <WhiteText data={"Current Score"}/>
+              <WhiteText data={formattedCurrentScore.problemsSolved.toString()}/>
+              <WhiteText data={formattedCurrentScore.totalTime}/>
+              <WhiteText data={formattedCurrentScore.speed}/>
             </View>
             <View style={styles.scoreData}>
-              <Text>High Score</Text>
-              <Text>{formattedHighScore.problemsSolved}</Text>
-              <Text>{formattedHighScore.totalTime}</Text>
-              <Text>{formattedHighScore.speed}</Text>
+              <WhiteText data={"High Score"}/>
+              <WhiteText data={formattedHighScore.problemsSolved.toString()}/>
+              <WhiteText data={formattedHighScore.totalTime}/>
+              <WhiteText data={formattedHighScore.speed}/>
             </View>
           </View>
         </>
@@ -83,6 +89,7 @@ const RestartModal = (props: RestartModelProps) => {
       animationType="slide"
       transparent={true}
       visible={controller.showRestartModal}
+      style={styles.modal}
       onRequestClose={() => {
         Alert.alert('Modal has been closed.');
         // setModalVisible(!modalVisible);
@@ -90,7 +97,7 @@ const RestartModal = (props: RestartModelProps) => {
       }}>
       <View style={styles.centeredView} accessibilityLabel="restart-modal">
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>{controller.gameOverReason}</Text>
+          <Text style={styles.modalTitle}>{controller.gameOverReason}</Text>
           {renderScore()}
           {renderButtons()}
         </View>
@@ -100,50 +107,66 @@ const RestartModal = (props: RestartModelProps) => {
 };
 
 const styles = StyleSheet.create({
+  modal:{
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 22,
+    backgroundColor: 'rgba(0,0,0,0.8)'
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "#212121",
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: '#616161',
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowRadius: 2,
+    elevation: 15,
+  },
+  buttonGroup:{
+    // flex:1,
+    flexDirection:"row"
+  },
+  modalTitle:{
+    fontWeight:"bold",
+    fontSize: 20,
+    color: numberColour,
+    marginBottom:15,
   },
   button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
+    width:86,
+    height: 50,
+    fontSize:14,
+    margin:3,
   },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
+  buttonText: {
+    fontSize:14,
   },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
+  // buttonOpen: {
+  //   backgroundColor: '#F194FF',
+  // },
+  // buttonClose: {
+  //   backgroundColor: '#2196F3',
+  // },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: numberColour,
   },
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+    color: numberColour,
   },
   score: {
     fontSize: '15',
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
   },
   scoreHeader: {
