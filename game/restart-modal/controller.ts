@@ -1,6 +1,7 @@
 import {useDispatch, useSelector} from 'react-redux';
 import {RestartModelProps} from '.';
 import {RootState} from '../../store';
+import { getFormattedSpeed, getFormattedTime, SPEED_UNIT } from '../../utils/formatter';
 import {GameOverReason, GamePageActions, HighScore} from '../redux';
 
 export const useRestartModalController = (props: RestartModelProps) => {
@@ -22,13 +23,6 @@ export const useRestartModalController = (props: RestartModelProps) => {
   // const totalTime = useSelector((state: RootState) => state.gamePage.totalTime);
   // const problemSolved = useSelector((state: RootState) => state.gamePage.score);
 
-  const getFormattedTime = (totalTime: number) => {
-    if (totalTime < 60) {
-      return `${totalTime} secs`;
-    } else {
-      return `${(totalTime / 60).toFixed(1)} minutes`;
-    }
-  };
 
   const getSpeed = (
     problemsSolved: HighScore['problemsSolved'],
@@ -37,9 +31,9 @@ export const useRestartModalController = (props: RestartModelProps) => {
     return `${(problemsSolved / totalTime).toFixed(1)} answers/secs`;
   };
 
-  const getFormattedSpeed = (speed:number) => {
-    return `${speed.toFixed(1)} answers/secs`
-  }
+  // const getFormattedSpeed = (speed:number) => {
+  //   return `${speed.toFixed(1)} answers/secs`
+  // }
 
   const shouldRenderScores = () => {
     return gameOverReason !== GameOverReason.PAUSED;
@@ -52,7 +46,7 @@ export const useRestartModalController = (props: RestartModelProps) => {
   const getFormattedCurrentScore = () => {
     return {
       speed: getFormattedSpeed(currentScore.speed),
-      problemsSolved: currentScore.problemsSolved,
+      problemsSolved: {value:currentScore.problemsSolved.toString(), unit:"problems"},
       totalTime: getFormattedTime(currentScore.totalTime),
     };
   };
@@ -60,7 +54,7 @@ export const useRestartModalController = (props: RestartModelProps) => {
   const getFormattedHighScore = () => {
     return {
       speed: getFormattedSpeed(highScorePEV.value.speed),
-      problemsSolved: highScorePEV.value.problemsSolved,
+      problemsSolved: {value:highScorePEV.value.problemsSolved.toString(), unit:"problems"},
       totalTime: getFormattedTime(highScorePEV.value.totalTime),
     };
   };
@@ -77,7 +71,6 @@ export const useRestartModalController = (props: RestartModelProps) => {
     onQuitGame: props.onQuitGame,
     getFormattedTime,
     problemSolved: currentScore.problemsSolved,
-    // getSpeed,
     getFormattedHighScore,
     getFormattedCurrentScore,
     shouldRenderScores,

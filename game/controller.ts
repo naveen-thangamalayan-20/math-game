@@ -39,17 +39,6 @@ const useGameController = (props: GameProps) => {
   }, []);
 
   const getCurrentScore = () => {
-    // console.log(
-    //   'StopWatch',
-    //   stopWatch.timer.current,
-    //   problemSolved,
-    //   currentSpeed,
-    // );
-    // return {
-    //   speed: currentSpeed,
-    //   problemsSolved: problemSolved,
-    //   totalTime: stopWatch.timer.current,
-    // };
     return currentScore;
   };
 
@@ -91,11 +80,6 @@ const useGameController = (props: GameProps) => {
   };
 
   const validateResult = (total: number) => {
-    console.log(
-      'VAlidateResult--currentRoundRemainingTime=AnswerNotFound',
-      currentRoundRemainingTime,
-      total,
-    );
     if (total === result) {
       onAnswerFound();
     } else {

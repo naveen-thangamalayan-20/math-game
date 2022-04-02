@@ -42,7 +42,7 @@ const App = () => {
       <Provider store={store}>
         <GestureHandlerRootView style={{flex: 1}}>
           <Stack.Navigator>
-            <Stack.Screen
+          <Stack.Screen
               name="Home"
               component={Home}
               options={{title: 'Home', headerShown: false}}
@@ -52,6 +52,7 @@ const App = () => {
               component={Game}
               options={{title: 'Game', headerShown: false}}
             />
+          
 
             {/* < /> */}
           </Stack.Navigator>

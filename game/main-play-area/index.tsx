@@ -9,11 +9,11 @@ import Animated, {
   useDerivedValue,
 } from 'react-native-reanimated';
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
-import StopWatch from './stop-watch';
 import Timer from './timer/timer';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import IconButton from '../../components/icon-button';
 import { answerCellBGColour, answerColour, backGroundColour, inactiveColor, numberColour } from '../../components/color';
+import { getFormattedSpeed, SPEED_UNIT } from '../../utils/formatter';
 
 export type CoOrdinates = {
   x: number;
@@ -92,6 +92,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
     console.log('Mounted MainPlayArea');
   }, []);
 
+  const speed = getFormattedSpeed(controller.currentScore.speed);
   return (
     <View style={styles.mainContainer}>
       <Timer onTimeOut={controller.onTimeOver} key={controller.roundId} />
@@ -110,9 +111,9 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
         </View>
         <View style={styles.highScore}>
           <Text style={styles.problemSolved}>
-            {controller.currentScore.speed}
+            {speed.value}
           </Text>
-          <Text style={styles.highScoreTitle}>answers/msec</Text>
+          <Text style={styles.highScoreTitle}>{speed.unit}</Text>
         </View>
         </View>
       </View>
