@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from '../../components/button';
-import {backGroundColour, numberColour} from '../../components/color';
+import {backGroundColour, numberColour, titleColor} from '../../components/color';
 import {RootState} from '../../store';
 import {GamePageActions, HighScore} from '../redux';
 import {useRestartModalController} from './controller';
@@ -14,6 +14,7 @@ import {
   Rows,
   Col,
 } from 'react-native-table-component';
+import Score from '../../components/score';
 
 export type RestartModelProps = {
   onRestartGame: () => void;
@@ -94,38 +95,40 @@ const RestartModal = (props: RestartModelProps) => {
   //     );
   //   }
   // };
-  const renderCol = (label: string, value: string, unit: string) => {
-    return (
-      <View style={styles.scoreCol}>
-        <Text style={styles.scoreLabel}>{label}</Text>
-        <Text style={styles.scoreValue}>{value}</Text>
-        <Text style={styles.scoreUnit}>{unit}</Text>
-      </View>
-    );
-  };
+  // const renderCol = (label: string, value: string, unit: string) => {
+  //   return (
+  //     <View style={styles.scoreCol}>
+  //       <Text style={styles.scoreLabel}>{label}</Text>
+  //       <Text style={styles.scoreValue}>{value}</Text>
+  //       <Text style={styles.scoreUnit}>{unit}</Text>
+  //     </View>
+  //   );
+  // };
 
   const renderScore = () => {
     if (controller.shouldRenderScores()) {
-      const formattedCurrentScore = controller.getFormattedCurrentScore();
-      const formattedHighScore = controller.getFormattedHighScore();
+      // const formattedCurrentScore = controller.getFormattedCurrentScore();
+      // const formattedHighScore = controller.getFormattedHighScore();
       return (
         <View style={styles.currentScore}>
-          <View style={styles.currentScore}>
+          {/* <View style={styles.currentScore}>
             <Text style={styles.scoreTitle}>Score</Text>
             <View style={styles.scoreRow}>
               {renderCol('Solved', formattedCurrentScore.problemsSolved.value, formattedCurrentScore.problemsSolved.unit)}
               {renderCol('Time', formattedCurrentScore.totalTime.value, formattedCurrentScore.totalTime.unit)}
               {renderCol('Speed', formattedCurrentScore.speed.value,  formattedCurrentScore.speed.unit)}
             </View>
-          </View>
-          <View style={styles.currentScore}>
+          </View> */}
+          {/* <View style={styles.currentScore}>
             <Text style={styles.scoreTitle}>Best</Text>
             <View style={styles.scoreRow}>
               {renderCol('Solved', formattedHighScore.problemsSolved.value, formattedHighScore.problemsSolved.unit)}
               {renderCol('Time', formattedHighScore.totalTime.value, formattedHighScore.totalTime.unit)}
               {renderCol('Speed', formattedHighScore.speed.value,  formattedHighScore.speed.unit)}
             </View>
-          </View>
+          </View> */}
+          <Score title={"Score"} score={controller.currentScore}/>
+          <Score title={"Best"} score={controller.highScore}/>
         </View>
       );
     }
@@ -258,16 +261,11 @@ const styles = StyleSheet.create({
   },
   scoreUnit: {
     color:numberColour,
-    // color: "#e0e0e0",
-    // color: "#bdbdbd",
     marginBottom:8,
   },
   scoreValue: {
     color:numberColour,
     fontSize: 18,
-    // color: "#e0e0e0",
-    // color: "#bdbdbd",
-    // marginBottom:8,
   },
 });
 

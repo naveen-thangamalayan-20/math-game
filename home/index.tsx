@@ -10,7 +10,7 @@ const Home = ({navigation}: {navigation: any}) => {
       <Text style={styles.title}>Math Speed Run</Text>
       <View style={styles.buttonGroup}>
         <Button onPress={() => navigation.navigate('Game')} label={'PLAY'} />
-        <Button onPress={() => console.log("d")} label={'HIGH SCORE'} />
+        <Button onPress={() => navigation.navigate('HighScore')} label={'HIGH SCORE'} />
         <Button onPress={() => console.log("d")} label={'QUIT'} />
       </View>
     </View>

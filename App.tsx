@@ -28,6 +28,7 @@ import Game from './game';
 // import { Provider } from "react-redux";
 import {store} from './store';
 import Home from './home';
+import HighScore from './high-score';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -51,6 +52,11 @@ const App = () => {
               name="Game"
               component={Game}
               options={{title: 'Game', headerShown: false}}
+            />
+            <Stack.Screen
+              name="HighScore"
+              component={HighScore}
+              options={{title: 'HighScore', headerShown: false}}
             />
           
 

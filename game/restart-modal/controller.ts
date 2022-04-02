@@ -76,5 +76,7 @@ export const useRestartModalController = (props: RestartModelProps) => {
     shouldRenderScores,
     shouldRenderResumeButton,
     onResumeGame: props.onResumeGame,
+    highScore: highScorePEV.value,
+    currentScore,
   };
 };
