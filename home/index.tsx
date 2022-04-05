@@ -1,16 +1,18 @@
-import {NavigationAction, NavigationProp} from '@react-navigation/native';
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Button from '../components/button';
 import {backGroundColour, titleColor} from '../components/color';
+import Score from '../components/score';
+import useHomeController, { HomeProps } from './controller';
 
-const Home = ({navigation}: {navigation: any}) => {
+const Home = (props: HomeProps) => {
+  const controller = useHomeController(props)
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.title}>Math Speed Run</Text>
       <View style={styles.buttonGroup}>
-        <Button onPress={() => navigation.navigate('Game')} label={'PLAY'} />
-        <Button onPress={() => navigation.navigate('HighScore')} label={'HIGH SCORE'} />
+        <Button onPress={() => controller.onTouchGameButton()} label={'PLAY'} />
+        <Button onPress={() => controller.onTouchHighScoreButton()} label={'HIGH SCORE'} />
         <Button onPress={() => console.log("d")} label={'QUIT'} />
       </View>
     </View>

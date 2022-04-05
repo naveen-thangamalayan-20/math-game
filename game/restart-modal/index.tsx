@@ -245,7 +245,8 @@ const styles = StyleSheet.create({
   },
   currentScore: {
     flexDirection: 'column',
-    alignItems:'center'
+    // width:320
+    // alignItems:'center'
   },
   scoreTitle: {
     color: numberColour,

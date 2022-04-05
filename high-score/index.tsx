@@ -11,7 +11,9 @@ const HighScore = (props : HighScoreProps) => {
   return (
     <View style={styles.mainContainer}>
       <BackButton onTouchBackButton={controller.onTouchBackButton}/>
+      <View style={styles.highScore}>
       <Score title={'Best'} score={controller.highScore} />
+      </View>
     </View>
   );
 };
@@ -21,6 +23,9 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: backGroundColour,
     },
+    highScore: {
+      margin: 40,
+    }
 });
 
 export default HighScore;

@@ -2,7 +2,7 @@ export const SPEED_UNIT = "problems/secs";
 export const getFormattedTime = (totalTime: number) => {
   if (totalTime < 60) {
     return {
-      value: totalTime.toString(),
+      value: totalTime.toFixed(1),
       unit:"secs"
     }
   } else {

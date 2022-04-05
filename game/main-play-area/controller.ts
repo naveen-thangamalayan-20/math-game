@@ -113,8 +113,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
         const selected: number[] = [];
 
         patternPoints.value.every((p, idx) => {
-          console.log('EventX', evt.x, p.position.x);
-          console.log('EventY', evt.y, p.position.y);
+          // console.log('EventX', evt.x, p.position.x);
+          // console.log('EventY', evt.y, p.position.y);
           if (
             (p.position.x - evt.x) * (p.position.x - evt.x) +
               (p.position.y - evt.y) * (p.position.y - evt.y) <
@@ -135,8 +135,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
         selectedIndexes.value.length > 0
       ) {
         patternPoints.value.every((p, idx) => {
-          console.log('EventActiveX', evt.x, p.position.x);
-          console.log('EventActiveY', evt.y, p.position.y);
+          // console.log('EventActiveX', evt.x, p.position.x);
+          // console.log('EventActiveY', evt.y, p.position.y);
           if (
             (p.position.x - evt.x) * (p.position.x - evt.x) +
               (p.position.y - evt.y) * (p.position.y - evt.y) <
@@ -165,8 +165,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
     const {width, height} = event.nativeEvent.layout;
-    console.log('ContainerX', event.nativeEvent.layout.x);
-    console.log('ContainerY', event.nativeEvent.layout.y);
+    // console.log('ContainerX', event.nativeEvent.layout.x);
+    // console.log('ContainerY', event.nativeEvent.layout.y);
     containerLayout.value = {
       width,
       height,
@@ -190,9 +190,9 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
       position: {x: p.x, y: p.y},
     }));
 
-    console.log('X', event.nativeEvent.layout.x);
-    console.log('Y', event.nativeEvent.layout.y);
-    console.log('Points', points);
+    // console.log('X', event.nativeEvent.layout.x);
+    // console.log('Y', event.nativeEvent.layout.y);
+    // console.log('Points', points);
   };
 
   const getOperatorCellLabel = (idx: number) => {
@@ -202,13 +202,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     } else {
       return props.operatorCells[idx].value;
     }
-  };
-
-  const onTimeUp = () => {
-    console.log('###########');
-    console.log('Time Up');
-    console.log('###########');
-    // dispatch(GamePageActions.setShowRestartModal(true));
   };
 
   const offset = useSharedValue(1);
@@ -242,7 +235,7 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     selectedIndexes,
     R,
     getOperatorCellLabel,
-    onTimeUp,
+    // onTimeUp,
     roundId: props.roundId,
     animatedStyles,
     // score: problemsSolved,

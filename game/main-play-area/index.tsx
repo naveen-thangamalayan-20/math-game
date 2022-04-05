@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/dist/Ionicons';
 import IconButton from '../../components/icon-button';
 import { answerCellBGColour, answerColour, backGroundColour, inactiveColor, numberColour } from '../../components/color';
 import { getFormattedSpeed, SPEED_UNIT } from '../../utils/formatter';
+import BackButton from '../../components/back-button';
 
 export type CoOrdinates = {
   x: number;
@@ -97,11 +98,12 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
     <View style={styles.mainContainer}>
       <Timer onTimeOut={controller.onTimeOver} key={controller.roundId} />
       <View style={styles.header}>
-        <IconButton
+        {/* <IconButton
           onPress={controller.onTouchBackButton}
           icon={backButtonIcon}
           style={styles.backButton}
-        />
+        /> */}
+        <BackButton onTouchBackButton={controller.onTouchBackButton}/>
         <View style={styles.highScoreContainer}>
         <View style={styles.highScore}>
           <Text style={styles.problemSolved}>

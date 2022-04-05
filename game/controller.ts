@@ -80,6 +80,7 @@ const useGameController = (props: GameProps) => {
   };
 
   const validateResult = (total: number) => {
+    console.log("######VAlidatationResult",total, result)
     if (total === result) {
       onAnswerFound();
     } else {
