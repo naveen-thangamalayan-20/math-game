@@ -204,6 +204,13 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     }
   };
 
+  const getOperator = (idx: number) => {
+    const value = props.operatorCells[idx].value as Operator;
+    return value.label;
+  }
+
+  const isOperatorCell = (idx: number) => props.operatorCells[idx].type === CellType.OPERATOR
+
   const offset = useSharedValue(1);
 
   const animatedStyles = useAnimatedStyle(() => {
@@ -242,6 +249,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     currentScore,
     onTimeOver: props.onTimeOver,
     onTouchBackButton: props.onTouchBackButton,
+    isOperatorCell,
+    getOperator,
   };
 };
 

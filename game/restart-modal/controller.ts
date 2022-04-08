@@ -78,5 +78,10 @@ export const useRestartModalController = (props: RestartModelProps) => {
     onResumeGame: props.onResumeGame,
     highScore: highScorePEV.value,
     currentScore,
+    isNewHighScore: () => {
+      console.log("#######", currentScore)
+      console.log("#######", highScorePEV.value)
+      return currentScore.problemsSolved === highScorePEV.value.problemsSolved || currentScore.speed === highScorePEV.value.speed
+    }
   };
 };

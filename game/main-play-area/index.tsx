@@ -10,11 +10,20 @@ import Animated, {
 } from 'react-native-reanimated';
 import useMainPlayAreaController, {MainPlayAreaProps} from './controller';
 import Timer from './timer/timer';
-import Icon from 'react-native-vector-icons/dist/Ionicons';
+import FontAwesomeIcon from 'react-native-vector-icons/dist/FontAwesome5';
+import FoundationIcon from 'react-native-vector-icons/dist/Foundation';
+import EntypoIcon from 'react-native-vector-icons/dist/Entypo';
 import IconButton from '../../components/icon-button';
-import { answerCellBGColour, answerColour, backGroundColour, inactiveColor, numberColour } from '../../components/color';
-import { getFormattedSpeed, SPEED_UNIT } from '../../utils/formatter';
+import {
+  answerCellBGColour,
+  answerColour,
+  backGroundColour,
+  inactiveColor,
+  numberColour,
+} from '../../components/color';
+import {getFormattedSpeed, SPEED_UNIT} from '../../utils/formatter';
 import BackButton from '../../components/back-button';
+import { Operators } from '../problem-generator';
 
 export type CoOrdinates = {
   x: number;
@@ -25,11 +34,23 @@ export type Cell = {
   position: CoOrdinates;
 };
 
+// const backButtonIcon = (
+//   <Icon name="arrow-back-circle-outline" size={38} color={numberColour} />
+// );
 
-
-const backButtonIcon = (
-  <Icon name="arrow-back-circle-outline" size={38} color={numberColour} />
+const renderMultiplicationIcon = (idx: number) => (
+  <EntypoIcon accessibilityLabel={`option-${idx}`} name="cross" size={28} color={numberColour} />
 );
+
+const renderSubtractionIcon = (idx: number) => (
+  <FoundationIcon accessibilityLabel={`option-${idx}`} name="minus" size={20} color={numberColour} />
+);
+
+const renderAdditionIcon = (idx: number) => (
+  <FontAwesomeIcon accessibilityLabel={`option-${idx}`} name="plus" size={20} color={numberColour} />
+);
+
+
 
 export default function MainPlayArea(props: MainPlayAreaProps) {
   const rowCount = 2;
@@ -40,7 +61,30 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   const cellSelectedColor = '#212121';
   const cellSelectedBorderColor = '#fafafa';
   const controller = useMainPlayAreaController(props);
-  function renderCell() {
+
+  const renderOperatorCell = (idx: number) => {
+    const operator = controller.getOperator(idx)
+    if(operator === Operators.MULTIPLICATION) {
+      return renderMultiplicationIcon(idx)
+    } else if (operator === Operators.SUBTRACTION) {
+      return renderSubtractionIcon(idx)
+    } else {
+      return renderAdditionIcon(idx)
+    }
+  }
+
+  function renderCell(idx: number) {
+    if (controller.isOperatorCell(idx)) {
+      return renderOperatorCell(idx)
+    } else {
+      return (
+        <Text style={styles.number} accessibilityLabel={`option-${idx}`}>
+          {controller.getOperatorCellLabel(idx)}
+        </Text>
+      );
+    }
+  }
+  function renderCells() {
     return (
       <Animated.View
         style={controller.cvc}
@@ -75,15 +119,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 // textDecorationColor:"#fffff",
               };
             });
-            return (
-              <Animated.View key={idx} style={outer}>
-                <Text
-                  style={styles.number}
-                  accessibilityLabel={`option-${idx}`}>
-                  {controller.getOperatorCellLabel(idx)}
-                </Text>
-              </Animated.View>
-            );
+            return <Animated.View key={idx} style={outer}>{renderCell(idx)}</Animated.View>;
           })}
       </Animated.View>
     );
@@ -103,20 +139,18 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
           icon={backButtonIcon}
           style={styles.backButton}
         /> */}
-        <BackButton onTouchBackButton={controller.onTouchBackButton}/>
+        <BackButton onTouchBackButton={controller.onTouchBackButton} />
         <View style={styles.highScoreContainer}>
-        <View style={styles.highScore}>
-          <Text style={styles.problemSolved}>
-            {controller.currentScore.problemsSolved}
-          </Text>
-          <Text style={styles.highScoreTitle}>solved</Text>
-        </View>
-        <View style={styles.highScore}>
-          <Text style={styles.problemSolved}>
-            {speed.value}
-          </Text>
-          <Text style={styles.highScoreTitle}>{speed.unit}</Text>
-        </View>
+          <View style={styles.highScore}>
+            <Text style={styles.problemSolved}>
+              {controller.currentScore.problemsSolved}
+            </Text>
+            <Text style={styles.highScoreTitle}>solved</Text>
+          </View>
+          <View style={styles.highScore}>
+            <Text style={styles.problemSolved}>{speed.value}</Text>
+            <Text style={styles.highScoreTitle}>{speed.unit}</Text>
+          </View>
         </View>
       </View>
       <View style={styles.playContainer}>
@@ -130,7 +164,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
             style={[styles.cellsContainer, controller.animatedStyles]}
             onLayout={controller.onContainerLayout}>
             <TapGestureHandler onGestureEvent={controller.panHandler}>
-              {renderCell()}
+              {renderCells()}
             </TapGestureHandler>
           </Animated.View>
         </PanGestureHandler>
@@ -167,7 +201,7 @@ const styles = StyleSheet.create({
     left: 10,
     height: 50,
     top: 10,
-    flex: 1
+    flex: 1,
   },
   playContainer: {
     flex: 3,

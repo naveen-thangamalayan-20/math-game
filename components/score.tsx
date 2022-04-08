@@ -7,10 +7,10 @@ import {iif} from '../utils/iif';
 
 type ScoreProps = {
   score: HighScore;
-  title: string;
+  // title: string;
 };
 
-const Score = ({score, title}: ScoreProps) => {
+const Score = ({score}: ScoreProps) => {
   const formattedHighScore = iif(function getFormattedScore() {
     return {
       speed: getFormattedSpeed(score.speed),
@@ -40,8 +40,8 @@ const Score = ({score, title}: ScoreProps) => {
   };
 
   return (
-    <View style={styles.currentScore}>
-      <Text style={styles.scoreTitle}>{title}</Text>
+    // <View style={styles.currentScore}>
+    //   <Text style={styles.scoreTitle}>{title}</Text>
       <View style={styles.scoreRow}>
         {renderCol(
           'Solved',
@@ -64,7 +64,7 @@ const Score = ({score, title}: ScoreProps) => {
           [styles.scoreSpeedValue]
         )}
       </View>
-    </View>
+    // </View>
   );
 };
 const styles = StyleSheet.create({

@@ -3,7 +3,11 @@ import React, {useState} from 'react';
 import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from '../../components/button';
-import {backGroundColour, numberColour, titleColor} from '../../components/color';
+import {
+  backGroundColour,
+  numberColour,
+  titleColor,
+} from '../../components/color';
 import {RootState} from '../../store';
 import {GamePageActions, HighScore} from '../redux';
 import {useRestartModalController} from './controller';
@@ -104,13 +108,31 @@ const RestartModal = (props: RestartModelProps) => {
   //     </View>
   //   );
   // };
+  const renderCurrentScore = () => (
+    <View style={styles.currentScore}>
+      <Text style={styles.scoreTitle}>{'Score'}</Text>
+      <Score score={controller.currentScore} />
+    </View>
+  );
+
+  const renderHighScore = () => (
+    <View style={styles.currentScore}>
+      {/* <View style={styles.highScoreTitleContainer}>
+         {!controller.isNewHighScore() && <Text style={styles.newHighScore}>New </Text>}
+        <Text style={styles.highScoreTitle}>{'Best'}</Text>
+      </View> */}
+      {console.log(controller.isNewHighScore())}
+      {!controller.isNewHighScore() ? <Text style={[styles.highScoreTitle, styles.scoreTitle]}>{'Best'}</Text> : <Text style={[styles.scoreTitle, styles.newHighScore]}>{'New Best'}</Text>}
+      <Score  score={controller.highScore} />
+    </View>
+  );
 
   const renderScore = () => {
     if (controller.shouldRenderScores()) {
       // const formattedCurrentScore = controller.getFormattedCurrentScore();
       // const formattedHighScore = controller.getFormattedHighScore();
       return (
-        <View style={styles.currentScore}>
+        <View style={styles.scoreContainer}>
           {/* <View style={styles.currentScore}>
             <Text style={styles.scoreTitle}>Score</Text>
             <View style={styles.scoreRow}>
@@ -127,8 +149,10 @@ const RestartModal = (props: RestartModelProps) => {
               {renderCol('Speed', formattedHighScore.speed.value,  formattedHighScore.speed.unit)}
             </View>
           </View> */}
-          <Score title={"Score"} score={controller.currentScore}/>
-          <Score title={"Best"} score={controller.highScore}/>
+          {renderCurrentScore()}
+          {renderHighScore()}
+          {/* <Score title={"Score"} score={controller.currentScore}/>
+          <Score title={"Best"} score={controller.highScore}/> */}
         </View>
       );
     }
@@ -240,32 +264,60 @@ const styles = StyleSheet.create({
   scoreCol: {
     flexDirection: 'column',
     padding: 10,
-    alignItems:'center',
-    margin:10,
+    alignItems: 'center',
+    margin: 10,
   },
-  currentScore: {
+  scoreContainer: {
     flexDirection: 'column',
     // width:320
     // alignItems:'center'
   },
-  scoreTitle: {
+  currentScore: {
+    flexDirection: 'column',
+    // alignItems:'center',
+    // borderWidth: 1.5,
+    borderColor: numberColour,
+    width: '100%',
+    // margin: 5,
+  },
+  highScoreTitleContainer: {
+    borderBottomWidth: 1.5,
+    borderTopWidth: 1.5,
+    borderColor: numberColour,
+    padding: 5,
+    flexDirection:"row"
+  },
+  newHighScore:{
+    fontSize:20,
+    color: titleColor,
+    marginLeft: 5,
+  },
+  highScoreTitle:{
     color: numberColour,
     fontSize: 20
+  },
+  scoreTitle: {
+    color: numberColour,
+    fontSize: 20,
+    borderBottomWidth: 1.5,
+    borderTopWidth: 1.5,
+    borderColor: numberColour,
+    padding: 5,
   },
   scoreRow: {
     flexDirection: 'row',
   },
   scoreLabel: {
     fontWeight: 'bold',
-    marginBottom:8,
-    color: "#bdbdbd",
+    marginBottom: 8,
+    color: '#bdbdbd',
   },
   scoreUnit: {
-    color:numberColour,
-    marginBottom:8,
+    color: numberColour,
+    marginBottom: 8,
   },
   scoreValue: {
-    color:numberColour,
+    color: numberColour,
     fontSize: 18,
   },
 });

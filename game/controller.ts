@@ -21,16 +21,17 @@ const useGameController = (props: GameProps) => {
   const stopWatch = useStopWatch();
   const dispatch = useDispatch();
   const [roundId, setroundId] = useState(0);
-  const currentRoundRemainingTime = useSelector(
-    (state: RootState) => state.gamePage.currentRoundRemainingTime,
-  );
+  // const currentRoundRemainingTime = useSelector(
+  //   (state: RootState) => state.gamePage.currentRoundRemainingTime,
+  // );
   // const problemSolved = useSelector((state: RootState) => state.gamePage.problemsSolved);
   const currentScore = useSelector((state: RootState) => state.gamePage.currentScore);
   const highScorePEV = useSelector(
     (state: RootState) => state.gamePage.highScorePEV,
   );
+  const gameOverReason = useSelector((state: RootState) => state.gamePage.gameOverReason);
   const {result, operatorCell} = operatorAndResultState;
-
+   console.log("###CAlls")
   useEffect(() => {
     dispatch(GamePageActions.fetchHighScore());
     setroundId(roundId => roundId + 1);
@@ -50,15 +51,24 @@ const useGameController = (props: GameProps) => {
     dispatch(GamePageActions.updateTotalTime(stopWatch.timer.current));
     // setroundId(roundId => roundId + 1);
     stopWatch.reset();
-    console.log('CurrentScore', currentScore);
+    console.log('CurrentScore', currentScore, highScorePEV);
     // dispatch(GamePageActions.updateCurrentScore(currentScore));
-    if (highScorePEV.value.speed < currentScore.speed) {
+    // if (highScorePEV.value.speed < currentScore.speed) {
+    //   dispatch(GamePageActions.storeHighScore(currentScore));
+    // }
+    // TODO Add unit test for the code
+    if(highScorePEV.value.problemsSolved < currentScore.problemsSolved) {
+      console.log('Higscore ProblemSolved', highScorePEV);
       dispatch(GamePageActions.storeHighScore(currentScore));
+    } else if (highScorePEV.value.problemsSolved === currentScore.problemsSolved) {
+      console.log('Higscore ProblemSolved Samw', highScorePEV);
+      if (highScorePEV.value.speed < currentScore.speed) {
+        dispatch(GamePageActions.storeHighScore(currentScore));
+      }
     }
   };
 
   const onAnswerFound = () => {
-    // const newTotalTime = currentRoundRemainingTime + 3;
     setOperatorAndResultState(getOperationValuesAndResult());
     dispatch(
       GamePageActions.updateGameTime(
@@ -66,10 +76,12 @@ const useGameController = (props: GameProps) => {
         INITIAL_TOTAL_ROUND_DURATION,
       ),
     );
-    const currentSpeed = currentScore.problemsSolved / stopWatch.timer.current;
+    const newProblemsSolved =  currentScore.problemsSolved + 1;
+    const currentSpeed = newProblemsSolved / stopWatch.timer.current;
+    console.log("@@CurrentSpeed", currentSpeed)
     dispatch(GamePageActions.updateCurrentScore({
       speed: currentSpeed,
-      problemsSolved: currentScore.problemsSolved + 1,
+      problemsSolved: newProblemsSolved,
       totalTime: stopWatch.timer.current,
     }));
     setroundId(roundId => roundId + 1);
@@ -80,11 +92,14 @@ const useGameController = (props: GameProps) => {
   };
 
   const validateResult = (total: number) => {
-    console.log("######VAlidatationResult",total, result)
-    if (total === result) {
-      onAnswerFound();
-    } else {
-      onAnswerNotFound();
+    console.log("######VAlidatationResult",total, result, gameOverReason)
+    if(gameOverReason === GameOverReason.NONE) {
+      console.log("#####Inside")
+      if (total === result) {
+        onAnswerFound();
+      } else {
+        onAnswerNotFound();
+      }
     }
   };
 
@@ -107,17 +122,17 @@ const useGameController = (props: GameProps) => {
         INITIAL_TOTAL_ROUND_DURATION,
       ),
     );
-    dispatch(GamePageActions.updateStartTimer(true));
-    // dispatch(GamePageActions.updateProblemsSolved(0));
     dispatch(GamePageActions.updateCurrentScore({
       speed: 0,
       problemsSolved: 0,
       totalTime: 0,
     }));
-    dispatch(GamePageActions.setShowRestartModal(false));
     setOperatorAndResultState(getOperationValuesAndResult());
+    dispatch(GamePageActions.setShowRestartModal(false));
+    dispatch(GamePageActions.updateStartTimer(true));
     setroundId(roundId => roundId + 1);
     stopWatch.start();
+    dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
   };
 
   const onResumeGame = () => {

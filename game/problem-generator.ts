@@ -28,17 +28,23 @@ type IOperation = {
   [key in SupportedOperation]: Operator;
 };
 
+export enum Operators {
+  ADDITION= "+",
+  SUBTRACTION= "-",
+  MULTIPLICATION= "*"
+}
+
 export const operations: IOperation = {
   ADDITION: {
-    label: '+',
+    label: Operators.ADDITION,
     operate: (value1: number, value2: number) => value1 + value2,
   },
   SUBTRACTION: {
-    label: '-',
+    label: Operators.SUBTRACTION,
     operate: (value1: number, value2: number) => value1 - value2,
   },
   MULTIPLICATION: {
-    label: '*',
+    label: Operators.MULTIPLICATION,
     operate: (value1: number, value2: number) => value1 * value2,
   },
   // DIVISION: {

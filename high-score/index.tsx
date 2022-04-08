@@ -12,7 +12,7 @@ const HighScore = (props : HighScoreProps) => {
     <View style={styles.mainContainer}>
       <BackButton onTouchBackButton={controller.onTouchBackButton}/>
       <View style={styles.highScore}>
-      <Score title={'Best'} score={controller.highScore} />
+      <Score score={controller.highScore} />
       </View>
     </View>
   );
