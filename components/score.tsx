@@ -47,7 +47,9 @@ const Score = ({score}: ScoreProps) => {
           'Solved',
           formattedHighScore.problemsSolved.value,
           formattedHighScore.problemsSolved.unit,
-          [styles.scoreProblemsCol]
+          [styles.scoreProblemsCol],
+          [styles.scoreSpeedValue],
+          [styles.scoreSpeedValue]
         )}
         {renderCol(
           'Time',

@@ -4,3 +4,4 @@ export const answerColour = '#000000';
 export const answerCellBGColour = numberColour;
 export const inactiveColor = numberColour;
 export const titleColor = "#03acd5";
+export const purpleColor = "#BB86FC";

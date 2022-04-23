@@ -44,12 +44,14 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
   const patternPoints = useSharedValue([] as Cell[]);
   const selectedIndexes = useSharedValue([] as number[]);
   const containerLayout = useSharedValue({width: 0, height: 0, min: 0});
+  const answered = useSharedValue({answer: "", problem: ""});
   const rowCount = 2;
   const columnCount = 2;
   const patternMargin = 2;
   // const problemsSolved = useSelector((state: RootState) => state.gamePage.problemsSolved);
   const currentScore = useSelector((state: RootState) => state.gamePage.currentScore);
   const stopWatch = useStopWatch();
+  const dispatch = useDispatch();
 
   const cvc = useAnimatedStyle(() => ({
     flexDirection: 'row',
@@ -90,16 +92,25 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
           operandsInSelectedCells[0].value as number,
           operandsInSelectedCells[1].value as number,
         );
+        dispatch(GamePageActions.updateAnsweredProblem({
+          problem:`${operandsInSelectedCells[0].value} ${operatorValue.label} ${operandsInSelectedCells[0].value}`,
+          answer:total.toString(),
+        }))
         props.validateResult(total);
       }
       // selectedIndexes.value.forEach(index => {
       //   const {value, type} = props.operatorCells[index];
       //   total = operator.operate(total, number);
       // });
+     
       console.log('selectedIndex,', selectedIndexes.value);
     }
     selectedIndexes.value = [];
   };
+
+  const getWronglyAnswered = () => {
+
+  }
 
   const panHandler = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent | TapGestureHandlerGestureEvent

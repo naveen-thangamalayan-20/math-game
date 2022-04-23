@@ -1,18 +1,19 @@
 import React from 'react';
 import useHighScoreController, { HighScoreProps } from './controller';
 import Score from '../components/score';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import BackButton from '../components/back-button';
-import { backGroundColour } from '../components/color';
+import { backGroundColour, numberColour } from '../components/color';
 
 
 const HighScore = (props : HighScoreProps) => {
   const controller = useHighScoreController(props);
   return (
     <View style={styles.mainContainer}>
-      <BackButton onTouchBackButton={controller.onTouchBackButton}/>
+      <BackButton onTouchBackButton={controller.onTouchBackButton} />
       <View style={styles.highScore}>
-      <Score score={controller.highScore} />
+        <Text style={styles.highScoreTitle}>Best</Text>
+        <Score score={controller.highScore} />
       </View>
     </View>
   );
@@ -24,7 +25,18 @@ const styles = StyleSheet.create({
       backgroundColor: backGroundColour,
     },
     highScore: {
+      flexDirection:"column",
       margin: 40,
+      alignItems:"center"
+    },
+    highScoreTitle: {
+      color: numberColour,
+      fontSize: 20,
+      borderBottomWidth: 1.5,
+      borderTopWidth: 1.5,
+      borderColor: numberColour,
+      padding: 5,
+      marginBottom: 24,
     }
 });
 

@@ -24,4 +24,9 @@ describe('Restart Modal', () => {
   it('should quit game on quit button click', () => {
     // const controller = useRestartModalController({});
   });
+
+
+  it('should show ansered problem when gameReasoon is wrongAnswer', () => {
+    // const controller = useRestartModalController({});
+  });
 });

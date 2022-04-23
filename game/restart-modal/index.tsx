@@ -6,10 +6,11 @@ import Button from '../../components/button';
 import {
   backGroundColour,
   numberColour,
+  purpleColor,
   titleColor,
 } from '../../components/color';
 import {RootState} from '../../store';
-import {GamePageActions, HighScore} from '../redux';
+import {GameOverReason, GamePageActions, HighScore} from '../redux';
 import {useRestartModalController} from './controller';
 import {
   Table,
@@ -19,6 +20,7 @@ import {
   Col,
 } from 'react-native-table-component';
 import Score from '../../components/score';
+import FontAwesomeIcon from 'react-native-vector-icons/dist/FontAwesome5';
 
 export type RestartModelProps = {
   onRestartGame: () => void;
@@ -122,8 +124,14 @@ const RestartModal = (props: RestartModelProps) => {
         <Text style={styles.highScoreTitle}>{'Best'}</Text>
       </View> */}
       {console.log(controller.isNewHighScore())}
-      {!controller.isNewHighScore() ? <Text style={[styles.highScoreTitle, styles.scoreTitle]}>{'Best'}</Text> : <Text style={[styles.scoreTitle, styles.newHighScore]}>{'New Best'}</Text>}
-      <Score  score={controller.highScore} />
+      {!controller.isNewHighScore() ? (
+        <Text style={[styles.highScoreTitle, styles.scoreTitle]}>{'Best'}</Text>
+      ) : (
+        <Text style={[styles.scoreTitle, styles.newHighScore]}>
+          {'New Best'}
+        </Text>
+      )}
+      <Score score={controller.highScore} />
     </View>
   );
 
@@ -158,6 +166,18 @@ const RestartModal = (props: RestartModelProps) => {
     }
   };
 
+  const renderCurrentAnsweredProblem = () => {
+    if (controller.gameOverReason === GameOverReason.WRONG_ANSWER) {
+      return (
+        <View style={styles.answeredProblemContainer}>
+          <Text style={styles.answeredProblem}>{controller.answeredProblem.problem} </Text>
+          <FontAwesomeIcon name="not-equal"  style={styles.answeredProblemOperator} />
+          <Text  style={styles.answeredProblem}>{controller.answeredProblem.answer}</Text>
+        </View>
+      );
+    }
+  };
+
   return (
     // <View style={styles.centeredView}>
     <Modal
@@ -173,6 +193,7 @@ const RestartModal = (props: RestartModelProps) => {
       <View style={styles.centeredView} accessibilityLabel="restart-modal">
         <View style={styles.modalView}>
           <Text style={styles.modalTitle}>{controller.gameOverReason}</Text>
+          {renderCurrentAnsweredProblem()}
           {renderScore()}
           {renderButtons()}
         </View>
@@ -225,12 +246,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   wrapper: {flexDirection: 'row'},
-  // buttonOpen: {
-  //   backgroundColor: '#F194FF',
-  // },
-  // buttonClose: {
-  //   backgroundColor: '#2196F3',
-  // },
+  answeredProblemContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  answeredProblem: {
+    fontSize: 20,
+    color:purpleColor,
+  },
+  answeredProblemOperator: {
+    fontSize: 14,
+    color:purpleColor,
+    paddingTop: 6,
+    paddingLeft:6,
+    paddingRight: 6,
+  },
   textStyle: {
     color: numberColour,
     // height:40,
@@ -285,16 +315,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1.5,
     borderColor: numberColour,
     padding: 5,
-    flexDirection:"row"
+    flexDirection: 'row',
   },
-  newHighScore:{
-    fontSize:20,
+  newHighScore: {
+    fontSize: 20,
     color: titleColor,
     marginLeft: 5,
   },
-  highScoreTitle:{
+  highScoreTitle: {
     color: numberColour,
-    fontSize: 20
+    fontSize: 20,
   },
   scoreTitle: {
     color: numberColour,

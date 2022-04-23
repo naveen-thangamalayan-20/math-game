@@ -6,6 +6,9 @@ import {GameOverReason, GamePageActions, HighScore} from '../redux';
 
 export const useRestartModalController = (props: RestartModelProps) => {
   const dispatch = useDispatch();
+  const answeredProblem =useSelector(
+    (root: RootState) => root.gamePage.answeredProblem,
+  );
   const gameOverReason = useSelector(
     (root: RootState) => root.gamePage.gameOverReason,
   );
@@ -82,6 +85,7 @@ export const useRestartModalController = (props: RestartModelProps) => {
       console.log("#######", currentScore)
       console.log("#######", highScorePEV.value)
       return currentScore.problemsSolved === highScorePEV.value.problemsSolved || currentScore.speed === highScorePEV.value.speed
-    }
+    },
+    answeredProblem,
   };
 };

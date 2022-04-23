@@ -37,6 +37,10 @@ type GamePageState = {
   currentScore: HighScore;
   highScorePEV: PEV<HighScore>;
   storeHighScore: PE;
+  answeredProblem: {
+    answer: string;
+    problem: string;
+  }
 };
 
 const initialState: GamePageState = {
@@ -65,6 +69,10 @@ const initialState: GamePageState = {
     progress: null,
     error: null,
   },
+  answeredProblem: {
+    answer: "",
+    problem: "",
+  }
 };
 
 const fetchHighScore = createAsyncThunk('fetchHighScore', async () => {
@@ -158,4 +166,5 @@ export const GamePageActions = {
 
   updateCurrentScore: (currentScore: HighScore) =>
     updateGamePageState({currentScore}),
+  updateAnsweredProblem: (answeredProblem: {problem: string, answer: string}) =>updateGamePageState({answeredProblem}),
 };
