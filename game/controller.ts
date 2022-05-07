@@ -1,7 +1,9 @@
 import {useEffect, useState} from 'react';
+import Sound from 'react-native-sound';
 import {useDispatch, useSelector} from 'react-redux';
+import { getFailureSound, getWinningSound } from '../home/sound';
 import {RootState} from '../store';
-import { generateRandomNumber, shuffle } from '../utils/iif';
+import { Nullable } from '../utils/types';
 import useStopWatch from './main-play-area/stop-watch/stop-watch';
 import { getOperationValuesAndResult, Operator } from './problem-generator';
 import {
@@ -21,14 +23,31 @@ const useGameController = (props: GameProps) => {
   const stopWatch = useStopWatch();
   const dispatch = useDispatch();
   const [roundId, setroundId] = useState(0);
-  // const currentRoundRemainingTime = useSelector(
-  //   (state: RootState) => state.gamePage.currentRoundRemainingTime,
-  // );
-  // const problemSolved = useSelector((state: RootState) => state.gamePage.problemsSolved);
+  const isSoundOn = useSelector((state: RootState) => state.homePage.isSoundOn);
+  let winningSound: Nullable<Sound> =  null;
+  let failingSound: Nullable<Sound> =  null;
+
+  getWinningSound().then((sound) => {
+    winningSound = sound as Sound;
+  })
+  getFailureSound().then((sound) => {
+    failingSound = sound as Sound;
+  })
+
+  const playWinningSound = () => {
+    if(isSoundOn) {
+      winningSound?.play();
+    }
+  }
+
+  const playFailureSound = () => {
+    if(isSoundOn) {
+      failingSound?.play();
+    }
+  }
   const currentScore = useSelector((state: RootState) => state.gamePage.currentScore);
-  const highScorePEV = useSelector(
-    (state: RootState) => state.gamePage.highScorePEV,
-  );
+  const highScorePEV = useSelector((state: RootState) => state.gamePage.highScorePEV);
+  const resourcePE = useSelector((state: RootState) => state.homePage.resourcePE);
   const gameOverReason = useSelector((state: RootState) => state.gamePage.gameOverReason);
   const {result, operatorCell} = operatorAndResultState;
    console.log("###CAlls")
@@ -43,8 +62,17 @@ const useGameController = (props: GameProps) => {
     return currentScore;
   };
 
+  const shouldRenderContent = () => {
+      return !highScorePEV.progress || !resourcePE.progress;
+  }
+
+  const shouldRenderProgress = () => {
+    return !!highScorePEV.progress || !!resourcePE.progress;
+  }
+
   const onGameOver = (gameOverReason: GameOverReason) => {
     // const currentScore = getCurrentScore();
+    playFailureSound()
     dispatch(GamePageActions.updateGameOverReason(gameOverReason));
     dispatch(GamePageActions.setShowRestartModal(true));
     dispatch(GamePageActions.updateStartTimer(false));
@@ -69,6 +97,7 @@ const useGameController = (props: GameProps) => {
   };
 
   const onAnswerFound = () => {
+    playWinningSound()
     setOperatorAndResultState(getOperationValuesAndResult());
     dispatch(
       GamePageActions.updateGameTime(
@@ -128,11 +157,11 @@ const useGameController = (props: GameProps) => {
       totalTime: 0,
     }));
     setOperatorAndResultState(getOperationValuesAndResult());
+    dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
     dispatch(GamePageActions.setShowRestartModal(false));
     dispatch(GamePageActions.updateStartTimer(true));
     setroundId(roundId => roundId + 1);
     stopWatch.start();
-    dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
   };
 
   const onResumeGame = () => {
@@ -162,8 +191,12 @@ const useGameController = (props: GameProps) => {
     onTouchBackButton,
     onResumeGame,
     getCurrentScore,
-    onQuitGame
+    onQuitGame,
+    shouldRenderContent,
+    shouldRenderProgress
   };
 };
 
 export default useGameController;
+
+

@@ -71,45 +71,7 @@ const RestartModal = (props: RestartModelProps) => {
     </View>
   );
 
-  // const renderScore = () => {
-  //   if (controller.shouldRenderScores()) {
-  //     const formattedCurrentScore = controller.getFormattedCurrentScore();
-  //     const formattedHighScore = controller.getFormattedHighScore();
-  //     return (
-  //       <>
-  //         <View style={styles.score}>
-  //           <View style={styles.scoreHeader}>
-  //             <WhiteText data=""/>
-  //             <WhiteText data={"Solved"}/>
-  //             <WhiteText data={"Time"}/>
-  //             <WhiteText data={"Speed"} />
-  //           </View>
-  //           <View style={styles.scoreData}>
-  //             <WhiteText data={"Current Score"}/>
-  //             <WhiteText data={`${formattedCurrentScore.problemsSolved.toString()} problems`}/>
-  //             <WhiteText data={formattedCurrentScore.totalTime}/>
-  //             <WhiteText data={formattedCurrentScore.speed}/>
-  //           </View>
-  //           <View style={styles.scoreData}>
-  //             <WhiteText data={"Best"}/>
-  //             <WhiteText data={formattedHighScore.problemsSolved.toString()}/>
-  //             <WhiteText data={formattedHighScore.totalTime}/>
-  //             <WhiteText data={formattedHighScore.speed}/>
-  //           </View>
-  //         </View>
-  //       </>
-  //     );
-  //   }
-  // };
-  // const renderCol = (label: string, value: string, unit: string) => {
-  //   return (
-  //     <View style={styles.scoreCol}>
-  //       <Text style={styles.scoreLabel}>{label}</Text>
-  //       <Text style={styles.scoreValue}>{value}</Text>
-  //       <Text style={styles.scoreUnit}>{unit}</Text>
-  //     </View>
-  //   );
-  // };
+
   const renderCurrentScore = () => (
     <View style={styles.currentScore}>
       <Text style={styles.scoreTitle}>{'Score'}</Text>
@@ -119,10 +81,6 @@ const RestartModal = (props: RestartModelProps) => {
 
   const renderHighScore = () => (
     <View style={styles.currentScore}>
-      {/* <View style={styles.highScoreTitleContainer}>
-         {!controller.isNewHighScore() && <Text style={styles.newHighScore}>New </Text>}
-        <Text style={styles.highScoreTitle}>{'Best'}</Text>
-      </View> */}
       {console.log(controller.isNewHighScore())}
       {!controller.isNewHighScore() ? (
         <Text style={[styles.highScoreTitle, styles.scoreTitle]}>{'Best'}</Text>
@@ -137,30 +95,10 @@ const RestartModal = (props: RestartModelProps) => {
 
   const renderScore = () => {
     if (controller.shouldRenderScores()) {
-      // const formattedCurrentScore = controller.getFormattedCurrentScore();
-      // const formattedHighScore = controller.getFormattedHighScore();
       return (
         <View style={styles.scoreContainer}>
-          {/* <View style={styles.currentScore}>
-            <Text style={styles.scoreTitle}>Score</Text>
-            <View style={styles.scoreRow}>
-              {renderCol('Solved', formattedCurrentScore.problemsSolved.value, formattedCurrentScore.problemsSolved.unit)}
-              {renderCol('Time', formattedCurrentScore.totalTime.value, formattedCurrentScore.totalTime.unit)}
-              {renderCol('Speed', formattedCurrentScore.speed.value,  formattedCurrentScore.speed.unit)}
-            </View>
-          </View> */}
-          {/* <View style={styles.currentScore}>
-            <Text style={styles.scoreTitle}>Best</Text>
-            <View style={styles.scoreRow}>
-              {renderCol('Solved', formattedHighScore.problemsSolved.value, formattedHighScore.problemsSolved.unit)}
-              {renderCol('Time', formattedHighScore.totalTime.value, formattedHighScore.totalTime.unit)}
-              {renderCol('Speed', formattedHighScore.speed.value,  formattedHighScore.speed.unit)}
-            </View>
-          </View> */}
           {renderCurrentScore()}
           {renderHighScore()}
-          {/* <Score title={"Score"} score={controller.currentScore}/>
-          <Score title={"Best"} score={controller.highScore}/> */}
         </View>
       );
     }
@@ -179,7 +117,6 @@ const RestartModal = (props: RestartModelProps) => {
   };
 
   return (
-    // <View style={styles.centeredView}>
     <Modal
       animationType="slide"
       transparent={true}

@@ -93,8 +93,8 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
           operandsInSelectedCells[1].value as number,
         );
         dispatch(GamePageActions.updateAnsweredProblem({
-          problem:`${operandsInSelectedCells[0].value} ${operatorValue.label} ${operandsInSelectedCells[0].value}`,
-          answer:total.toString(),
+          problem:`${operandsInSelectedCells[0].value} ${operatorValue.label} ${operandsInSelectedCells[1].value}`,
+          answer:props.answerToBeFound.toString(),
         }))
         props.validateResult(total);
       }
@@ -107,10 +107,6 @@ const useMainPlayAreaController = (props: MainPlayAreaProps) => {
     }
     selectedIndexes.value = [];
   };
-
-  const getWronglyAnswered = () => {
-
-  }
 
   const panHandler = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent | TapGestureHandlerGestureEvent
