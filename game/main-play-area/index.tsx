@@ -24,6 +24,7 @@ import {
 import {getFormattedSpeed, SPEED_UNIT} from '../../utils/formatter';
 import BackButton from '../../components/back-button';
 import { Operators } from '../problem-generator';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 export type CoOrdinates = {
   x: number;
@@ -169,6 +170,13 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
           </Animated.View>
         </PanGestureHandler>
       </View>
+      <BannerAd
+        unitId={"ca-app-pub-3940256099942544/6300978111"}
+        size={BannerAdSize.FULL_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
     </View>
   );
 }

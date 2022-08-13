@@ -2,6 +2,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store';
 import { HomePageActions } from './redux';
 import { useEffect } from 'react';
+import mobileAds from 'react-native-google-mobile-ads';
 
 
 export type HomeProps = {

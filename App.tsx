@@ -29,8 +29,24 @@ import Game from './game';
 import {store} from './store';
 import Home from './home';
 import HighScore from './high-score';
+import mobileAds from 'react-native-google-mobile-ads';
+
+// mobileAds()
+//   .initialize()
+//   .then(adapterStatuses => {
+//     console.log("Loading completed", adapterStatuses);
+//     // Initialization complete!
+//   });
 
 const App = () => {
+  
+  // mobileAds()
+  // .initialize()
+  // .then((adapterStatuses: any) => {
+  //  console.log("Loading completed", adapterStatuses);
+  // });
+  
+
   const isDarkMode = useColorScheme() === 'dark';
   const Stack = createNativeStackNavigator();
 

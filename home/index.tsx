@@ -6,7 +6,7 @@ import IconButton from '../components/icon-button';
 import Score from '../components/score';
 import useHomeController, {HomeProps} from './controller';
 import FontAwesomeIcon from 'react-native-vector-icons/dist/FontAwesome5';
-
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
 const Home = (props: HomeProps) => {
   const controller = useHomeController(props);
@@ -28,7 +28,6 @@ const Home = (props: HomeProps) => {
   );
   return (
     <View style={styles.mainContainer}>
-     
       <Text style={styles.title}>Math Speed Run</Text>
       {/* <IconButton
           onPress={controller.onToundSoundButton}
@@ -47,12 +46,15 @@ const Home = (props: HomeProps) => {
           onPress={() => controller.onToundSoundButton()}
           label={controller.getSoundButtonLabel()}
         />
-         <Button
-          onPress={() => controller.onTouchQuitButton()}
-          label={'QUIT'}
-        />
-       
+        <Button onPress={() => controller.onTouchQuitButton()} label={'QUIT'} />
       </View>
+      <BannerAd
+        unitId={"ca-app-pub-3940256099942544/6300978111"}
+        size={BannerAdSize.FULL_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
     </View>
   );
 };
@@ -83,9 +85,9 @@ const styles = StyleSheet.create({
     borderColor: numberColour,
     borderWidth: 1,
     backgroundColor: backGroundColour,
-    width:"14%",
+    width: '14%',
     // width: "40%",
-    padding:16,
-    marginTop: 16
+    padding: 16,
+    marginTop: 16,
   },
 });
