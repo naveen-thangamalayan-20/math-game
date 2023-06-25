@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
-import {numberColour} from './color';
+import {numberColour, scoreColor} from './color';
 import IconButton from './icon-button';
 
 type BackButtonProps = {
@@ -13,7 +13,7 @@ const BackButton = (props: BackButtonProps) => {
     <IconButton
       onPress={props.onTouchBackButton}
       icon={
-        <Icon name="arrow-back-circle-outline" size={38} color={numberColour} />
+        <Icon name="arrow-back-circle-outline" size={38} color={scoreColor} />
       }
       style={styles.backButton}
     />

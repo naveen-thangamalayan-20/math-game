@@ -20,11 +20,12 @@ import {
   backGroundColour,
   inactiveColor,
   numberColour,
+  scoreColor,
 } from '../../components/color';
 import {getFormattedSpeed, SPEED_UNIT} from '../../utils/formatter';
 import BackButton from '../../components/back-button';
-import { Operators } from '../problem-generator';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import {Operators} from '../problem-generator';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
 export type CoOrdinates = {
   x: number;
@@ -40,18 +41,31 @@ export type Cell = {
 // );
 
 const renderMultiplicationIcon = (idx: number) => (
-  <EntypoIcon accessibilityLabel={`option-${idx}`} name="cross" size={28} color={numberColour} />
+  <EntypoIcon
+    accessibilityLabel={`option-${idx}`}
+    name="cross"
+    size={28}
+    color={numberColour}
+  />
 );
 
 const renderSubtractionIcon = (idx: number) => (
-  <FoundationIcon accessibilityLabel={`option-${idx}`} name="minus" size={20} color={numberColour} />
+  <FoundationIcon
+    accessibilityLabel={`option-${idx}`}
+    name="minus"
+    size={20}
+    color={numberColour}
+  />
 );
 
 const renderAdditionIcon = (idx: number) => (
-  <FontAwesomeIcon accessibilityLabel={`option-${idx}`} name="plus" size={20} color={numberColour} />
+  <FontAwesomeIcon
+    accessibilityLabel={`option-${idx}`}
+    name="plus"
+    size={20}
+    color={numberColour}
+  />
 );
-
-
 
 export default function MainPlayArea(props: MainPlayAreaProps) {
   const rowCount = 2;
@@ -61,22 +75,24 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
   // const activeColor = '#5FA8FC';
   const cellSelectedColor = '#212121';
   const cellSelectedBorderColor = '#fafafa';
+  const cellBGColor = '#c2d047ff';
+  const selectedCellBGColor = '#91d04b';
   const controller = useMainPlayAreaController(props);
 
   const renderOperatorCell = (idx: number) => {
-    const operator = controller.getOperator(idx)
-    if(operator === Operators.MULTIPLICATION) {
-      return renderMultiplicationIcon(idx)
+    const operator = controller.getOperator(idx);
+    if (operator === Operators.MULTIPLICATION) {
+      return renderMultiplicationIcon(idx);
     } else if (operator === Operators.SUBTRACTION) {
-      return renderSubtractionIcon(idx)
+      return renderSubtractionIcon(idx);
     } else {
-      return renderAdditionIcon(idx)
+      return renderAdditionIcon(idx);
     }
-  }
+  };
 
   function renderCell(idx: number) {
     if (controller.isOperatorCell(idx)) {
-      return renderOperatorCell(idx)
+      return renderOperatorCell(idx);
     } else {
       return (
         <Text style={styles.number} accessibilityLabel={`option-${idx}`}>
@@ -97,11 +113,11 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
               if (
                 controller.selectedIndexes.value.findIndex(v => v === idx) < 0
               ) {
-                return {bgColor: backGroundColour, borderColor: inactiveColor};
+                return {bgColor: cellBGColor, borderColor: cellBGColor};
               } else {
                 return {
-                  bgColor: cellSelectedColor,
-                  borderColor: cellSelectedBorderColor,
+                  bgColor: selectedCellBGColor,
+                  borderColor: selectedCellBGColor,
                 };
               }
             });
@@ -116,11 +132,15 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
                 borderRadius: 10,
                 borderWidth: 1,
                 margin: patternMargin,
-                color: '#ffffff',
+                color: '#2c3a1b',
                 // textDecorationColor:"#fffff",
               };
             });
-            return <Animated.View key={idx} style={outer}>{renderCell(idx)}</Animated.View>;
+            return (
+              <Animated.View key={idx} style={outer}>
+                {renderCell(idx)}
+              </Animated.View>
+            );
           })}
       </Animated.View>
     );
@@ -143,15 +163,15 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
         <BackButton onTouchBackButton={controller.onTouchBackButton} />
         <View style={styles.highScoreContainer}>
           <View style={styles.highScore}>
+            <Text style={styles.highScoreTitle}>Solved</Text>
             <Text style={styles.problemSolved}>
               {controller.currentScore.problemsSolved}
             </Text>
-            <Text style={styles.highScoreTitle}>solved</Text>
           </View>
-          <View style={styles.highScore}>
+          {/* <View style={styles.highScore}>
             <Text style={styles.problemSolved}>{speed.value}</Text>
             <Text style={styles.highScoreTitle}>{speed.unit}</Text>
-          </View>
+          </View> */}
         </View>
       </View>
       <View style={styles.playContainer}>
@@ -171,7 +191,7 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
         </PanGestureHandler>
       </View>
       <BannerAd
-        unitId={"ca-app-pub-3940256099942544/6300978111"}
+        unitId={'ca-app-pub-3940256099942544/6300978111'}
         size={BannerAdSize.FULL_BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,
@@ -183,26 +203,33 @@ export default function MainPlayArea(props: MainPlayAreaProps) {
 
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row',
     marginTop: 8,
+    justifyContent: 'space-between',
+    marginLeft: 12,
+    marginRight: 12,
+    marginBottom: 48,
   },
   highScore: {
-    flex: 1,
+    // flex: 1,
+    // alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-end'
   },
   highScoreContainer: {
-    flex: 2,
+    // flex: 1,
     flexDirection: 'row',
   },
   highScoreTitle: {
-    fontSize: 16,
-    color: numberColour,
-    textAlign: 'center',
+    fontSize: 24,
+    color: scoreColor,
+    // textAlign: 'left',
   },
   problemSolved: {
-    fontSize: 26,
-    textAlign: 'center',
-    color: numberColour,
+    fontSize: 32,
+    // textAlign: 'center',
+    color: scoreColor,
   },
   backButton: {
     width: 50,
@@ -228,12 +255,12 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   number: {
-    fontSize: 28,
+    fontSize: 32,
     alignItems: 'center',
     color: numberColour,
   },
   answer: {
-    fontSize: 30,
+    fontSize: 36,
     alignItems: 'center',
     color: answerColour,
   },

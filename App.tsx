@@ -59,7 +59,7 @@ const App = () => {
       <Provider store={store}>
         <GestureHandlerRootView style={{flex: 1}}>
           <Stack.Navigator>
-          <Stack.Screen
+           <Stack.Screen
               name="Home"
               component={Home}
               options={{title: 'Home', headerShown: false}}

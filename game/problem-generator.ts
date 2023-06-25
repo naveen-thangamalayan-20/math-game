@@ -1,16 +1,16 @@
-import {generateRandomNumber, shuffle} from '../utils/iif';
-
+import {generateRandomNumber, iif, shuffle} from '../utils/iif';
+import { DifficultyLevel } from './redux';
 
 export type OperationCell =
-| {
-    type: CellType.NUMBER;
-    value: number;
-  }
-| {
-    type: CellType.OPERATOR;
-    value: Operator;
-  };
-  
+  | {
+      type: CellType.NUMBER;
+      value: number;
+    }
+  | {
+      type: CellType.OPERATOR;
+      value: Operator;
+    };
+
 export enum CellType {
   NUMBER,
   OPERATOR,
@@ -29,9 +29,9 @@ type IOperation = {
 };
 
 export enum Operators {
-  ADDITION= "+",
-  SUBTRACTION= "-",
-  MULTIPLICATION= "*"
+  ADDITION = '+',
+  SUBTRACTION = '-',
+  MULTIPLICATION = '*',
 }
 
 export const operations: IOperation = {
@@ -53,16 +53,52 @@ export const operations: IOperation = {
   // }
 };
 
-export const getOperationValuesAndResult = () => {
+export const getOperationValuesAndResult = (difficultyLevel: number) => {
+  // const difficultyLevel: number = 1
+  const {operand1StartingNumber, operand2StartingNumber, operand1EndingNumber, operand2EndingNumber} = iif(
+    function getOperandStartingNumber() {
+     if (difficultyLevel === DifficultyLevel.BEGINNER) {
+        return {
+          operand1StartingNumber: 50,
+          operand1EndingNumber: 100,
+          operand2StartingNumber: 2,
+          operand2EndingNumber: 10,
+        };
+      } else if (difficultyLevel === DifficultyLevel.HARD) {
+        return {
+          operand1StartingNumber: 50,
+          operand1EndingNumber: 100,
+          operand2StartingNumber: 50,
+          operand2EndingNumber: 100,
+        };
+      }
+      else if (difficultyLevel === DifficultyLevel.EXPERT) {
+        return {
+          operand1StartingNumber: 100,
+          operand1EndingNumber: 1000,
+          operand2StartingNumber: 50,
+          operand2EndingNumber: 100,
+        };
+      } else {
+        return {
+          operand1StartingNumber: 2,
+          operand1EndingNumber: 10,
+          operand2StartingNumber: 2,
+          operand2EndingNumber: 10,
+        }
+      }
+    },
+  );
   // const operatorCell: OperationCell[] = [];
   const operand1 = generateRandomNumber(
-    difficultyLevel * 10,
-    difficultyLevel + 2,
+    operand1EndingNumber,
+    operand1StartingNumber,
   );
   const operand2 = generateRandomNumber(
-    difficultyLevel * 10,
-    difficultyLevel + 2,
+    operand2EndingNumber,
+    operand2StartingNumber,
   );
+  console.log("##DifficultyLevel:"+difficultyLevel+":"+operand1+":"+operand2)
   const operationKeys = Object.keys(operations);
   let totalOperationsCount = operationKeys.length;
   const firstOperatorIndex = generateRandomNumber(totalOperationsCount);

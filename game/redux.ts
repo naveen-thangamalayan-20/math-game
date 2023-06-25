@@ -26,6 +26,13 @@ export type PE = {
   error: string | null;
 };
 
+export enum DifficultyLevel {
+  NOVICE,
+  BEGINNER,
+  HARD,
+  EXPERT
+}
+
 type GamePageState = {
   showRestartModal: boolean;
   currentRoundRemainingTime: number;
@@ -41,6 +48,7 @@ type GamePageState = {
     answer: string;
     problem: string;
   }
+  difficultyLevel: DifficultyLevel;
 };
 
 const initialState: GamePageState = {
@@ -72,7 +80,8 @@ const initialState: GamePageState = {
   answeredProblem: {
     answer: "",
     problem: "",
-  }
+  },
+  difficultyLevel: DifficultyLevel.NOVICE
 };
 
 const fetchHighScore = createAsyncThunk('fetchHighScore', async () => {
@@ -145,6 +154,8 @@ export const GamePageActions = {
   //   updateGamePageState({isRoundAnswered}),
 
   updateStartTimer: (startTimer: boolean) => updateGamePageState({startTimer}),
+
+  updateDifficultLevel: (difficultyLevel: DifficultyLevel) => updateGamePageState({difficultyLevel}),
 
   // updateProblemsSolved: (score: number) => updateGamePageState({problemsSolved: score}),
 

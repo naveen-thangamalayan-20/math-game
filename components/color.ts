@@ -1,7 +1,8 @@
-export const backGroundColour = '#121212';
-export const numberColour = '#ffffff';
-export const answerColour = '#000000';
-export const answerCellBGColour = numberColour;
+export const backGroundColour = '#303030';
+export const numberColour = '#2c3a1b';
+export const answerColour = '#2c3a1b';
+export const scoreColor = '#ffffff';
+export const answerCellBGColour = "#91d04b";
 export const inactiveColor = numberColour;
-export const titleColor = "#03acd5";
+export const titleColor = "#000000";
 export const purpleColor = "#BB86FC";

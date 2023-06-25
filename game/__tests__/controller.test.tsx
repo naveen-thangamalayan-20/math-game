@@ -1,10 +1,12 @@
-import useGameController, {GameProps} from '../controller';
+import * as allStates from  "../all-states";
+import useGameController, {GameProps, getDifficultyLevel} from '../controller';
 import * as redux from 'react-redux';
 import * as React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
 import {Pressable, Text, TouchableHighlight} from 'react-native';
 import {iif} from '../../utils/iif';
 import {
+  DifficultyLevel,
   GameOverReason,
   HighScore,
   INITIAL_TOTAL_ROUND_DURATION,
@@ -31,6 +33,8 @@ jest.mock('../main-play-area/stop-watch/stop-watch', () => ({
   })),
 }));
 
+jest.mock("react-native-sound", () => "sound")
+
 const createGameProps = (options: {navigation?: any}) => ({
   navigation: options.navigation ?? jest.fn(),
 });
@@ -47,7 +51,6 @@ describe('Game controller', () => {
       jest
         .spyOn(redux, 'useSelector')
         .mockReturnValue({progress: null, error: null, value: highScore})
-        // .mockReturnValue(GameOverReason.NONE)
         .mockReturnValueOnce(currentScore)
         .mockReturnValueOnce({progress: null, error: null, value: highScore})
         .mockReturnValueOnce(gameOverReason)
@@ -111,17 +114,18 @@ describe('Game controller', () => {
         type: 'gamePage/updateGamePageState',
       });
       expect(mockDispatch).toHaveBeenNthCalledWith(5, {
-        payload: {showRestartModal: false},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(6, {
-        payload: {startTimer: true},
-        type: 'gamePage/updateGamePageState',
-      });
-      expect(mockDispatch).toHaveBeenNthCalledWith(7, {
         payload: {gameOverReason: GameOverReason.NONE},
         type: 'gamePage/updateGamePageState',
       });
+      expect(mockDispatch).toHaveBeenNthCalledWith(6, {
+        payload: {showRestartModal: false},
+        type: 'gamePage/updateGamePageState',
+      });
+      expect(mockDispatch).toHaveBeenNthCalledWith(7, {
+        payload: {startTimer: true},
+        type: 'gamePage/updateGamePageState',
+      });
+      
     });
     expect(mockDispatch).toBeCalledTimes(7);
     iif(function assertStopWatchIsReseted() {
@@ -277,6 +281,14 @@ describe('Game controller', () => {
         totalTime: 100,
       };
       mockUseSelector(currentScore, highScore);
+      jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+        currentScore: currentScore,
+        highScorePEV: {progress:null, error: null, value: highScore},
+        resourcePE: {progress:null, error: null},
+        gameOverReason: GameOverReason.NONE,
+        difficultyLevel: DifficultyLevel.NOVICE,
+        isSoundOn: false,
+       })
 
       const {getByText} = render(<SetupDummyComponent />);
       fireEvent.press(getByText('RoundTimeOut'));
@@ -326,6 +338,14 @@ describe('Game controller', () => {
         totalTime: 100,
       };
       mockUseSelector(currentScore, highScore);
+      jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+        currentScore: currentScore,
+        highScorePEV: {progress:null, error: null, value: highScore},
+        resourcePE: {progress:null, error: null},
+        gameOverReason: GameOverReason.NONE,
+        difficultyLevel: DifficultyLevel.NOVICE,
+        isSoundOn: false,
+       })
 
       const {getByText} = render(<SetupDummyComponent />);
       fireEvent.press(getByText('RoundTimeOut'));
@@ -444,6 +464,14 @@ describe('Game controller', () => {
       };
       const wrongAnswer = Number.MAX_SAFE_INTEGER;
       mockUseSelector(currentScore, highScore);
+      jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+        currentScore: currentScore,
+        highScorePEV: {progress:null, error: null, value: highScore},
+        resourcePE: {progress:null, error: null},
+        gameOverReason: GameOverReason.NONE,
+        difficultyLevel: DifficultyLevel.NOVICE,
+        isSoundOn: false,
+       })
 
       const {getByText} = render(
         <SetupDummyComponentWithResult answer={wrongAnswer} />,
@@ -496,6 +524,14 @@ describe('Game controller', () => {
       };
       const wrongAnswer = Number.MAX_SAFE_INTEGER;
       mockUseSelector(currentScore, highScore);
+      jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+        currentScore: currentScore,
+        highScorePEV: {progress:null, error: null, value: highScore},
+        resourcePE: {progress:null, error: null},
+        gameOverReason: GameOverReason.NONE,
+        difficultyLevel: DifficultyLevel.NOVICE,
+        isSoundOn: false,
+       })
 
       const {getByText} = render(
         <SetupDummyComponentWithResult answer={wrongAnswer} />,
@@ -548,6 +584,14 @@ describe('Game controller', () => {
       };
       const wrongAnswer = Number.MAX_SAFE_INTEGER;
       mockUseSelector(currentScore, highScore);
+      jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+        currentScore: currentScore,
+        highScorePEV: {progress:null, error: null, value: highScore},
+        resourcePE: {progress:null, error: null},
+        gameOverReason: GameOverReason.NONE,
+        difficultyLevel: DifficultyLevel.NOVICE,
+        isSoundOn: false,
+       })
 
       const {getByText} = render(
         <SetupDummyComponentWithResult answer={wrongAnswer} />,
@@ -600,6 +644,14 @@ describe('Game controller', () => {
       };
       const wrongAnswer = Number.MAX_SAFE_INTEGER;
       mockUseSelector(currentScore, highScore);
+      jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+        currentScore: currentScore,
+        highScorePEV: {progress:null, error: null, value: highScore},
+        resourcePE: {progress:null, error: null},
+        gameOverReason: GameOverReason.NONE,
+        difficultyLevel: DifficultyLevel.NOVICE,
+        isSoundOn: false,
+       })
 
       const {getByText} = render(
         <SetupDummyComponentWithResult answer={wrongAnswer} />,
@@ -691,29 +743,42 @@ describe('Game controller', () => {
     const currentScore = {
       problemsSolved: 9,
       speed: 0.1,
-      totalTime: 100,
+      totalTime: 5,
     };
-    mockUseSelector(currentScore, highScore);
+    jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+      currentScore: currentScore,
+      highScorePEV: {progress:null, error: null, value: highScore},
+      resourcePE: {progress:null, error: null},
+      gameOverReason: GameOverReason.NONE,
+      difficultyLevel: DifficultyLevel.NOVICE,
+      isSoundOn: false,
+     })
 
     const {getByText} = render(
       <SetupDummyComponentWithResult answer={correctAnswer} />,
     );
     fireEvent.press(getByText('ValidateResult'));
 
+    // expect(mockedSelector).toBeCalledTimes(5);
     expect(mockedUseDispatch).toBeCalledTimes(3);
     iif(function assertCurrentTimeIsRestedAndProblemSolvedIsUpdated() {
+      // expect(mockDispatch).toBeCalledTimes(4);
       expect(mockDispatch).toHaveBeenNthCalledWith(2, {
         payload: {startTimer: true},
         type: 'gamePage/updateGamePageState',
       });
       expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+        payload: {difficultyLevel: DifficultyLevel.NOVICE},
+        type: 'gamePage/updateGamePageState',
+      });
+      expect(mockDispatch).toHaveBeenNthCalledWith(4, {
         payload: {
           currentRoundRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
           totalGameRemainingTime: INITIAL_TOTAL_ROUND_DURATION,
         },
         type: 'gamePage/updateGamePageState',
       });
-      expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+      expect(mockDispatch).toHaveBeenNthCalledWith(5, {
         payload: {
           currentScore: {
             problemsSolved: 10,
@@ -728,7 +793,114 @@ describe('Game controller', () => {
       //   type: 'gamePage/updateGamePageState',
       // });
     });
-    expect(mockDispatch).toBeCalledTimes(4);
+    expect(mockDispatch).toBeCalledTimes(5);
+    iif(function assertStopWatchIsNotReseted() {
+      expect(mockStopWatchReset).toBeCalledTimes(0);
+    });
+  });
+
+  it.each([DifficultyLevel.NOVICE, DifficultyLevel.BEGINNER, DifficultyLevel.HARD, DifficultyLevel.EXPERT])('should reduce the current round time by 5% when difficulty level increases', (difficultLeveL: DifficultyLevel) => {
+    const SetupDummyComponentWithResult = (props: {answer: number}) => {
+      const controller = useGameController(createGameProps({}));
+      return (
+        <>
+          <Pressable
+            data-testid="restart-btn"
+            onPress={() => controller.validateResult(props.answer)}>
+            <Text>ValidateResult</Text>
+          </Pressable>
+          <Text data-testid="result" onPress={controller.onTouchBackButton}>
+            <Text>{controller.result}</Text>
+          </Text>
+        </>
+      );
+    };
+
+    const correctAnswer = 20;
+    jest
+      .spyOn(problemGenerator, 'getOperationValuesAndResult')
+      .mockImplementation(() => ({
+        result: correctAnswer,
+        operatorCell: [
+          {
+            type: CellType.NUMBER,
+            value: 10,
+          },
+          {
+            type: CellType.OPERATOR,
+            value: problemGenerator.operations.ADDITION,
+          },
+          {
+            type: CellType.NUMBER,
+            value: 10,
+          },
+          {
+            type: CellType.OPERATOR,
+            value: problemGenerator.operations.SUBTRACTION,
+          },
+        ],
+      }));
+    const mockDispatch = jest.fn();
+    const mockedUseDispatch = jest
+      .spyOn(redux, 'useDispatch')
+      .mockImplementation(() => mockDispatch);
+    const highScore = {
+      problemsSolved: 10,
+      speed: 0.1,
+      totalTime: 100,
+    };
+    const currentScore = {
+      problemsSolved: 9,
+      speed: 0.1,
+      totalTime: 5,
+    };
+    jest.spyOn(allStates, "useGetAllReduxStates").mockReturnValue({
+      currentScore: currentScore,
+      highScorePEV: {progress:null, error: null, value: highScore},
+      resourcePE: {progress:null, error: null},
+      gameOverReason: GameOverReason.NONE,
+      difficultyLevel: difficultLeveL,
+      isSoundOn: false,
+     })
+
+    const {getByText} = render(
+      <SetupDummyComponentWithResult answer={correctAnswer} />,
+    );
+    fireEvent.press(getByText('ValidateResult'));
+
+    expect(mockedUseDispatch).toBeCalledTimes(3);
+    iif(function assertCurrentTimeIsRestedAndProblemSolvedIsUpdated() {
+      expect(mockDispatch).toHaveBeenNthCalledWith(2, {
+        payload: {startTimer: true},
+        type: 'gamePage/updateGamePageState',
+      });
+      expect(mockDispatch).toHaveBeenNthCalledWith(3, {
+        payload: {difficultyLevel: DifficultyLevel.NOVICE},
+        type: 'gamePage/updateGamePageState',
+      });
+      expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+        payload: {
+          currentRoundRemainingTime: INITIAL_TOTAL_ROUND_DURATION * (1 - (difficultLeveL * 0.05)),
+          totalGameRemainingTime: INITIAL_TOTAL_ROUND_DURATION * (1 - (difficultLeveL * 0.05)),
+        },
+        type: 'gamePage/updateGamePageState',
+      });
+      expect(mockDispatch).toHaveBeenNthCalledWith(5, {
+        payload: {
+          currentScore: {
+            problemsSolved: 10,
+            speed: 1,
+            totalTime: 10,
+          },
+        },
+        type: 'gamePage/updateGamePageState',
+      });
+      // expect(mockDispatch).toHaveBeenNthCalledWith(4, {
+      //   payload: {problemsSolved: 2},
+      //   type: 'gamePage/updateGamePageState',
+      // });
+    });
+    expect(mockDispatch).toBeCalledTimes(5);
     iif(function assertStopWatchIsNotReseted() {
       expect(mockStopWatchReset).toBeCalledTimes(0);
     });
@@ -910,4 +1082,60 @@ describe('Game controller', () => {
       expect(mockStopWatchStart).toBeCalledTimes(1);
     });
   });
+
+  describe("Set Difficulty Level", () => {
+    it('should set the difficulty level to 1 if number of problems solved is less than zero and total time is zero', () => {
+      expect(getDifficultyLevel(0, 0)).toBe(DifficultyLevel.NOVICE)
+    });
+
+    it('should set the difficulty level to 2 if number of problems solved is greter than 8', () => {
+      expect(getDifficultyLevel(12, 10)).toBe(DifficultyLevel.BEGINNER)
+    });
+
+    it('should set the difficulty level to 3 if number of problems solved is greter than 16', () => {
+      expect(getDifficultyLevel(17, 27)).toBe(DifficultyLevel.HARD)
+    });
+
+    // it('should set the difficulty level to 4 if number of problems solved is greter than 32', () => {
+    //   expect(getDifficultyLevel({
+    //     speed: 0,
+    //     problemsSolved: 33,
+    //     totalTime: 0,
+    //   })).toBe(4)
+
+
+    //   it('should set the difficulty level to 2 if number of total-time is greter than 10', () => {
+    //     expect(getDifficultyLevel({
+    //       speed: 0,
+    //       problemsSolved: 0,
+    //       totalTime: 12,
+    //     })).toBe(2)
+    //   });
+  
+    //   it('should set the difficulty level to 3 if number of problems solved is greter than 20', () => {
+    //     expect(getDifficultyLevel({
+    //       speed: 0,
+    //       problemsSolved: 0,
+    //       totalTime: 21,
+    //     })).toBe(3)
+    //   });
+  
+    //   it('should set the difficulty level to 2 if number of problems solved is greter than 30', () => {
+    //     expect(getDifficultyLevel({
+    //       speed: 0,
+    //       problemsSolved: 0,
+    //       totalTime: 31,
+    //     })).toBe(4)
+    // });
+  // })
+ });
+ 
 });
+// function PEV(highScore: { problemsSolved: number; speed: number; totalTime: number; }): import("../redux").PEV<HighScore> {
+//   throw new Error('Function not implemented.');
+// }
+
+// function PE(): { progress: string | null; error: string | null; } {
+//   throw new Error('Function not implemented.');
+// }
+

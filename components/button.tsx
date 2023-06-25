@@ -27,18 +27,22 @@ const Button = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 2,
-    borderColor: numberColour,
+    borderRadius: 8,
+    // borderColor: numberColour,
     borderWidth: 1,
-    backgroundColor: backGroundColour,
+    // backgroundColor: backGroundColour,
     width: "40%",
     padding:16,
-    marginTop: 16
+    marginTop: 16,
+    borderColor: '#483A58',
+    backgroundColor: '#483A58',
+    color: '#322F20'
   },
   label: {
     fontSize: 22,
-    color: numberColour,
-    textAlign:"center"
+    // color: numberColour,
+    textAlign:"center",
+    color: '#EDFFEC',
   }
 });
 export default Button;
