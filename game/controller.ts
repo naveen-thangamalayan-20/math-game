@@ -4,26 +4,73 @@ import {useDispatch, useSelector} from 'react-redux';
 import { getFailureSound, getWinningSound } from '../home/sound';
 import {RootState} from '../store';
 import { Nullable } from '../utils/types';
+import { useGetAllReduxStates } from './all-states';
 import useStopWatch from './main-play-area/stop-watch/stop-watch';
-import { getOperationValuesAndResult, Operator } from './problem-generator';
+import { getOperationValuesAndResult, OperationCell, Operator } from './problem-generator';
 import {
   GameOverReason,
   GamePageActions,
   INITIAL_TOTAL_ROUND_DURATION,
+  HighScore,
+  DifficultyLevel
 } from './redux';
+import { InterstitialAd, TestIds, useInterstitialAd } from 'react-native-google-mobile-ads';
 
 
 export type GameProps = {
   navigation: any;
 }
+
+
+
+export const getDifficultyLevel = (problemsSolved: number, totalTime: number) => {
+    const weightedAverage =(problemsSolved * 0.6) + (totalTime * 0.4)
+    console.log("WeightedAverage", weightedAverage, problemsSolved,totalTime)
+    if(weightedAverage > 10 && weightedAverage <= 14) {
+      return DifficultyLevel.BEGINNER;
+    } else if (weightedAverage > 15 && weightedAverage <= 29 ) {
+      return DifficultyLevel.HARD;
+    } else if (weightedAverage > 30 ) {
+      return DifficultyLevel.EXPERT;
+    } else {
+      return DifficultyLevel.NOVICE;
+    }
+}
+
+
+const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : 'ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy';
+
 const useGameController = (props: GameProps) => {
-  const [operatorAndResultState, setOperatorAndResultState] = useState(
-    getOperationValuesAndResult(),
-  );
+  const { isLoaded: isAdsLoaded, isClosed: isAdsClosed, load: loadAd, show: showAd } = useInterstitialAd(TestIds.INTERSTITIAL, {
+    requestNonPersonalizedAdsOnly: true,
+  });
+  useEffect(() => {
+    loadAd();
+  }, [loadAd]);
+  useEffect(() => {
+    if (isAdsClosed) {
+      dispatch(GamePageActions.updateStartTimer(true));
+      setroundId(roundId => roundId + 1);
+      stopWatch.start();
+      loadAd();
+      // Action after the ad is closed
+      // navigation.navigate('NextScreen');
+      console.log("Closed")
+    }
+  }, [isAdsClosed]);
+  
+  console.debug("useGameController called")
+  const allStates = useGetAllReduxStates()
+  const currentScore = allStates.currentScore;
+  const highScorePEV = allStates.highScorePEV;
+  const resourcePE = allStates.resourcePE;
+  const gameOverReason = allStates.gameOverReason;;
+  const difficultyLevel = allStates.difficultyLevel;
+  const isSoundOn = allStates.isSoundOn;
+  const [operatorAndResultState, setOperatorAndResultState] = useState(getOperationValuesAndResult(DifficultyLevel.EXPERT));
   const stopWatch = useStopWatch();
   const dispatch = useDispatch();
   const [roundId, setroundId] = useState(0);
-  const isSoundOn = useSelector((state: RootState) => state.homePage.isSoundOn);
   let winningSound: Nullable<Sound> =  null;
   let failingSound: Nullable<Sound> =  null;
 
@@ -45,19 +92,19 @@ const useGameController = (props: GameProps) => {
       failingSound?.play();
     }
   }
-  const currentScore = useSelector((state: RootState) => state.gamePage.currentScore);
-  const highScorePEV = useSelector((state: RootState) => state.gamePage.highScorePEV);
-  const resourcePE = useSelector((state: RootState) => state.homePage.resourcePE);
-  const gameOverReason = useSelector((state: RootState) => state.gamePage.gameOverReason);
-  const {result, operatorCell} = operatorAndResultState;
+ 
+
    console.log("###CAlls")
   useEffect(() => {
+    console.debug("useEffect called")
     dispatch(GamePageActions.fetchHighScore());
     setroundId(roundId => roundId + 1);
     dispatch(GamePageActions.updateStartTimer(true));
     stopWatch.start();
+    setOperatorAndResultState(getOperationValuesAndResult(difficultyLevel))
   }, []);
 
+  const {result, operatorCell} = operatorAndResultState;
   const getCurrentScore = () => {
     return currentScore;
   };
@@ -96,18 +143,28 @@ const useGameController = (props: GameProps) => {
     }
   };
 
+  // useEffect(() => {
+  //   setOperatorAndResultState(getOperationValuesAndResult(difficultyLevel));
+  // }, [difficultyLevel])
+
   const onAnswerFound = () => {
-    playWinningSound()
-    setOperatorAndResultState(getOperationValuesAndResult());
-    dispatch(
-      GamePageActions.updateGameTime(
-        INITIAL_TOTAL_ROUND_DURATION,
-        INITIAL_TOTAL_ROUND_DURATION,
-      ),
-    );
     const newProblemsSolved =  currentScore.problemsSolved + 1;
     const currentSpeed = newProblemsSolved / stopWatch.timer.current;
     console.log("@@CurrentSpeed", currentSpeed)
+    playWinningSound()
+    setOperatorAndResultState(getOperationValuesAndResult(difficultyLevel))
+    dispatch(GamePageActions.updateDifficultLevel(getDifficultyLevel(newProblemsSolved, stopWatch.timer.current)));
+    const getRoundTime = (difficultyLevel: DifficultyLevel) => {
+      return INITIAL_TOTAL_ROUND_DURATION * (1 - (difficultyLevel * 0.05))
+    }
+    dispatch(
+      GamePageActions.updateGameTime(
+        getRoundTime(difficultyLevel),
+        getRoundTime(difficultyLevel)
+        // INITIAL_TOTAL_ROUND_DURATION,
+        // INITIAL_TOTAL_ROUND_DURATION,
+      ),
+    );
     dispatch(GamePageActions.updateCurrentScore({
       speed: currentSpeed,
       problemsSolved: newProblemsSolved,
@@ -121,6 +178,7 @@ const useGameController = (props: GameProps) => {
   };
 
   const validateResult = (total: number) => {
+    console.log("###GAmeOverREason", gameOverReason)
     console.log("######VAlidatationResult",total, result, gameOverReason)
     if(gameOverReason === GameOverReason.NONE) {
       console.log("#####Inside")
@@ -156,12 +214,15 @@ const useGameController = (props: GameProps) => {
       problemsSolved: 0,
       totalTime: 0,
     }));
-    setOperatorAndResultState(getOperationValuesAndResult());
+    setOperatorAndResultState(getOperationValuesAndResult(DifficultyLevel.NOVICE));
     dispatch(GamePageActions.updateGameOverReason(GameOverReason.NONE));
     dispatch(GamePageActions.setShowRestartModal(false));
-    dispatch(GamePageActions.updateStartTimer(true));
-    setroundId(roundId => roundId + 1);
-    stopWatch.start();
+    if(isAdsLoaded) {
+      showAd();
+    }
+    // dispatch(GamePageActions.updateStartTimer(true));
+    // setroundId(roundId => roundId + 1);
+    // stopWatch.start();
   };
 
   const onResumeGame = () => {

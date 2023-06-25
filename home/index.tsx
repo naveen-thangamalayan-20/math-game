@@ -6,7 +6,7 @@ import IconButton from '../components/icon-button';
 import Score from '../components/score';
 import useHomeController, {HomeProps} from './controller';
 import FontAwesomeIcon from 'react-native-vector-icons/dist/FontAwesome5';
-import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
 const Home = (props: HomeProps) => {
   const controller = useHomeController(props);
@@ -28,7 +28,7 @@ const Home = (props: HomeProps) => {
   );
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.title}>Math Speed Run</Text>
+      <Text style={styles.title}>Math Dash</Text>
       {/* <IconButton
           onPress={controller.onToundSoundButton}
           icon={
@@ -37,19 +37,21 @@ const Home = (props: HomeProps) => {
           style={styles.soundButton}
         /> */}
       <View style={styles.buttonGroup}>
-        <Button onPress={() => controller.onTouchGameButton()} label={'PLAY'} />
+        <Button style={styles.button} onPress={() => controller.onTouchGameButton()} label={'PLAY'} />
         <Button
           onPress={() => controller.onTouchHighScoreButton()}
+          style={styles.button}
           label={'HIGH SCORE'}
         />
         <Button
           onPress={() => controller.onToundSoundButton()}
+          style={styles.button}
           label={controller.getSoundButtonLabel()}
         />
-        <Button onPress={() => controller.onTouchQuitButton()} label={'QUIT'} />
+        <Button style={styles.button} onPress={() => controller.onTouchQuitButton()} label={'QUIT'} />
       </View>
       <BannerAd
-        unitId={"ca-app-pub-3940256099942544/6300978111"}
+        unitId={TestIds.BANNER}
         size={BannerAdSize.FULL_BANNER}
         requestOptions={{
           requestNonPersonalizedAdsOnly: true,
@@ -78,6 +80,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // top: 100,
     flex: 1,
+  },
+  button: {
+    // borderRadius: 8,
+    // backgroundColor: '#6A5837',
+    // color: '#322F20'
   },
   soundButton: {
     // color: numberColour,
